@@ -4,6 +4,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import Main from './components/Main'
 import MyApp from './components/MyApp';
 import NewAppForm from './components/NewAppForm';
+import QRCodeDisplay from './components/QRDisplay';
 
 class App extends Component {
   render() {
@@ -16,6 +17,7 @@ class App extends Component {
               <Route exact path="/" component={Main} />
               <Route exact path="/newapp" component={NewAppForm} />
               <Route exact path="/myapp/:id?" component={MyApp} />
+              <Route exact path="/qr/:id?" component={QRCodeDisplay} />
             </Switch>
           </main>
         </div>

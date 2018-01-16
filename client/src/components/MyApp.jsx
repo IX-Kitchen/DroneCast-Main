@@ -50,7 +50,7 @@ export default class Main extends React.Component {
         this.dropCallback = this.dropCallback.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.updateData()
     }
 

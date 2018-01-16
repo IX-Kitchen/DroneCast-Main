@@ -41,10 +41,10 @@ export default class AppList extends React.Component {
                                 <Label ribbon>{item.name}</Label>
                             </Table.Cell>
                             <Table.Cell>
-                                <Link to={"/myapp/"+item._id}>
+                                <Link to={"/myapp/" + item._id}>
                                     <Button icon><Icon name='edit' /></Button>
                                 </Link>
-                                <Link to="/qr">
+                                <Link to={"/qr/" + item._id}>
                                     <Button icon><Icon name='qrcode' /></Button>
                                 </Link>
                             </Table.Cell>
