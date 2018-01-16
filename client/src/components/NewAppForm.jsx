@@ -1,11 +1,16 @@
 import React from 'react'
 import { Button, Form } from 'semantic-ui-react'
 import request from "superagent"
+import { Link } from 'react-router-dom'
+import Redirect from 'react-router-dom/Redirect';
 
 export default class NewAppForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { name: '' };
+    this.state = {
+      name: '',
+      redirect: false
+    };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -27,16 +32,22 @@ export default class NewAppForm extends React.Component {
         console.log(error)
       })
     event.preventDefault();
+    this.setState({ redirect: true })
   }
   render() {
+    const { redirect } = this.state
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <Form.Field>
-          <label>First Name</label>
-          <input placeholder='App Name' name='name' onChange={this.handleChange} />
-        </Form.Field>
-        <Button type='submit'>Submit</Button>
-      </Form>
+      <div>
+        <Form onSubmit={this.handleSubmit}>
+          <Form.Field>
+            <label>First Name</label>
+            <input placeholder='App Name' name='name' onChange={this.handleChange} />
+          </Form.Field>
+          <Button type='submit'>Submit</Button>
+          
+        </Form>
+        {redirect && (<Redirect to={''} />)}
+      </div>
     )
   }
 }
