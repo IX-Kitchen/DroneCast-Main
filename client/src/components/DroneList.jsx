@@ -6,13 +6,13 @@ import request from 'superagent'
 export default class AppList extends React.Component {
     constructor() {
         super();
-        this.state = { apps: [] };
+        this.state = { drones: [] };
     }
     updateData() {
         request
-            .get('http://localhost:8080/api/apps/list')
+            .get('http://localhost:8080/api/drones/list')
             .then((response) => {
-                this.setState({ apps: response.body });
+                this.setState({ drones: response.body });
             })
             .catch((error) => {
                 console.log(error)
@@ -24,17 +24,18 @@ export default class AppList extends React.Component {
     }
 
     render() {
-        const { apps } = this.state
+        const { drones } = this.state
+
         return (
             <Table celled>
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell>Apps</Table.HeaderCell>
+                        <Table.HeaderCell>Drones</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
 
                 <Table.Body>
-                    {apps.map((item, index) => (
+                    {drones.map(item => (
                         <Table.Row key={item._id}>
                             <Table.Cell>
                                 <Label ribbon>{item.name}</Label>
@@ -43,15 +44,7 @@ export default class AppList extends React.Component {
                                 <Link to={"/myapp/" + item._id}>
                                     <Button icon><Icon name='edit' /></Button>
                                 </Link>
-                                <Link to={"/qr/" + item._id}>
-                                    <Button icon><Icon name='qrcode' /></Button>
-                                </Link>
                             </Table.Cell>
-                            {apps[index].drones.map(item => (
-                                <Table.Cell key={item}>
-                                    <Label>{item}</Label>
-                                </Table.Cell>
-                            ))}
                         </Table.Row>
                     ))}
                 </Table.Body>

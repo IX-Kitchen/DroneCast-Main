@@ -8,6 +8,8 @@ export default class NewAppForm extends React.Component {
     super(props);
     this.state = {
       name: '',
+      availableDrones: [],
+      drones: [],
       redirect: false
     };
 
@@ -15,13 +17,24 @@ export default class NewAppForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
-    this.setState({ name: event.target.value });
+  handleChange(event, data) {
+    var { drones } = this.state
+    if (data) {
+      if (data.checked) {
+        drones.push(data.label)
+      } else {
+        drones = drones.filter(drone => drone !== data.label)
+      }
+      this.setState({ drones: drones });
+    } else {
+      this.setState({ name: event.target.value });
+    }
+
   }
 
-  handleSubmit(event) {
+  handleSubmit(event, data) {
     request
-      .post('http://localhost:8080/api/new')
+      .post('http://localhost:8080/api/apps/new')
       .send(this.state)
       .then((response) => {
         this.setState({ redirect: true })
@@ -32,15 +45,35 @@ export default class NewAppForm extends React.Component {
     event.preventDefault();
 
   }
+
+  componentDidMount() {
+    request
+      .get('http://localhost:8080/api/drones/list')
+      .then((response) => {
+        this.setState({ availableDrones: response.body });
+      })
+      .catch((error) => {
+        console.log(error)
+        return [error]
+      })
+  }
+
   render() {
-    const { redirect } = this.state
+    const { redirect, availableDrones } = this.state
     return (
       <div>
         <Form onSubmit={this.handleSubmit}>
           <Form.Field>
-            <label>First Name</label>
+            <label>App Name</label>
             <input placeholder='App Name' name='name' onChange={this.handleChange} />
           </Form.Field>
+          <Form.Group grouped>
+            <label>Drones</label>
+            {availableDrones.map(item => (
+              <Form.Checkbox key={item._id} label={item.name} onClick={this.handleChange} />
+            ))}
+
+          </Form.Group>
           <Button type='submit'>Submit</Button>
 
         </Form>

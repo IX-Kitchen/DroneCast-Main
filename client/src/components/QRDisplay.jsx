@@ -16,7 +16,7 @@ export default class QRCodeDisplay extends React.Component {
 
     updateData() {
         request
-            .get('http://localhost:8080/api/find/' + this.props.match.params.id)
+            .get('http://localhost:8080/api/apps/find/' + this.props.match.params.id)
             .then((response) => {
                 const body = response.body
                 const data =

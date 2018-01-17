@@ -47,7 +47,7 @@ app.get("/test", function (req, res) {
     res.send("OK!")
 });
 
-app.post("/api/new", async function (req, res) {
+app.post("/api/apps/new", async function (req, res) {
     const newAppData = {
         folders: [
             {
@@ -61,17 +61,16 @@ app.post("/api/new", async function (req, res) {
             }
         ]
     }
-    await dbLib.insert(req.body.name, "author", "scenario", "category", newAppData)
-res.send({ response: "New!" })
-
+    await dbLib.insertApp(req.body.name, "author", "scenario", "category", newAppData, req.body.drones)
+    res.send({ response: "New!" })
 });
 
-app.put("/api/update/:id", async function (req, res) {
-    await dbLib.update(req.params.id, req.body)
+app.put("/api/apps/update/:id", async function (req, res) {
+    await dbLib.updateApp(req.params.id, req.body)
     res.send({ response: "Updated!" })
 })
 
-app.post("/api/upload", function (req, res) {
+app.post("/api/apps/upload", function (req, res) {
     console.log("Post")
     upload(req, res, async function (err) {
         if (err) {
@@ -81,21 +80,31 @@ app.post("/api/upload", function (req, res) {
         const { appid, index, subindex } = req.body
 
         for (let i = 0; i < req.files.length; i++) {
-            await dbLib.addContent(req.body.appid, index, subindex, req.files[i].originalname)
+            await dbLib.addAppContent(req.body.appid, index, subindex, req.files[i].originalname)
         }
         console.log("Upload complete")
         res.send({ response: "Upload complete!" })
     });
 });
 
-app.get("/api/list", async function (req, res) {
-    const data = await dbLib.listAll();
+app.get("/api/apps/list", async function (req, res) {
+    const data = await dbLib.listAllApp();
     res.json(data);
 });
 
-app.get("/api/find/:id", async function (req, res) {
-    const data = await dbLib.find(req.params.id)
+app.get("/api/apps/find/:id", async function (req, res) {
+    const data = await dbLib.findApp(req.params.id)
     res.json(data);
+});
+
+app.get("/api/drones/list", async function (req, res) {
+    const data = await dbLib.listAllDrones();
+    res.json(data);
+});
+
+app.post("/api/drones/new", async function (req, res) {
+    await dbLib.insertDrone(req.body.name)
+    res.send({ response: "New Drone!" })
 });
 
 // Start server
@@ -103,5 +112,6 @@ server.listen(port, async function () {
     console.log('Server listening at port %d', port);
     // Debug
     //await dbLib.dropCol();
-    await dbLib.createCol();
+    await dbLib.createCol("Dev", "Apps");
+    await dbLib.createCol("Dev", "Drones")
 });

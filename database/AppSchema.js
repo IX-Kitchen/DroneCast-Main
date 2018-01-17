@@ -5,11 +5,11 @@ module.exports = {
         title: "AppSchema",
         description: "An app description",
         bsonType: "object",
-        required: ["name", "date", "author", "scenario", "appdata"],
+        required: ["name", "date", "author", "scenario", "appdata", "drones"],
         properties: {
             name: {
                 bsonType: "string",
-                description: "File name. must be a string and is not required"
+                description: "App name"
             },
             date: {
                 bsonType: "date",

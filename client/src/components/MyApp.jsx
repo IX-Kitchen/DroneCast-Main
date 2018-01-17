@@ -56,7 +56,7 @@ export default class Main extends React.Component {
 
     updateData() {
         request
-            .get('http://localhost:8080/api/find/' + this.props.match.params.id)
+            .get('http://localhost:8080/api/apps/find/' + this.props.match.params.id)
             .then((response) => {
                 const body = response.body
                 let data =
@@ -177,7 +177,7 @@ export default class Main extends React.Component {
 
     handleBackClick() {
         request
-            .put('http://localhost:8080/api/update/' + this.props.match.params.id)
+            .put('http://localhost:8080/api/apps/update/' + this.props.match.params.id)
             .send({ folders: this.state.data.folders })
             .then((response) => {
 

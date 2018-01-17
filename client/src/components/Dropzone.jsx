@@ -8,7 +8,7 @@ import './css/filepicker.css';
 var componentConfig = {
     iconFiletypes: ['.jpg', '.png', '.gif'],
     showFiletypeIcon: false,
-    postUrl: '/api/upload'
+    postUrl: '/api/apps/upload'
 };
 var djsConfig = {
     acceptedFiles: "image/*, video/*",
