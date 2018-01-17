@@ -10,7 +10,7 @@ export default class Explorer extends React.Component {
         return (
             <div>
                 <Button.Group>
-                    <Button disabled={folders.length === 0} icon='minus' onClick={this.props.removeCallback} />
+                    <Button disabled={folders.length === 1} icon='minus' onClick={this.props.removeCallback} />
                     <Button icon='plus' onClick={this.props.addCallback} />
                 </Button.Group>
 

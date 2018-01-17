@@ -15,6 +15,10 @@ module.exports = {
                 bsonType: "date",
                 description: "Date of uploading"
             },
+            drones: {
+                bsonType: "array",
+                description: "Drones bound to the app"
+            },
             author: {
                 bsonType: "string",
                 description: "Uploader"

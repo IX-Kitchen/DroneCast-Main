@@ -47,7 +47,7 @@ export default class Main extends React.Component {
             }
         }
         this.handleBackClick = this.handleBackClick.bind(this);
-        this.dropCallback = this.dropCallback.bind(this);
+        this.updateData = this.updateData.bind(this);
     }
 
     componentDidMount() {
@@ -189,12 +189,9 @@ export default class Main extends React.Component {
 
     }
 
-    dropCallback() {
-
-    }
-
     render() {
         let add, remove, folders, folder, subfolder, thisFolder
+        const { index, subindex } = this.state.currentFolder
 
         switch (this.state.currentFolder.type) {
             case "Main":
@@ -203,16 +200,16 @@ export default class Main extends React.Component {
                 folders = this.state.data.folders
                 break;
             case "Folder":
-                add = () => this.handleAddSubFolder(this.state.currentFolder.index)
-                remove = () => this.handleRemoveSubFolder(this.state.currentFolder.index)
-                thisFolder = this.state.data.folders[this.state.currentFolder.index]
+                add = () => this.handleAddSubFolder(index)
+                remove = () => this.handleRemoveSubFolder(index)
+                thisFolder = this.state.data.folders[index]
                 folders = thisFolder.subfolders
                 folder = thisFolder.name
                 break;
             case "SubFolder":
-                thisFolder = this.state.data.folders[this.state.currentFolder.index]
+                thisFolder = this.state.data.folders[index]
                 folder = thisFolder.name
-                thisFolder = thisFolder.subfolders[this.state.currentFolder.subindex]
+                thisFolder = thisFolder.subfolders[subindex]
                 folders = thisFolder.content
                 subfolder = thisFolder.name
                 break
@@ -237,8 +234,12 @@ export default class Main extends React.Component {
                     handleClick={(type) => this.handleNavClick(type)} />
                 {this.state.currentFolder.type === "SubFolder" ? (
                     <div>
+                        <Dropzone
+                            index={index}
+                            subindex={subindex}
+                            appid={this.props.match.params.id}
+                            dropCallback = {this.updateData}/>
                         <ContentList content={folders} />
-                        <Dropzone />
                     </div>
 
                 ) : (

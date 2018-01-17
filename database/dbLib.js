@@ -70,7 +70,26 @@ async function update(id, appdata) {
 
         const col = db.collection(colName);
 
-        await col.updateOne({_id: mongo.ObjectID(id)}, { $set: { appdata: appdata } });
+        await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: { appdata: appdata } });
+
+        client.close();
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
+
+async function addContent(id, index, subindex, content) {
+    console.log("add",id,index,subindex,content)
+    const query = "appdata.folders." + index + ".subfolders." + subindex + ".content"
+    const push = {}
+    push[query] = content
+    try {
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+
+        const col = db.collection(colName);
+
+        col.updateOne({ _id: mongo.ObjectID(id) }, { $push: push });
 
         client.close();
     } catch (err) {
@@ -122,5 +141,6 @@ module.exports = {
     dropCol: dropCol,
     listAll: listAll,
     find: find,
-    update: update
+    update: update,
+    addContent: addContent
 };

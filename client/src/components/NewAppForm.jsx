@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Form } from 'semantic-ui-react'
 import request from "superagent"
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 export default class NewAppForm extends React.Component {
   constructor(props) {
@@ -24,12 +24,13 @@ export default class NewAppForm extends React.Component {
       .post('http://localhost:8080/api/new')
       .send(this.state)
       .then((response) => {
+        this.setState({ redirect: true })
       })
       .catch((error) => {
         console.log(error)
       })
     event.preventDefault();
-    this.setState({ redirect: true })
+
   }
   render() {
     const { redirect } = this.state

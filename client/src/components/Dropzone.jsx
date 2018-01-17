@@ -22,13 +22,15 @@ var eventHandlers = {
     error: (file, error, xhr) => console.log("Error component",error, xhr)
     //success: (file) => console.log("Success"),
 }
-
-
 export default class Dropzone extends React.Component {
 
     componentWillMount(){
-        console.log(this.props)
-        djsConfig.params = {}
+        djsConfig.params = {
+            appid: this.props.appid,
+            index: this.props.index,
+            subindex: this.props.subindex
+        }
+        eventHandlers.complete = this.props.dropCallback;
     }
     
     render() {
