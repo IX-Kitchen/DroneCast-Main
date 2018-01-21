@@ -20,7 +20,7 @@ export default class Explorer extends React.Component {
                     <Grid container columns={3}>
                         {content.map((item, index) => (
                             <Grid.Column key={item}>
-                                <Image src='http://www.fundacionunam.org.mx/wp-content/uploads/2016/03/herpetarioUNAM1.jpg' avatar />
+                                <Image src='https://picsum.photos/200/?random' avatar />
                                 <span>{item}</span>
                             </Grid.Column>
                         ))}

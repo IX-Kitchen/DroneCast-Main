@@ -85,7 +85,6 @@ async function updateApp(id, appdata) {
 }
 
 async function addAppContent(id, index, subindex, content) {
-    console.log("add", id, index, subindex, content)
     const query = "appdata.folders." + index + ".subfolders." + subindex + ".content"
     const push = {}
     push[query] = content

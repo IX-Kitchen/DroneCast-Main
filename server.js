@@ -23,6 +23,7 @@ const dbLib = require('./database/dbLib.js');
 
 const multer = require('multer');
 const bodyParser = require('body-parser');
+const path = require('path')
 
 // HTTP request in req.body as json
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -71,7 +72,6 @@ app.put("/api/apps/update/:id", async function (req, res) {
 })
 
 app.post("/api/apps/upload", function (req, res) {
-    console.log("Post")
     upload(req, res, async function (err) {
         if (err) {
             console.log(err)
@@ -80,7 +80,7 @@ app.post("/api/apps/upload", function (req, res) {
         const { appid, index, subindex } = req.body
 
         for (let i = 0; i < req.files.length; i++) {
-            await dbLib.addAppContent(req.body.appid, index, subindex, req.files[i].originalname)
+            await dbLib.addAppContent(req.body.appid, index, subindex, req.files[i].filename)
         }
         console.log("Upload complete")
         res.send({ response: "Upload complete!" })
@@ -95,6 +95,10 @@ app.get("/api/apps/list", async function (req, res) {
 app.get("/api/apps/find/:id", async function (req, res) {
     const data = await dbLib.findApp(req.params.id)
     res.json(data);
+});
+
+app.get("/api/content/:id", function (req, res) {
+    res.sendFile(path.join(__dirname, './database/media', req.params.id));
 });
 
 app.get("/api/drones/list", async function (req, res) {
