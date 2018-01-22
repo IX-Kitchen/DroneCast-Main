@@ -47,22 +47,21 @@ export default class Main extends React.Component {
             }
         }
         this.handleBackClick = this.handleBackClick.bind(this);
-        this.updateData = this.updateData.bind(this);
+        this.getData = this.getData.bind(this);
     }
 
     componentDidMount() {
-        this.updateData()
+        this.getData()
     }
 
-    updateData() {
+    getData() {
         request
             .get('http://' + window.location.hostname + ':8080/api/apps/find/' + this.props.match.params.id)
             .then((response) => {
-                const body = response.body
-                let data =
+                const data =
                     {
-                        AppId: body.name,
-                        folders: body.appdata.folders
+                        AppId: response.body.name,
+                        folders: response.body.appdata.folders
                     }
                 this.setState({ data: data });
             })
@@ -76,7 +75,10 @@ export default class Main extends React.Component {
         let name = "Folder" + (this.state.data.folders.length + 1);
         let newFolder = {
             "name": name,
-            "subfolders": []
+            "subfolders": [{
+                "name": "SubFolder1",
+                "content": []
+            }]
         };
         const folders = [...this.state.data.folders, newFolder]
         let newJson = {
@@ -145,6 +147,7 @@ export default class Main extends React.Component {
             case "Folder":
                 type = "SubFolder"
                 mySubIndex = index
+                this.updateData()
                 break;
             default:
                 type = "Main"
@@ -175,7 +178,7 @@ export default class Main extends React.Component {
         })
     }
 
-    handleBackClick() {
+    updateData() {
         request
             .put('http://' + window.location.hostname + ':8080/api/apps/update/' + this.props.match.params.id)
             .send({ folders: this.state.data.folders })
@@ -186,6 +189,10 @@ export default class Main extends React.Component {
                 console.log(error)
                 return [error]
             })
+    }
+
+    handleBackClick() {
+        this.updateData()
 
     }
 
@@ -238,7 +245,7 @@ export default class Main extends React.Component {
                             index={index}
                             subindex={subindex}
                             appid={this.props.match.params.id}
-                            dropCallback={this.updateData} />
+                            getData={this.getData} />
                         <ContentList content={folders} />
                         <Button icon labelPosition='left' onClick={this.handleBackClick}>
                             <Icon name='upload' />

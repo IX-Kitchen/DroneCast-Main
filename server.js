@@ -149,7 +149,7 @@ dronesIo.on('connection', (socket) => {
         avDrones.set(msg.id, socket)
         request
             .post('http://localhost:8080/api/drones/new')
-            .send({name: msg.name})
+            .send({name: msg.id})
             .then((response) => {
                 console.log(response.body.response)
             })

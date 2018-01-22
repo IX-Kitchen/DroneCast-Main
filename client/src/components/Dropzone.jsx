@@ -30,7 +30,7 @@ export default class Dropzone extends React.Component {
             index: this.props.index,
             subindex: this.props.subindex
         }
-        eventHandlers.complete = this.props.dropCallback;
+        eventHandlers.complete = this.props.getData;
     }
     
     render() {
