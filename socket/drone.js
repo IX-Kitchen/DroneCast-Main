@@ -1,5 +1,5 @@
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 const url = process.env.SOCKET_URL || 'localhost'
 
 const io = require('socket.io-client')

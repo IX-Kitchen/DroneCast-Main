@@ -34,7 +34,6 @@ dronesIo.on('connection', (socket) => {
             .catch((error) => {
                 console.log(error)
             })
-        console.log('Available Drones:',avDrones.keys())
     })
 });
 apps.on('connection', (socket) => {
@@ -47,9 +46,7 @@ apps.on('connection', (socket) => {
         console.log("Data sent from client to drone:", msg)
         const { drones } = msg // Drones bound to the app
         for (let key of avDrones.keys()) {
-            console.log('Key', key)
             drones.forEach(drone => {
-                console.log('Drone', drone)
                 if (drone === key) {
                     const sock = avDrones.get(key)
                     sock.emit('message', msg.content)

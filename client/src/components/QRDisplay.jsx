@@ -29,7 +29,7 @@ export default class QRCodeDisplay extends React.Component {
     }
 
     render() {
-        const qrdata = 'http://'+window.location.hostname+':8080/api/apps/find/' + this.props.match.params.id
+        const qrdata = {appdata:'http://'+window.location.hostname+':8080/api/apps/find/' + this.props.match.params.id}
         qrdata['socketUrl'] = 'http://'+window.location.hostname+":"
         qrdata['socketPort'] = 8000
         return (
