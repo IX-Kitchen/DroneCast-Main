@@ -56,7 +56,7 @@ export default class Main extends React.Component {
 
     updateData() {
         request
-            .get('http://'+window.location.hostname+':8080/api/apps/find/' + this.props.match.params.id)
+            .get('http://' + window.location.hostname + ':8080/api/apps/find/' + this.props.match.params.id)
             .then((response) => {
                 const body = response.body
                 let data =
@@ -177,7 +177,7 @@ export default class Main extends React.Component {
 
     handleBackClick() {
         request
-            .put('http://'+window.location.hostname+':8080/api/apps/update/' + this.props.match.params.id)
+            .put('http://' + window.location.hostname + ':8080/api/apps/update/' + this.props.match.params.id)
             .send({ folders: this.state.data.folders })
             .then((response) => {
 
@@ -238,8 +238,12 @@ export default class Main extends React.Component {
                             index={index}
                             subindex={subindex}
                             appid={this.props.match.params.id}
-                            dropCallback = {this.updateData}/>
+                            dropCallback={this.updateData} />
                         <ContentList content={folders} />
+                        <Button icon labelPosition='left' onClick={this.handleBackClick}>
+                            <Icon name='upload' />
+                            Back
+                        </Button>
                     </div>
 
                 ) : (
