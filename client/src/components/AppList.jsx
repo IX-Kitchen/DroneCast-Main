@@ -10,7 +10,7 @@ export default class AppList extends React.Component {
     }
     updateData() {
         request
-            .get('http://'+window.location.hostname+':8080/api/apps/list')
+            .get('http://' + window.location.hostname + ':8080/api/apps/list')
             .then((response) => {
                 this.setState({ apps: response.body });
             })
@@ -22,6 +22,18 @@ export default class AppList extends React.Component {
     componentDidMount() {
         this.updateData();
     }
+    deleteApp(id) {
+        request
+            .delete('http://' + window.location.hostname + ':8080/api/apps/delete/' + id)
+            .then((response) => {
+                this.updateData()
+                console.log(response.body.response)
+            })
+            .catch((error) => {
+                console.log(error)
+                return [error]
+            })
+    }
 
     render() {
         const { apps } = this.state
@@ -30,6 +42,8 @@ export default class AppList extends React.Component {
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Apps</Table.HeaderCell>
+                        <Table.HeaderCell>Actions</Table.HeaderCell>
+                        <Table.HeaderCell>Bound drones</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
 
@@ -46,12 +60,13 @@ export default class AppList extends React.Component {
                                 <Link to={"/qr/" + item._id}>
                                     <Button icon><Icon name='qrcode' /></Button>
                                 </Link>
+                                <Button icon onClick={() => this.deleteApp(item._id)}><Icon name='delete' /></Button>
                             </Table.Cell>
-                            {apps[index].drones.map(item => (
-                                <Table.Cell key={item}>
-                                    <Label>{item}</Label>
-                                </Table.Cell>
-                            ))}
+                            <Table.Cell>
+                                {apps[index].drones.map(item => (
+                                    <Label key={item}>{item}</Label>
+                                ))}
+                            </Table.Cell>
                         </Table.Row>
                     ))}
                 </Table.Body>

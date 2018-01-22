@@ -124,7 +124,7 @@ async function insertDrone(name) {
         const client = await MongoClient.connect(url);
         let db = client.db(dbName);
         const col = db.collection(droneCol);
-        col.updateOne({ name: name },{$set: {name: name}},{upsert: true});
+        col.updateOne({ name: name }, { $set: { name: name } }, { upsert: true });
         client.close();
     } catch (err) {
         console.log(err.stack);
@@ -167,6 +167,40 @@ async function dropCol(name) {
     }
 }
 
+async function deleteApp(id) {
+    try {
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+
+        let col = db.collection(appCol);
+
+        let r = await col.deleteOne({ _id: mongo.ObjectID(id) });
+        assert.equal(1, r.deletedCount);
+
+        client.close();
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
+
+async function deleteDrone(id) {
+    try {
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+
+        const col = db.collection(droneCol);
+
+        let r = await col.deleteOne({ name: id });
+        assert.equal(1, r.deletedCount);
+
+        db.collection(appCol).updateMany({}, { $pull: { drones: id }});
+
+        client.close();
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
+
 module.exports = {
     createCol: createCol,
     insertApp: insertApp,
@@ -176,5 +210,7 @@ module.exports = {
     updateApp: updateApp,
     addAppContent: addAppContent,
     insertDrone: insertDrone,
-    listAllDrones: listAllDrones
+    listAllDrones: listAllDrones,
+    deleteApp: deleteApp,
+    deleteDrone: deleteDrone
 };

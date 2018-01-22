@@ -10,7 +10,7 @@ export default class AppList extends React.Component {
     }
     updateData() {
         request
-            .get('http://'+window.location.hostname+':8080/api/drones/list')
+            .get('http://' + window.location.hostname + ':8080/api/drones/list')
             .then((response) => {
                 this.setState({ drones: response.body });
             })
@@ -19,6 +19,20 @@ export default class AppList extends React.Component {
                 return [error]
             })
     }
+
+    deleteDrone(id) {
+        request
+            .delete('http://' + window.location.hostname + ':8080/api/drones/delete/' + id)
+            .then((response) => {
+                this.updateData()
+                console.log(response.body.response)
+            })
+            .catch((error) => {
+                console.log(error)
+                return [error]
+            })
+    }
+
     componentDidMount() {
         this.updateData();
     }
@@ -31,6 +45,7 @@ export default class AppList extends React.Component {
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Drones</Table.HeaderCell>
+                        <Table.HeaderCell>Actions</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
 
@@ -44,6 +59,7 @@ export default class AppList extends React.Component {
                                 <Link to={"/myapp/" + item._id}>
                                     <Button icon><Icon name='edit' /></Button>
                                 </Link>
+                                <Button icon onClick={() => this.deleteDrone(item.name)}><Icon name='delete' /></Button>
                             </Table.Cell>
                         </Table.Row>
                     ))}

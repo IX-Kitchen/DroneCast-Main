@@ -119,6 +119,15 @@ app.post("/api/drones/new", async function (req, res) {
     res.send({ response: "Added "+req.body.name+" to the DB" })
 });
 
+app.delete("/api/apps/delete/:id", async function(req,res){
+    await dbLib.deleteApp(req.params.id)
+    res.send({response: "App deleted"})
+})
+app.delete("/api/drones/delete/:id", async function(req,res){
+    await dbLib.deleteDrone(req.params.id)
+    res.send({response: "Drone deleted"})
+})
+
 // Start server
 server.listen(port, async function () {
     console.log('Server listening at port %d', port);
