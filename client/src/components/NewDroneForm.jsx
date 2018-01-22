@@ -21,7 +21,7 @@ export default class NewAppForm extends React.Component {
 
   handleSubmit(event) {
     request
-      .post('http://localhost:8080/api/drones/new')
+      .post('http://'+window.location.hostname+':8080/api/drones/new')
       .send(this.state)
       .then((response) => {
         this.setState({ redirect: true })

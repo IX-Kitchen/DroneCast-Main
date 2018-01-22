@@ -2,7 +2,6 @@ import React from 'react'
 import { Segment, Button, Icon, Header } from 'semantic-ui-react'
 import QRCode from 'qrcode.react'
 import request from 'superagent'
-import ip from 'ip'
 import { Link } from 'react-router-dom'
 
 export default class QRCodeDisplay extends React.Component {
@@ -14,7 +13,7 @@ export default class QRCodeDisplay extends React.Component {
 
     updateData() {
         request
-            .get('http://localhost:8080/api/apps/find/' + this.props.match.params.id)
+            .get('http://'+window.location.hostname+':8080/api/apps/find/' + this.props.match.params.id)
             .then((response) => {
                 const { body } = response
                 this.setState(body);
@@ -31,7 +30,6 @@ export default class QRCodeDisplay extends React.Component {
 
     render() {
         const qrdata = this.state
-        qrdata['ip'] = ip.address() + ':8000'
         return (
             <div>
                 <Link to="/">

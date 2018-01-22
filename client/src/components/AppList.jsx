@@ -10,7 +10,7 @@ export default class AppList extends React.Component {
     }
     updateData() {
         request
-            .get('http://localhost:8080/api/apps/list')
+            .get('http://'+window.location.hostname+':8080/api/apps/list')
             .then((response) => {
                 this.setState({ apps: response.body });
             })

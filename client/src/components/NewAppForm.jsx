@@ -34,7 +34,7 @@ export default class NewAppForm extends React.Component {
 
   handleSubmit(event, data) {
     request
-      .post('http://localhost:8080/api/apps/new')
+      .post('http://'+window.location.hostname+':8080/api/apps/new')
       .send(this.state)
       .then((response) => {
         this.setState({ redirect: true })
@@ -48,7 +48,7 @@ export default class NewAppForm extends React.Component {
 
   componentDidMount() {
     request
-      .get('http://localhost:8080/api/drones/list')
+      .get('http://'+window.location.hostname+':8080/api/drones/list')
       .then((response) => {
         this.setState({ availableDrones: response.body });
       })
