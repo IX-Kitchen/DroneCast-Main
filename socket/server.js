@@ -21,6 +21,9 @@ dronesIo.on('connection', (socket) => {
 
     socket.on('init', (msg) => {
         console.log("Init msg from drone:", msg)
+        if (typeof msg === 'string'){
+            msg = JSON.parse(msg)
+        }
         avDrones.set(msg.id, socket)
         request
             .post('http://localhost:8080/api/drones/new')
@@ -31,6 +34,7 @@ dronesIo.on('connection', (socket) => {
             .catch((error) => {
                 console.log(error)
             })
+        console.log('Available Drones:',avDrones.keys())
     })
 });
 apps.on('connection', (socket) => {

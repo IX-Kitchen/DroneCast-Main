@@ -7,10 +7,10 @@ const socket = io(`http://${url}:${port}/drones`);
 
 socket.on('connect', function () {
     console.log("Drone connected");
-    socket.emit('init', {
+    socket.emit('init', JSON.stringify({
         id: '123',
         name: 'MyDrone'
-    });
+    }));
 });
 
 
