@@ -116,7 +116,7 @@ app.get("/api/drones/list", async function (req, res) {
 
 app.post("/api/drones/new", async function (req, res) {
     await dbLib.insertDrone(req.body.name)
-    res.send({ response: "New Drone!" })
+    res.send({ response: "Added "+req.body.name+" to the DB" })
 });
 
 // Start server

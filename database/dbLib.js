@@ -123,10 +123,8 @@ async function insertDrone(name) {
     try {
         const client = await MongoClient.connect(url);
         let db = client.db(dbName);
-        let r = await db.collection(droneCol).insertOne(
-            { name: name }
-        );
-        assert.equal(1, r.insertedCount);
+        const col = db.collection(droneCol);
+        col.updateOne({ name: name },{$set: {name: name}},{upsert: true});
         client.close();
     } catch (err) {
         console.log(err.stack);
