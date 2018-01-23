@@ -1,10 +1,10 @@
 import React from 'react'
 import Navigator from "./Navigator"
-import Dropzone from './Dropzone';
+import ModalDrop from './ModalDrop'
 import { Link } from 'react-router-dom'
 import Explorer from './Explorer'
 import ContentList from './ContentList'
-import { Button, Icon } from 'semantic-ui-react'
+import { Button, Icon, Menu } from 'semantic-ui-react'
 import request from 'superagent'
 
 /*
@@ -198,9 +198,9 @@ export default class Main extends React.Component {
 
     render() {
         let add, remove, folders, folder, subfolder, thisFolder
-        const { index, subindex } = this.state.currentFolder
+        const { index, subindex, type } = this.state.currentFolder
 
-        switch (this.state.currentFolder.type) {
+        switch (type) {
             case "Main":
                 add = () => this.handleAddFolder()
                 remove = () => this.handleRemoveFolder()
@@ -227,32 +227,31 @@ export default class Main extends React.Component {
 
         return (
             <div>
-                <Link to="/">
-                    <Button icon labelPosition='left' onClick={this.handleBackClick}>
-                        <Icon name='reply' />
-                        Back
-                    </Button>
-                </Link>
-                <hr />
+                <Menu pointing secondary>
+                    <Menu.Item>
+                        <Link to="/">
+                            <Button icon labelPosition='left' onClick={this.handleBackClick}>
+                                <Icon name='reply' />
+                                Back
+                            </Button>
+                        </Link>
+                    </Menu.Item>
+                    {type === "SubFolder" &&
+                        <Menu.Item position="right">
+                            <ModalDrop
+                                index={index}
+                                subindex={subindex}
+                                appid={this.props.match.params.id}
+                                getData={this.getData} />
+                        </Menu.Item>}
+                </Menu>
                 <Navigator
                     id={this.state.data.AppId}
                     folder={folder}
                     subfolder={subfolder}
                     handleClick={(type) => this.handleNavClick(type)} />
-                {this.state.currentFolder.type === "SubFolder" ? (
-                    <div>
-                        <Dropzone
-                            index={index}
-                            subindex={subindex}
-                            appid={this.props.match.params.id}
-                            getData={this.getData} />
-                        <ContentList content={folders} />
-                        <Button icon labelPosition='left' onClick={this.handleBackClick}>
-                            <Icon name='upload' />
-                            Back
-                        </Button>
-                    </div>
-
+                {type === "SubFolder" ? (
+                    <ContentList content={folders} />
                 ) : (
                         <Explorer
                             addCallback={add}

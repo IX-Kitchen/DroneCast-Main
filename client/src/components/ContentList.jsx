@@ -18,7 +18,8 @@ export default class Explorer extends React.Component {
                     <Grid container columns={3}>
                         {content.map((item, index) => (
                             <Grid.Column key={item}>
-                                <Image src='https://picsum.photos/200/?random' rounded />
+                                <Image rounded size="small"
+                                src={'http://' + window.location.hostname + ':8080/api/content/' + item}  />
                             </Grid.Column>
                         ))}
                     </Grid>
