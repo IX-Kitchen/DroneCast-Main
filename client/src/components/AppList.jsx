@@ -1,5 +1,5 @@
 import React from 'react'
-import { Label, Table, Button, Icon } from 'semantic-ui-react'
+import { Label, Table, Button, Icon, Segment } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import request from 'superagent'
 
@@ -38,11 +38,11 @@ export default class AppList extends React.Component {
     render() {
         const { apps } = this.state
         return (
-            <Table celled>
+            <Segment color='teal' loading={apps.length === 0}>
+            <Table basic= 'very'>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Apps</Table.HeaderCell>
-                        <Table.HeaderCell>Actions</Table.HeaderCell>
                         <Table.HeaderCell>Bound drones</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
@@ -51,26 +51,41 @@ export default class AppList extends React.Component {
                     {apps.map((item, index) => (
                         <Table.Row key={item._id}>
                             <Table.Cell>
-                                <Label ribbon>{item.name}</Label>
-                            </Table.Cell>
-                            <Table.Cell>
-                                <Link to={"/myapp/" + item._id}>
-                                    <Button icon><Icon name='edit' /></Button>
-                                </Link>
-                                <Link to={"/qr/" + item._id}>
-                                    <Button icon><Icon name='qrcode' /></Button>
-                                </Link>
-                                <Button icon onClick={() => this.deleteApp(item._id)}><Icon name='delete' /></Button>
+                                <Label as='a' color='brown' ribbon>{item.name}</Label>
                             </Table.Cell>
                             <Table.Cell>
                                 {apps[index].drones.map(item => (
                                     <Label key={item}>{item}</Label>
                                 ))}
                             </Table.Cell>
+                            <Table.Cell>
+                                <Link to={"/myapp/" + item._id}>
+                                <Button basic color= 'black' animated='fade'>
+                                        <Button.Content visible>
+                                            <Icon name='edit' />
+                                        </Button.Content>
+                                        <Button.Content hidden>
+                                            Edit
+                                        </Button.Content>
+                                    </Button>
+                                </Link>
+                                <Link to={"/qr/" + item._id}>
+                                    <Button basic color= 'black' animated='fade'>
+                                        <Button.Content visible>
+                                            <Icon name='qrcode' />
+                                        </Button.Content>
+                                        <Button.Content hidden>
+                                            QR Code
+                                        </Button.Content>
+                                    </Button>
+                                </Link>
+                                <Button icon onClick={() => this.deleteApp(item._id)}><Icon name='delete' /></Button>
+                            </Table.Cell>
                         </Table.Row>
                     ))}
                 </Table.Body>
             </Table>
+            </Segment>
         );
     }
 }

@@ -4,7 +4,7 @@ import ModalDrop from './ModalDrop'
 import { Link } from 'react-router-dom'
 import Explorer from './Explorer'
 import ContentList from './ContentList'
-import { Button, Icon, Menu } from 'semantic-ui-react'
+import { Button, Icon, Menu, Divider } from 'semantic-ui-react'
 import request from 'superagent'
 
 /*
@@ -227,7 +227,7 @@ export default class Main extends React.Component {
 
         return (
             <div>
-                <Menu pointing secondary>
+                <Menu secondary>
                     <Menu.Item>
                         <Link to="/">
                             <Button icon labelPosition='left' onClick={this.handleBackClick}>
@@ -250,6 +250,7 @@ export default class Main extends React.Component {
                     folder={folder}
                     subfolder={subfolder}
                     handleClick={(type) => this.handleNavClick(type)} />
+                <Divider horizontal/>
                 {type === "SubFolder" ? (
                     <ContentList content={folders} />
                 ) : (
