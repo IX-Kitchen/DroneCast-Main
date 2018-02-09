@@ -6,10 +6,24 @@ const mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
 const assert = require('assert');
 
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').load();
+}
+
+const username = process.env.DB_USERNAME;
+const password = process.env.DB_PASSWORD
+const host = process.env.DB_HOST
+const dbName = process.env.DB_DATABASE_NAME
+const options = process.env.DB_OPTIONS;
+
 // Connection URL
-const url = 'mongodb://localhost:27017';
-// Database Name
-const dbName = 'Dev';
+let url
+if (username){
+    url = 'mongodb://' + username + ':' + password + '@' + host + '/' + options;
+}else{
+    url = 'mongodb://'+host+ '/' + options
+}
+
 // Collection name
 const appCol = 'Apps'
 const droneCol = "Drones"

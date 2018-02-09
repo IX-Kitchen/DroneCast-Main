@@ -1,5 +1,9 @@
 /node_modules
 TODO
+test.js
+
+# Environment variables
+.env
 
 # dependencies
 client/node_modules

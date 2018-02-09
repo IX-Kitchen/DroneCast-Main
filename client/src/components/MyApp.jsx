@@ -6,6 +6,7 @@ import Explorer from './Explorer'
 import ContentList from './ContentList'
 import { Button, Icon, Menu, Divider } from 'semantic-ui-react'
 import request from 'superagent'
+import { API_ROOT } from '../api-config';
 
 /*
 const json = {
@@ -56,7 +57,7 @@ export default class Main extends React.Component {
 
     getData() {
         request
-            .get('http://' + window.location.hostname + ':8080/api/apps/find/' + this.props.match.params.id)
+            .get(API_ROOT + 'api/apps/find/' + this.props.match.params.id)
             .then((response) => {
                 const data =
                     {
@@ -180,7 +181,7 @@ export default class Main extends React.Component {
 
     updateData() {
         request
-            .put('http://' + window.location.hostname + ':8080/api/apps/update/' + this.props.match.params.id)
+            .put(API_ROOT + 'api/apps/update/' + this.props.match.params.id)
             .send({ folders: this.state.data.folders })
             .then((response) => {
 
@@ -250,7 +251,7 @@ export default class Main extends React.Component {
                     folder={folder}
                     subfolder={subfolder}
                     handleClick={(type) => this.handleNavClick(type)} />
-                <Divider horizontal/>
+                <Divider horizontal />
                 {type === "SubFolder" ? (
                     <ContentList content={folders} />
                 ) : (

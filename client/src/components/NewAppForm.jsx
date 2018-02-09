@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, Form, Segment, Label } from 'semantic-ui-react'
 import request from "superagent"
 import { Redirect } from 'react-router-dom';
+import { API_ROOT } from '../api-config';
 
 export default class NewAppForm extends React.Component {
   constructor(props) {
@@ -10,7 +11,8 @@ export default class NewAppForm extends React.Component {
       name: '',
       availableDrones: [],
       drones: [],
-      redirect: false
+      redirect: false,
+      ready: false
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -34,7 +36,7 @@ export default class NewAppForm extends React.Component {
 
   handleSubmit(event, data) {
     request
-      .post('http://' + window.location.hostname + ':8080/api/apps/new')
+      .post(API_ROOT + 'apps/new')
       .send(this.state)
       .then((response) => {
         this.setState({ redirect: true })
@@ -48,9 +50,9 @@ export default class NewAppForm extends React.Component {
 
   componentDidMount() {
     request
-      .get('http://' + window.location.hostname + ':8080/api/drones/list')
+      .get(API_ROOT + 'drones/list')
       .then((response) => {
-        this.setState({ availableDrones: response.body });
+        this.setState({ availableDrones: response.body, ready: true });
       })
       .catch((error) => {
         console.log(error)
@@ -59,7 +61,7 @@ export default class NewAppForm extends React.Component {
   }
 
   render() {
-    const { redirect, availableDrones } = this.state
+    const { redirect, availableDrones, ready } = this.state
     return (
       <div>
         <Form onSubmit={this.handleSubmit} size='big'>
@@ -68,8 +70,10 @@ export default class NewAppForm extends React.Component {
             <input placeholder='App Name' name='name' onChange={this.handleChange} />
           </Form.Field>
           <Form.Group grouped>
-            <Segment basic loading={availableDrones.length === 0}>
-              <Label pointing='below'>Select the drones for this app</Label>
+            <Segment basic loading={!ready}>
+              {availableDrones.length > 0 &&
+                <Label pointing='below'>Select the drones for this app</Label>
+              }
               {availableDrones.map(item => (
                 <Form.Checkbox key={item._id} label={item.name} onClick={this.handleChange} />
               ))}

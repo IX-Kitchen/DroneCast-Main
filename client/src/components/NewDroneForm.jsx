@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, Form } from 'semantic-ui-react'
 import request from "superagent"
 import { Redirect } from 'react-router-dom';
+import { API_ROOT } from '../api-config';
 
 export default class NewAppForm extends React.Component {
   constructor(props) {
@@ -21,7 +22,7 @@ export default class NewAppForm extends React.Component {
 
   handleSubmit(event) {
     request
-      .post('http://'+window.location.hostname+':8080/api/drones/new')
+      .post(API_ROOT + 'drones/new')
       .send(this.state)
       .then((response) => {
         this.setState({ redirect: true })

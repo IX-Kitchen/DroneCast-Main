@@ -8,6 +8,10 @@
  /api/update
 */
 
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').load();
+  }
+
 const express = require('express');
 const app = express();
 // Reuse express server
@@ -22,7 +26,6 @@ var request = require('superagent')
 const socket_port = process.env.PORT || 8000;
 
 const io = require('socket.io')(server)
-
 
 
 // Connection to Mongo
@@ -130,7 +133,7 @@ app.delete("/api/drones/delete/:id", async function(req,res){
 
 // Start server
 server.listen(port, async function () {
-    console.log('Server listening at port %d', port);
+    console.log('Server listening at port %d', port, "in", process.env.NODE_ENV);
     // Debug
     //await dbLib.dropCol();
     await dbLib.createCol("Dev", "Apps");

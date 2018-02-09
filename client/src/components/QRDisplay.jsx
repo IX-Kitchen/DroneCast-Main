@@ -3,6 +3,7 @@ import { Segment, Button, Icon, Header } from 'semantic-ui-react'
 import QRCode from 'qrcode.react'
 import request from 'superagent'
 import { Link } from 'react-router-dom'
+import { API_ROOT, SOCKET_PORT, SOCKET_ROOT } from '../api-config';
 
 export default class QRCodeDisplay extends React.Component {
 
@@ -13,7 +14,7 @@ export default class QRCodeDisplay extends React.Component {
 
     updateData() {
         request
-            .get('http://'+window.location.hostname+':8080/api/apps/find/' + this.props.match.params.id)
+            .get(API_ROOT + 'apps/find/' + this.props.match.params.id)
             .then((response) => {
                 const { body } = response
                 this.setState(body);
@@ -29,9 +30,9 @@ export default class QRCodeDisplay extends React.Component {
     }
 
     render() {
-        const qrdata = {appdata:'http://'+window.location.hostname+':8080/api/apps/find/' + this.props.match.params.id}
-        qrdata['socketUrl'] = 'http://'+window.location.hostname+":"
-        qrdata['socketPort'] = 8080
+        const qrdata = { appdata: API_ROOT + 'apps/find/' + this.props.match.params.id }
+        qrdata['socketUrl'] = SOCKET_ROOT
+        qrdata['socketPort'] = SOCKET_PORT
         return (
             <div>
                 <Link to="/">

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Image, Grid, Transition } from 'semantic-ui-react'
+import { API_ROOT } from '../api-config';
 
 
 export default class Explorer extends React.Component {
@@ -19,7 +20,7 @@ export default class Explorer extends React.Component {
                         {content.map((item, index) => (
                             <Grid.Column key={item}>
                                 <Image rounded size="small"
-                                src={'http://' + window.location.hostname + ':8080/api/content/' + item}  />
+                                    src={API_ROOT + 'content/' + item} />
                             </Grid.Column>
                         ))}
                     </Grid>
