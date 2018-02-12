@@ -2,13 +2,14 @@ import React from 'react'
 import DropzoneComponent from 'react-dropzone-component';
 import './css/dropzone.min.css';
 import './css/filepicker.css';
+import { API_ROOT } from '../api-config';
 
 //var myDropZone;
 
 var componentConfig = {
     iconFiletypes: ['.jpg', '.png', '.gif'],
     showFiletypeIcon: false,
-    postUrl: '/api/apps/upload'
+    postUrl: API_ROOT + 'apps/upload'
 };
 var djsConfig = {
     acceptedFiles: "image/*, video/*",
