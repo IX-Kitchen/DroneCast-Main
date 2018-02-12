@@ -1,7 +1,5 @@
 import React from 'react'
 import { Icon, Button, Grid, Transition } from 'semantic-ui-react'
-import Segment from 'semantic-ui-react/dist/commonjs/elements/Segment/Segment';
-
 
 export default class Explorer extends React.Component {
 
@@ -14,7 +12,6 @@ export default class Explorer extends React.Component {
                     <Button disabled={folders.length === 1} icon='minus' onClick={this.props.removeCallback} />
                     <Button icon='plus' onClick={this.props.addCallback} />
                 </Button.Group>
-                <Segment color='teal' loading={folders.length === 0}>
                     <Transition.Group
                         as={Grid}
                         duration={200}
@@ -33,7 +30,6 @@ export default class Explorer extends React.Component {
                             ))}
                         </Grid>
                     </Transition.Group>
-                </Segment>
             </div>
         )
     }

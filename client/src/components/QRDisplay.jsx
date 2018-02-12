@@ -32,6 +32,7 @@ export default class QRCodeDisplay extends React.Component {
     render() {
         const qrdata = { appdata: API_ROOT + 'apps/find/' + this.props.match.params.id }
         qrdata['socketUrl'] = SOCKET_ROOT
+        console.log(qrdata)
         return (
             <div>
                 <Link to="/">

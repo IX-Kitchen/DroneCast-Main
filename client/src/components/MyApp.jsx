@@ -4,13 +4,13 @@ import ModalDrop from './ModalDrop'
 import { Link } from 'react-router-dom'
 import Explorer from './Explorer'
 import ContentList from './ContentList'
-import { Button, Icon, Menu, Divider } from 'semantic-ui-react'
+import { Button, Icon, Menu, Divider, Segment } from 'semantic-ui-react'
 import request from 'superagent'
 import { API_ROOT } from '../api-config';
 
 /*
 const json = {
-    "AppId": "Test",
+    "appId": "Test",
     "folders": [
         {
             "name": "Folder1",
@@ -40,12 +40,13 @@ export default class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: { AppId: "", folders: [] },
+            data: { appId: "", folders: [] },
             currentFolder: {
                 "index": 0,
                 "subindex": 0,
                 "type": "Main"
-            }
+            },
+            ready: false
         }
         this.handleBackClick = this.handleBackClick.bind(this);
         this.getData = this.getData.bind(this);
@@ -57,14 +58,14 @@ export default class Main extends React.Component {
 
     getData() {
         request
-            .get(API_ROOT + 'api/apps/find/' + this.props.match.params.id)
+            .get(API_ROOT + 'apps/find/' + this.props.match.params.id)
             .then((response) => {
                 const data =
                     {
-                        AppId: response.body.name,
+                        appId: response.body.name,
                         folders: response.body.appdata.folders
                     }
-                this.setState({ data: data });
+                this.setState({ data: data, ready: true });
             })
             .catch((error) => {
                 console.log(error)
@@ -181,7 +182,7 @@ export default class Main extends React.Component {
 
     updateData() {
         request
-            .put(API_ROOT + 'api/apps/update/' + this.props.match.params.id)
+            .put(API_ROOT + 'apps/update/' + this.props.match.params.id)
             .send({ folders: this.state.data.folders })
             .then((response) => {
 
@@ -200,6 +201,8 @@ export default class Main extends React.Component {
     render() {
         let add, remove, folders, folder, subfolder, thisFolder
         const { index, subindex, type } = this.state.currentFolder
+        const { appId } = this.state.data
+        const { ready } = this.state
 
         switch (type) {
             case "Main":
@@ -247,21 +250,23 @@ export default class Main extends React.Component {
                         </Menu.Item>}
                 </Menu>
                 <Navigator
-                    id={this.state.data.AppId}
+                    id={appId}
                     folder={folder}
                     subfolder={subfolder}
                     handleClick={(type) => this.handleNavClick(type)} />
                 <Divider horizontal />
-                {type === "SubFolder" ? (
-                    <ContentList content={folders} />
-                ) : (
-                        <Explorer
-                            addCallback={add}
-                            removeCallback={remove}
-                            folders={folders}
-                            handleClick={(index) => this.handleFolderClick(index)} />
-                    )}
+                <Segment color='teal' loading={!ready}>
+                    {type === "SubFolder" ? (
+                        <ContentList content={folders} />
+                    ) : (
 
+                            <Explorer
+                                addCallback={add}
+                                removeCallback={remove}
+                                folders={folders}
+                                handleClick={(index) => this.handleFolderClick(index)} />
+                        )}
+                </Segment>
             </div>
         );
     }
