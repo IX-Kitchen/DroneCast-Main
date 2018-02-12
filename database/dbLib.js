@@ -138,7 +138,8 @@ async function insertDrone(name) {
         const client = await MongoClient.connect(url);
         let db = client.db(dbName);
         const col = db.collection(droneCol);
-        col.updateOne({ name: name }, { $set: { name: name } }, { upsert: true });
+        await col.updateOne({ name: name }, { $set: { name: name } }, { upsert: true });
+        console.log("DB: New Drone -",name)
         client.close();
     } catch (err) {
         console.log(err.stack);
@@ -208,7 +209,7 @@ async function deleteDrone(id) {
         assert.equal(1, r.deletedCount);
 
         db.collection(appCol).updateMany({}, { $pull: { drones: id }});
-
+        console.log("DB: Delete Drone -",id)
         client.close();
     } catch (err) {
         console.log(err.stack);

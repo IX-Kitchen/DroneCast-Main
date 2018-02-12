@@ -1,9 +1,11 @@
 /node_modules
 TODO
 test.js
+/socket
 
 # Environment variables
 .env
+.env.prod
 
 # dependencies
 client/node_modules

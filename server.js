@@ -10,7 +10,7 @@
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').load();
-  }
+}
 
 const express = require('express');
 const app = express();
@@ -22,8 +22,6 @@ const port = process.env.PORT || 8080;
 const cors = require('cors');
 
 var request = require('superagent')
-
-const socket_port = process.env.PORT || 8000;
 
 const io = require('socket.io')(server)
 
@@ -56,6 +54,7 @@ const Storage = multer.diskStorage({
 const upload = multer({ storage: Storage }).array("imgUploader", 3);
 
 app.get("/test", function (req, res) {
+    console.log("OK!")
     res.send("OK!")
 });
 
@@ -118,17 +117,22 @@ app.get("/api/drones/list", async function (req, res) {
 });
 
 app.post("/api/drones/new", async function (req, res) {
-    await dbLib.insertDrone(req.body.name)
-    res.send({ response: "Added "+req.body.name+" to the DB" })
+    if (req.body) {
+        await dbLib.insertDrone(req.body.name)
+        res.send({ response: "Added " + req.body.name + " to the DB" })
+    } else {
+        res.send({ response: 'Error on adding a drone' })
+    }
+
 });
 
-app.delete("/api/apps/delete/:id", async function(req,res){
+app.delete("/api/apps/delete/:id", async function (req, res) {
     await dbLib.deleteApp(req.params.id)
-    res.send({response: "App deleted"})
+    res.send({ response: "App deleted" })
 })
-app.delete("/api/drones/delete/:id", async function(req,res){
+app.delete("/api/drones/delete/:id", async function (req, res) {
     await dbLib.deleteDrone(req.params.id)
-    res.send({response: "Drone deleted"})
+    res.send({ response: "Drone deleted" })
 })
 
 // Start server
@@ -142,8 +146,7 @@ server.listen(port, async function () {
 
 var avDrones = new Map()
 
-const dronesIo = io.of('/drones'),
-    apps = io.of('/clients');
+const dronesIo = io.of('/drones'), apps = io.of('/clients');
 
 dronesIo.on('connection', (socket) => {
     console.log("Drone connected");
@@ -154,20 +157,23 @@ dronesIo.on('connection', (socket) => {
     });
 
     socket.on('init', (msg) => {
-        console.log("Init msg from drone:", msg)
-        if (typeof msg === 'string'){
+        if (typeof msg === 'string') {
             msg = JSON.parse(msg)
         }
+        console.log("SOCKET_DRONE: Init msg from drone:", msg.id)
+        dbLib.insertDrone(msg.id)
         avDrones.set(msg.id, socket)
-        request
-            .post('http://localhost:8080/api/drones/new')
-            .send({name: msg.id})
-            .then((response) => {
-                console.log(response.body.response)
-            })
-            .catch((error) => {
-                console.log(error)
-            })
+    })
+
+    socket.on('disconnect', (reason) => {
+        for (let [key, value] of avDrones.entries()) {
+            if (value.id === socket.id) {
+                console.log("Found key",key)
+                dbLib.deleteDrone(key)
+                avDrones.delete(key)
+                return
+            }
+        }
     })
 });
 apps.on('connection', (socket) => {
