@@ -10,6 +10,10 @@ module.exports = {
             name: {
                 bsonType: "string",
                 description: "Drone name"
+            },
+            onair: {
+                bsonType: "bool",
+                description: "Is the drone on air?"
             }
         }
     }

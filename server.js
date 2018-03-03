@@ -138,7 +138,8 @@ app.get("/api/drones/list", async function (req, res) {
 
 app.post("/api/drones/new", async function (req, res) {
     if (req.body) {
-        await dbLib.insertDrone(req.body.name)
+        // Name, onair?
+        await dbLib.insertDrone(req.body.name, false)
         res.send({ response: "Added " + req.body.name + " to the DB" })
     } else {
         res.send({ response: 'Error on adding a drone' })
@@ -182,15 +183,14 @@ dronesIo.on('connection', (socket) => {
             msg = JSON.parse(msg)
         }
         console.log("SOCKET_DRONE: Init msg from drone:", msg.id)
-        dbLib.insertDrone(msg.id)
+        dbLib.insertDrone(msg.id, true)
         avDrones.set(msg.id, socket)
     })
 
     socket.on('disconnect', (reason) => {
         for (let [key, value] of avDrones.entries()) {
             if (value.id === socket.id) {
-                console.log("Found key", key)
-                dbLib.deleteDrone(key)
+                dbLib.insertDrone(key, false)
                 avDrones.delete(key)
                 return
             }

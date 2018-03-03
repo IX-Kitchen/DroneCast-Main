@@ -135,13 +135,15 @@ async function insertApp(name, author, scenario, category, appdata, drones) {
     }
 }
 
-async function insertDrone(name) {
+async function insertDrone(name, onair) {
     try {
         const client = await MongoClient.connect(url);
         let db = client.db(dbName);
         const col = db.collection(droneCol);
-        await col.updateOne({ name: name }, { $set: { name: name } }, { upsert: true });
-        console.log("DB: New Drone -",name)
+        const result = await col.updateOne({ name: name }, { $set: { name: name, onair: onair } }, { upsert: true });
+        if (result.upsertedCount){
+            console.log("DB: New Drone -",name)
+        }  
         client.close();
     } catch (err) {
         console.log(err.stack);

@@ -1,5 +1,5 @@
 import React from 'react'
-import Modal, { Label, Table, Button, Icon, Segment } from 'semantic-ui-react'
+import { Label, Table, Button, Icon, Segment } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import request from 'superagent'
 import { API_ROOT } from '../api-config';
@@ -72,7 +72,7 @@ export default class AppList extends React.Component {
                                             </Button.Content>
                                         </Button>
                                     </Link>
-                                    <ModalAppUpload appid={item._id}/>
+                                    <ModalAppUpload appid={item._id} />
                                     <Link to={"/myapp/" + item._id + "/edit"}>
                                         <Button basic color='black' animated='fade'>
                                             <Button.Content visible>
