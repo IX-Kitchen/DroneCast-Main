@@ -53,7 +53,7 @@ const contentStorage = multer.diskStorage({
     }
 });
 
-const contentUpload = multer({ storage: contentStorage }).array("imgcontentUploader", 3);
+const contentUpload = multer({ storage: contentStorage }).array("imgUploader", 3);
 
 // Upload App's HTML
 const appStorage = multer.diskStorage({

@@ -15,7 +15,8 @@ var djsConfig = {
     acceptedFiles: "image/*, video/*",
     autoProcessQueue: true,
     addRemoveLinks: false,
-    paramName: "imgUploader"
+    paramName: "imgUploader",
+    dictDefaultMessage: "Drop your content here"
 };
 
 var eventHandlers = {

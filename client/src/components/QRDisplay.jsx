@@ -9,7 +9,10 @@ export default class QRCodeDisplay extends React.Component {
 
     constructor() {
         super()
-        this.state = {}
+        this.state = {
+            ready: false,
+            qr: {}
+        }
     }
 
     updateData() {
@@ -17,7 +20,7 @@ export default class QRCodeDisplay extends React.Component {
             .get(API_ROOT + 'apps/find/' + this.props.match.params.id)
             .then((response) => {
                 const { body } = response
-                this.setState(body);
+                this.setState({ qr: body, ready: true });
             })
             .catch((error) => {
                 console.log(error)
@@ -32,7 +35,8 @@ export default class QRCodeDisplay extends React.Component {
     render() {
         const qrdata = { appdata: API_ROOT + 'apps/find/' + this.props.match.params.id }
         qrdata['socketUrl'] = SOCKET_ROOT
-        console.log(qrdata)
+        const { appdata, appid } = this.state.qr
+        const { ready } = this.state
         return (
             <div>
                 <Link to="/">
@@ -40,9 +44,9 @@ export default class QRCodeDisplay extends React.Component {
                         <Icon name='reply' /> Back
                     </Button>
                 </Link>
-                <Header textAlign='center' as='h2'>{this.state.appid}</Header>
-                <Segment style={{ left: '40%', position: 'fixed', top: '25%', zIndex: 1000 }}>
-                    {this.state.appdata && <QRCode size={256} value={JSON.stringify(qrdata)} />}
+                <Header textAlign='center' as='h2'>{appid}</Header>
+                <Segment loading={!ready} style={{ left: '40%', position: 'fixed', top: '25%', zIndex: 1000 }}>
+                    {appdata && <QRCode size={256} value={JSON.stringify(qrdata)} />}
                 </Segment>
             </div>
         )

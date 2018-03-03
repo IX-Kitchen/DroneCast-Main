@@ -10,4 +10,4 @@ if (hostname === 'dronecast.azurewebsites.net') {
 //backendHost = "https://dronecastapi.azurewebsites.net"
 export const BACK_ROOT = backendHost
 export const API_ROOT = `${backendHost}/api/`;
-export const SOCKET_ROOT = `${backendHost}/clients`;
+export const SOCKET_ROOT = `${backendHost}/`;

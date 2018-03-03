@@ -23,20 +23,17 @@ var eventHandlers = {
     error: (file, error, xhr) => console.log("Error component", error, xhr)
     //success: (file) => console.log("Success"),
 }
-export default class AppDropzone extends React.Component {
+const AppDropzone = ({ appid, getData }) => {
 
-    componentWillMount() {
-        djsConfig.params = {
-            appid: this.props.appid
-        }
-        eventHandlers.complete = this.props.getData ? this.props.getData : undefined;
+    djsConfig.params = {
+        appid: appid
     }
-
-    render() {
-        return (
-            <DropzoneComponent config={componentConfig}
-                eventHandlers={eventHandlers}
-                djsConfig={djsConfig} />
-        );
-    }
+    eventHandlers.complete = getData ? getData : undefined;
+    return (
+        <DropzoneComponent config={componentConfig}
+            eventHandlers={eventHandlers}
+            djsConfig={djsConfig} />
+    );
 }
+
+export default AppDropzone
