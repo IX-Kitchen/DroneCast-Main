@@ -98,18 +98,21 @@ async function updateApp(id, appdata) {
     }
 }
 
-async function addAppContent(id, index, subindex, content) {
-    const query = "appdata.folders." + index + ".subfolders." + subindex + ".content"
+async function addAppContent(id, index, content) {
+    index = 1
+    const field = `appdata.folders.${index}.content`
     const push = {}
-    push[query] = content
+    push[field] = content
+    //push[query] = content
+    console.log("DBlib addapp:",push)
     try {
         const client = await MongoClient.connect(url);
         const db = client.db(dbName);
 
         const col = db.collection(appCol);
 
-        col.updateOne({ _id: mongo.ObjectID(id) }, { $push: push });
-
+        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $push: push });
+        console.log(r.modifiedCount)
         client.close();
     } catch (err) {
         console.log(err.stack);

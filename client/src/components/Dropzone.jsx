@@ -28,8 +28,7 @@ export default class Dropzone extends React.Component {
     componentWillMount(){
         djsConfig.params = {
             appid: this.props.appid,
-            index: this.props.index,
-            subindex: this.props.subindex
+            index: this.props.index
         }
         eventHandlers.complete = this.props.getData;
     }

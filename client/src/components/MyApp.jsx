@@ -14,23 +14,7 @@ const json = {
     "folders": [
         {
             "name": "Folder1",
-            "subfolders": [
-                {
-                    "name": "SubFolder1",
-                    "content": ["Video1", "Video2"]
-                }
-            ]
-
-        },
-        {
-            "name": "Folder2",
-            "subfolders": [
-                {
-                    "name": "SubFolder1",
-                    "content": ["Video1", "Video2"]
-                }
-            ]
-
+            "content": ["Video1", "Video2"]
         }
     ]
 }
@@ -41,15 +25,13 @@ export default class Main extends React.Component {
         super(props);
         this.state = {
             data: { appId: "", folders: [] },
-            currentFolder: {
-                "index": 0,
-                "subindex": 0,
-                "type": "Main"
-            },
+            currentIndex: undefined,
             ready: false
         }
         this.handleBackClick = this.handleBackClick.bind(this);
         this.getData = this.getData.bind(this);
+        this.handleAddFolder = this.handleAddFolder.bind(this)
+        this.handleRemoveFolder = this.handleRemoveFolder.bind(this)
     }
 
     componentDidMount() {
@@ -74,16 +56,13 @@ export default class Main extends React.Component {
     }
 
     handleAddFolder() {
-        let name = "Folder" + (this.state.data.folders.length + 1);
-        let newFolder = {
+        const name = "Folder" + (this.state.data.folders.length + 1);
+        const newFolder = {
             "name": name,
-            "subfolders": [{
-                "name": "SubFolder1",
-                "content": []
-            }]
+            "content": []
         };
         const folders = [...this.state.data.folders, newFolder]
-        let newJson = {
+        const newJson = {
             ...this.state.data,
             folders: folders
         }
@@ -100,90 +79,23 @@ export default class Main extends React.Component {
         this.setState({ data: newJson })
     }
 
-    handleAddSubFolder(index) {
-        const folders = this.state.data.folders.slice()
-        const folder = JSON.parse(JSON.stringify(folders[index]))
-        let name = "SubFolder" + (folder.subfolders.length + 1);
-        let newSubFolder = {
-            "name": name,
-            "content": []
-        }
-        const subfolders = [...folder.subfolders, newSubFolder]
-        const newFolder = {
-            ...folder,
-            subfolders: subfolders
-        };
-        folders[index] = newFolder
-        const newJson = {
-            ...this.state.data,
-            folders: folders
-        }
-        this.setState({ data: newJson })
-    }
-    handleRemoveSubFolder(index) {
-        const folders = this.state.data.folders.slice()
-        const folder = folders[index]
-        const subfolders = folder.subfolders.slice(0, -1)
-        let newFolder = {
-            ...folder,
-            subfolders: subfolders
-        };
-        folders[index] = newFolder
-        let newJson = {
-            ...this.state.data,
-            folders: folders
-        }
-        this.setState({ data: newJson })
-    }
-
     handleFolderClick(index) {
-        const state = JSON.parse(JSON.stringify(this.state.currentFolder))
-        let myIndex = this.state.currentFolder.index
-        let mySubIndex = this.state.currentFolder.subindex
-        let type
-        switch (state.type) {
-            case "Main":
-                type = "Folder"
-                myIndex = index
-                break;
-            case "Folder":
-                type = "SubFolder"
-                mySubIndex = index
-                this.updateData()
-                break;
-            default:
-                type = "Main"
-                break
-
-        }
         this.setState({
-            currentFolder: {
-                index: myIndex,
-                subindex: mySubIndex,
-                type: type
-            }
+            currentIndex: index
         })
     }
 
     handleNavClick(type) {
-        switch (type) {
-            case "Main":
-
-                break
-            default:
-                break
-        }
-        const state = JSON.parse(JSON.stringify(this.state.currentFolder))
-        state.type = type
         this.setState({
-            currentFolder: state
+            currentIndex: undefined
         })
     }
 
     updateData() {
+        const { folders } = this.state.data
         request
             .put(API_ROOT + 'apps/update/' + this.props.match.params.id)
-            .send({ folders: this.state.data.folders })
+            .send({ folders: folders })
             .then((response) => {
 
             })
@@ -199,35 +111,11 @@ export default class Main extends React.Component {
     }
 
     render() {
-        let add, remove, folders, folder, subfolder, thisFolder
-        const { index, subindex, type } = this.state.currentFolder
-        const { appId } = this.state.data
-        const { ready } = this.state
-
-        switch (type) {
-            case "Main":
-                add = () => this.handleAddFolder()
-                remove = () => this.handleRemoveFolder()
-                folders = this.state.data.folders
-                break;
-            case "Folder":
-                add = () => this.handleAddSubFolder(index)
-                remove = () => this.handleRemoveSubFolder(index)
-                thisFolder = this.state.data.folders[index]
-                folders = thisFolder.subfolders
-                folder = thisFolder.name
-                break;
-            case "SubFolder":
-                thisFolder = this.state.data.folders[index]
-                folder = thisFolder.name
-                thisFolder = thisFolder.subfolders[subindex]
-                folders = thisFolder.content
-                subfolder = thisFolder.name
-                break
-            default:
-                break;
-
-        }
+        
+        const { appId, folders } = this.state.data
+        const { ready, currentIndex } = this.state
+        const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
+        const currentFolderName = currentFolder ? currentFolder.name : undefined
 
         return (
             <div>
@@ -240,29 +128,27 @@ export default class Main extends React.Component {
                             </Button>
                         </Link>
                     </Menu.Item>
-                    {type === "SubFolder" &&
+                    {currentIndex !== undefined &&
                         <Menu.Item position="right">
                             <ModalDrop
-                                index={index}
-                                subindex={subindex}
+                                index={currentIndex}
                                 appid={this.props.match.params.id}
                                 getData={this.getData} />
                         </Menu.Item>}
                 </Menu>
                 <Navigator
                     id={appId}
-                    folder={folder}
-                    subfolder={subfolder}
+                    folder={currentFolderName}
                     handleClick={(type) => this.handleNavClick(type)} />
                 <Divider horizontal />
                 <Segment color='teal' loading={!ready}>
-                    {type === "SubFolder" ? (
-                        <ContentList content={folders} />
+                    {currentIndex !== undefined ? (
+                        <ContentList content={currentFolder.content} />
                     ) : (
 
                             <Explorer
-                                addCallback={add}
-                                removeCallback={remove}
+                                addCallback={this.handleAddFolder}
+                                removeCallback={this.handleRemoveFolder}
                                 folders={folders}
                                 handleClick={(index) => this.handleFolderClick(index)} />
                         )}

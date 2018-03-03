@@ -14,7 +14,6 @@ export default class ModalDrop extends React.Component {
                 <Modal.Content>
                     <Dropzone
                         index={this.props.index}
-                        subindex={this.props.subindex}
                         appid={this.props.appid}
                         getData={this.props.getData} />
                 </Modal.Content>

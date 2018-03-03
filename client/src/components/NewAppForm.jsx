@@ -35,9 +35,22 @@ export default class NewAppForm extends React.Component {
   }
 
   handleSubmit(event, data) {
+    const newAppData = {
+      folders: [
+        {
+          name: "Folder1",
+          content: []
+        }
+      ]
+    }
+    const postData = {
+      drones: this.state.drones,
+      name: this.state.name,
+      appData: newAppData
+    }
     request
       .post(API_ROOT + 'apps/new')
-      .send(this.state)
+      .send(postData)
       .then((response) => {
         this.setState({ redirect: true })
       })

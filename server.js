@@ -59,20 +59,8 @@ app.get("/test", function (req, res) {
 });
 
 app.post("/api/apps/new", async function (req, res) {
-    const newAppData = {
-        folders: [
-            {
-                name: "Folder1",
-                subfolders: [
-                    {
-                        name: "SubFolder1",
-                        content: []
-                    }
-                ]
-            }
-        ]
-    }
-    await dbLib.insertApp(req.body.name, "author", "scenario", "category", newAppData, req.body.drones)
+    
+    await dbLib.insertApp(req.body.name, "author", "scenario", "category", req.body.appData, req.body.drones)
     res.send({ response: "New!" })
 });
 
@@ -87,10 +75,9 @@ app.post("/api/apps/upload", function (req, res) {
             console.log(err)
             return res.end("Something went wrong uploading content!");
         }
-        const { appid, index, subindex } = req.body
-
+        const { appid, index } = req.body
         for (let i = 0; i < req.files.length; i++) {
-            await dbLib.addAppContent(req.body.appid, index, subindex, req.files[i].filename)
+            await dbLib.addAppContent(appid, index, req.files[i].filename)
         }
         console.log("Upload complete")
         res.send({ response: "Upload complete!" })
