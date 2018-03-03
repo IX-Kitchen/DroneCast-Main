@@ -1,8 +1,9 @@
 import React from 'react'
-import { Label, Table, Button, Icon, Segment } from 'semantic-ui-react'
+import Modal, { Label, Table, Button, Icon, Segment } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import request from 'superagent'
 import { API_ROOT } from '../api-config';
+import ModalAppUpload from './ModalAppUpload'
 
 export default class AppList extends React.Component {
     constructor() {
@@ -27,7 +28,7 @@ export default class AppList extends React.Component {
         request
             .delete(API_ROOT + 'apps/delete/' + id)
             .then((response) => {
-                this.setState({ ready: false})
+                this.setState({ ready: false })
                 this.updateData()
                 console.log(response.body.response)
             })
@@ -64,11 +65,22 @@ export default class AppList extends React.Component {
                                     <Link to={"/myapp/" + item._id}>
                                         <Button basic color='black' animated='fade'>
                                             <Button.Content visible>
+                                                <Icon name='external' />
+                                            </Button.Content>
+                                            <Button.Content hidden>
+                                                App
+                                            </Button.Content>
+                                        </Button>
+                                    </Link>
+                                    <ModalAppUpload appid={item._id}/>
+                                    <Link to={"/myapp/" + item._id + "/edit"}>
+                                        <Button basic color='black' animated='fade'>
+                                            <Button.Content visible>
                                                 <Icon name='edit' />
                                             </Button.Content>
                                             <Button.Content hidden>
                                                 Edit
-                                        </Button.Content>
+                                            </Button.Content>
                                         </Button>
                                     </Link>
                                     <Link to={"/qr/" + item._id}>
@@ -78,10 +90,17 @@ export default class AppList extends React.Component {
                                             </Button.Content>
                                             <Button.Content hidden>
                                                 QR Code
-                                        </Button.Content>
+                                            </Button.Content>
                                         </Button>
                                     </Link>
-                                    <Button icon onClick={() => this.deleteApp(item._id)}><Icon name='delete' /></Button>
+                                    <Button basic color='black' animated='fade' onClick={() => this.deleteApp(item._id)}>
+                                        <Button.Content visible>
+                                            <Icon name='delete' />
+                                        </Button.Content>
+                                        <Button.Content hidden>
+                                            Delete
+                                        </Button.Content>
+                                    </Button>
                                 </Table.Cell>
                             </Table.Row>
                         ))}

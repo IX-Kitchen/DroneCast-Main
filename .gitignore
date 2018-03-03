@@ -2,6 +2,7 @@
 TODO
 test.js
 /socket
+/apps/*
 
 # Environment variables
 .env

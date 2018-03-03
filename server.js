@@ -3,7 +3,7 @@
 /*
  /test
  /api/new
- /api/upload
+ /api/contentUpload
  /api/list
  /api/update
 */
@@ -27,7 +27,6 @@ const io = require('socket.io')(server)
 
 
 // Connection to Mongo
-// Import?
 const dbLib = require('./database/dbLib.js');
 
 const multer = require('multer');
@@ -42,24 +41,46 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 
 // Serve static files
-//app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/apps'));
 
-const Storage = multer.diskStorage({
+const fs = require('fs');
+
+// Upload content
+const contentStorage = multer.diskStorage({
     destination: "./database/media",
     filename: function (req, file, callback) {
         callback(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
     }
 });
 
-const upload = multer({ storage: Storage }).array("imgUploader", 3);
+const contentUpload = multer({ storage: contentStorage }).array("imgcontentUploader", 3);
+
+// Upload App's HTML
+const appStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const dir = `./apps/${req.body.appid}`
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+        }
+        console.log("Server appstorage", req.body, file)
+        cb(null, dir)
+    },
+    filename: function (req, file, callback) {
+        if(file.mimetype==='text/html'){
+            file.originalname = 'index.html'
+        }
+        callback(null, file.originalname);
+    }
+});
+
+const appUpload = multer({ storage: appStorage }).array("appUploader", 5);
 
 app.get("/test", function (req, res) {
-    console.log("OK!")
     res.send("OK!")
 });
 
 app.post("/api/apps/new", async function (req, res) {
-    
+
     await dbLib.insertApp(req.body.name, "author", "scenario", "category", req.body.appData, req.body.drones)
     res.send({ response: "New!" })
 });
@@ -69,18 +90,30 @@ app.put("/api/apps/update/:id", async function (req, res) {
     res.send({ response: "Updated!" })
 })
 
-app.post("/api/apps/upload", function (req, res) {
-    upload(req, res, async function (err) {
+app.post("/api/apps/appupload", function (req, res) {
+    appUpload(req, res, async function (err) {
         if (err) {
             console.log(err)
-            return res.end("Something went wrong uploading content!");
+            return res.end("Something went wrong Uploading the app!");
+        }
+        const { appid } = req.body
+        console.log("App upload complete")
+        res.send({ response: "App Upload complete!" })
+    });
+});
+
+app.post("/api/apps/upload", function (req, res) {
+    contentUpload(req, res, async function (err) {
+        if (err) {
+            console.log(err)
+            return res.end("Something went wrong contentUploading content!");
         }
         const { appid, index } = req.body
         for (let i = 0; i < req.files.length; i++) {
             await dbLib.addAppContent(appid, index, req.files[i].filename)
         }
-        console.log("Upload complete")
-        res.send({ response: "Upload complete!" })
+        console.log("contentUpload complete")
+        res.send({ response: "contentUpload complete!" })
     });
 });
 
@@ -131,6 +164,7 @@ server.listen(port, async function () {
     await dbLib.createCol("Dev", "Drones")
 });
 
+// Socket logic
 var avDrones = new Map()
 
 const dronesIo = io.of('/drones'), apps = io.of('/clients');
@@ -155,7 +189,7 @@ dronesIo.on('connection', (socket) => {
     socket.on('disconnect', (reason) => {
         for (let [key, value] of avDrones.entries()) {
             if (value.id === socket.id) {
-                console.log("Found key",key)
+                console.log("Found key", key)
                 dbLib.deleteDrone(key)
                 avDrones.delete(key)
                 return

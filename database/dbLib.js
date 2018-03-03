@@ -99,11 +99,10 @@ async function updateApp(id, appdata) {
 }
 
 async function addAppContent(id, index, content) {
-    index = 1
+    //index = 1
     const field = `appdata.folders.${index}.content`
     const push = {}
     push[field] = content
-    //push[query] = content
     console.log("DBlib addapp:",push)
     try {
         const client = await MongoClient.connect(url);
