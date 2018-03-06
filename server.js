@@ -138,13 +138,20 @@ app.get("/api/drones/list", async function (req, res) {
 
 app.post("/api/drones/new", async function (req, res) {
     if (req.body) {
-        // Name, onair?
         await dbLib.insertDrone(req.body.name, false)
         res.send({ response: "Added " + req.body.name + " to the DB" })
     } else {
         res.send({ response: 'Error on adding a drone' })
     }
+});
 
+app.put("/api/drones/edit/:id", async function (req, res) {
+    if (req.body) {
+        await dbLib.updateDrone(req.params.id, req.body.name)
+        res.send({ response: "Drone " + req.params.id + " updated" })
+    } else {
+        res.send({ response: 'Error on adding a drone' })
+    }
 });
 
 app.delete("/api/apps/delete/:id", async function (req, res) {

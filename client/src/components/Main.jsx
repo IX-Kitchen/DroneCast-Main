@@ -28,7 +28,7 @@ export default class Main extends React.Component {
                 break
             case 'drones':
                 addButton = <Link to="/newdrone">
-                    <Button basic color='green'> Create New Drone </Button>
+                    <Button color='green'> Create New Drone </Button>
                 </Link>
                 list = <DroneList />
                 break

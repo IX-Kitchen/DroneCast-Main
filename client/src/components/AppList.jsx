@@ -47,6 +47,7 @@ export default class AppList extends React.Component {
                         <Table.Row>
                             <Table.HeaderCell>Apps</Table.HeaderCell>
                             <Table.HeaderCell>Bound drones</Table.HeaderCell>
+                            <Table.HeaderCell>Actions</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
@@ -54,11 +55,11 @@ export default class AppList extends React.Component {
                         {apps.map((item, index) => (
                             <Table.Row key={item._id}>
                                 <Table.Cell>
-                                    <Label as='a' color='brown' ribbon>{item.name}</Label>
+                                    <Label color='brown' ribbon>{item.name}</Label>
                                 </Table.Cell>
                                 <Table.Cell>
                                     {apps[index].drones.map(item => (
-                                        <Label key={item}>{item}</Label>
+                                        <Label basic color='blue' key={item}>{item}</Label>
                                     ))}
                                 </Table.Cell>
                                 <Table.Cell>
@@ -93,7 +94,7 @@ export default class AppList extends React.Component {
                                             </Button.Content>
                                         </Button>
                                     </Link>
-                                    <Button basic color='black' animated='fade' onClick={() => this.deleteApp(item._id)}>
+                                    <Button basic color='red' animated='fade' onClick={() => this.deleteApp(item._id)}>
                                         <Button.Content visible>
                                             <Icon name='delete' />
                                         </Button.Content>

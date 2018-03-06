@@ -18,10 +18,10 @@ const options = process.env.DB_OPTIONS;
 
 // Connection URL
 let url
-if (username){
+if (username) {
     url = 'mongodb://' + username + ':' + password + '@' + host + '/' + options;
-}else{
-    url = 'mongodb://'+host+ '/' + options
+} else {
+    url = 'mongodb://' + host + '/' + options
 }
 
 // Collection name
@@ -103,7 +103,7 @@ async function addAppContent(id, index, content) {
     const field = `appdata.folders.${index}.content`
     const push = {}
     push[field] = content
-    console.log("DBlib addapp:",push)
+    console.log("DBlib addapp:", push)
     try {
         const client = await MongoClient.connect(url);
         const db = client.db(dbName);
@@ -141,9 +141,24 @@ async function insertDrone(name, onair) {
         let db = client.db(dbName);
         const col = db.collection(droneCol);
         const result = await col.updateOne({ name: name }, { $set: { name: name, onair: onair } }, { upsert: true });
-        if (result.upsertedCount){
-            console.log("DB: New Drone -",name)
-        }  
+        if (result.upsertedCount) {
+            console.log("DB: New Drone -", name)
+        }
+        client.close();
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
+
+async function updateDrone(id, name) {
+    try {
+        const client = await MongoClient.connect(url);
+        let db = client.db(dbName);
+        const col = db.collection(droneCol);
+        const result = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: { name: name } });
+        if (result.upsertedCount) {
+            console.log("DB: New Drone -", name)
+        }
         client.close();
     } catch (err) {
         console.log(err.stack);
@@ -212,8 +227,8 @@ async function deleteDrone(id) {
         let r = await col.deleteOne({ name: id });
         assert.equal(1, r.deletedCount);
 
-        db.collection(appCol).updateMany({}, { $pull: { drones: id }});
-        console.log("DB: Delete Drone -",id)
+        db.collection(appCol).updateMany({}, { $pull: { drones: id } });
+        console.log("DB: Delete Drone -", id)
         client.close();
     } catch (err) {
         console.log(err.stack);
@@ -229,6 +244,7 @@ module.exports = {
     updateApp: updateApp,
     addAppContent: addAppContent,
     insertDrone: insertDrone,
+    updateDrone: updateDrone,
     listAllDrones: listAllDrones,
     deleteApp: deleteApp,
     deleteDrone: deleteDrone

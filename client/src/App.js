@@ -21,9 +21,9 @@ const App = () =>
         <Switch>
           <Route exact path="/" component={Main} />
           <Route exact path="/newapp" component={NewAppForm} />
-          <Route exact path="/newdrone" component={NewDroneForm} />
+          <Route exact path="/newdrone/:id?" component={NewDroneForm} />
           <Route exact path="/myapp/:id?" component={MyAppHTML} />
-          <Route exact path="/myapp/:id?/edit" component={MyApp} />
+          <Route exact path="/myapp/:id/edit" component={MyApp} />
           <Route exact path="/qr/:id?" component={QRCodeDisplay} />
         </Switch>
       </main>

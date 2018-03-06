@@ -21,17 +21,30 @@ export default class NewAppForm extends React.Component {
   }
 
   handleSubmit(event) {
-    request
-      .post(API_ROOT + 'drones/new')
-      .send(this.state)
-      .then((response) => {
-        this.setState({ redirect: true })
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    const { name } = this.state
+    const { id } = this.props.match.params
+    if (id) {
+      request
+        .put(API_ROOT + 'drones/edit/' + id)
+        .send({ name: name })
+        .then((response) => {
+          this.setState({ redirect: true })
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    } else {
+      request
+        .post(API_ROOT + 'drones/new')
+        .send({ name: name })
+        .then((response) => {
+          this.setState({ redirect: true })
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
     event.preventDefault();
-
   }
   render() {
     const { redirect } = this.state

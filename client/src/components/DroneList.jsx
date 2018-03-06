@@ -22,11 +22,11 @@ export default class AppList extends React.Component {
     }
 
     deleteDrone(id) {
+        this.setState({ ready: false })
         request
             .delete(API_ROOT + 'drones/delete/' + id)
             .then((response) => {
                 this.updateData()
-                console.log(response.body.response)
             })
             .catch((error) => {
                 console.log(error)
@@ -55,13 +55,27 @@ export default class AppList extends React.Component {
                         {drones.map(item => (
                             <Table.Row key={item._id}>
                                 <Table.Cell>
-                                    <Label ribbon>{item.name}</Label>
+                                    <Label color='brown' ribbon>{item.name}</Label>
                                 </Table.Cell>
                                 <Table.Cell>
-                                    <Link to={"/myapp/" + item._id}>
-                                        <Button icon><Icon name='edit' /></Button>
+                                    <Link to={"/newdrone/" + item._id}>
+                                        <Button basic color='black' animated='fade'>
+                                            <Button.Content visible>
+                                                <Icon name='edit' />
+                                            </Button.Content>
+                                            <Button.Content hidden>
+                                                Edit
+                                            </Button.Content>
+                                        </Button>
                                     </Link>
-                                    <Button icon onClick={() => this.deleteDrone(item.name)}><Icon name='delete' /></Button>
+                                    <Button basic color='red' animated='fade' onClick={() => this.deleteDrone(item.name)}>
+                                        <Button.Content visible>
+                                            <Icon name='delete' />
+                                        </Button.Content>
+                                        <Button.Content hidden>
+                                            Delete
+                                        </Button.Content>
+                                    </Button>
                                 </Table.Cell>
                             </Table.Row>
                         ))}
