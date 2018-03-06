@@ -108,9 +108,9 @@ app.post("/api/apps/upload", function (req, res) {
             console.log(err)
             return res.end("Something went wrong contentUploading content!");
         }
-        const { appid, index } = req.body
+        const { appid, index, folderName } = req.body
         for (let i = 0; i < req.files.length; i++) {
-            await dbLib.addAppContent(appid, index, req.files[i].filename)
+            await dbLib.addAppContent(appid, folderName, index, req.files[i].filename)
         }
         console.log("contentUpload complete")
         res.send({ response: "contentUpload complete!" })

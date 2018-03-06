@@ -2,7 +2,8 @@
 TODO
 test.js
 /socket
-/apps/*
+/apps/
+/database/media/
 
 # Environment variables
 .env

@@ -9,7 +9,7 @@ const style = {
     marginRight: 'auto'
 }
 
-const ModalDrop = ({ index, appid, getData }) =>
+const ModalDrop = ({ index, appid, folderName, getData }) =>
 
     <Modal style={style} trigger={
         <Button icon labelPosition='left'>
@@ -21,6 +21,7 @@ const ModalDrop = ({ index, appid, getData }) =>
         <Modal.Content>
             <Dropzone
                 index={index}
+                folderName={folderName}
                 appid={appid}
                 getData={getData} />
         </Modal.Content>

@@ -98,9 +98,11 @@ async function updateApp(id, appdata) {
     }
 }
 
-async function addAppContent(id, index, content) {
-    //index = 1
+async function addAppContent(id, folderName, index, content) {
     const field = `appdata.folders.${index}.content`
+    const nameField = `appdata.folders.${index}.name`
+    const setName = {}
+    setName[nameField] = folderName
     const push = {}
     push[field] = content
     console.log("DBlib addapp:", push)
@@ -110,7 +112,7 @@ async function addAppContent(id, index, content) {
 
         const col = db.collection(appCol);
 
-        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $push: push });
+        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: setName, $push: push });
         console.log(r.modifiedCount)
         client.close();
     } catch (err) {

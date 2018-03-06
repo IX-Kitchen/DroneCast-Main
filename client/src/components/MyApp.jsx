@@ -111,7 +111,7 @@ export default class Main extends React.Component {
     }
 
     render() {
-        
+
         const { appId, folders } = this.state.data
         const { ready, currentIndex } = this.state
         const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
@@ -131,6 +131,7 @@ export default class Main extends React.Component {
                     {currentIndex !== undefined &&
                         <Menu.Item position="right">
                             <ModalDrop
+                                folderName={currentFolderName}
                                 index={currentIndex}
                                 appid={this.props.match.params.id}
                                 getData={this.getData} />

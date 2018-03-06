@@ -25,10 +25,10 @@ export default class AppList extends React.Component {
         this.updateData();
     }
     deleteApp(id) {
+        this.setState({ ready: false })
         request
             .delete(API_ROOT + 'apps/delete/' + id)
             .then((response) => {
-                this.setState({ ready: false })
                 this.updateData()
                 console.log(response.body.response)
             })
