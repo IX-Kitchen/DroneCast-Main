@@ -40,7 +40,10 @@ export default class NewAppForm extends React.Component {
         {
           name: "Code",
           type: 'code',
-          code: []
+          content: {
+            'phone': [],
+            'drone': []
+          }
         },
         {
           name: "Content",

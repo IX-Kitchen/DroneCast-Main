@@ -8,6 +8,7 @@ import ContentList from './ContentList'
 import { Button, Icon, Menu, Divider, Segment } from 'semantic-ui-react'
 import request from 'superagent'
 import { API_ROOT } from '../api-config';
+import CodeList from './CodeList';
 
 /*
 const json = {
@@ -69,10 +70,10 @@ export default class Main extends React.Component {
                 newFolder = {
                     "name": name,
                     'type': type,
-                    "code": [
-                        { "phone": [] },
-                        { "drone": [] }
-                    ]
+                    "content": {
+                        "phone": [],
+                        "drone": []
+                    }
                 };
                 break
             default:
@@ -104,10 +105,10 @@ export default class Main extends React.Component {
         this.setState({ data: newJson }, this.updateData)
     }
 
-    handleFolderClick(index) {
+    handleFolderClick(event, { value }) {
         this.setState({
             phase: 'contentlist',
-            currentIndex: index
+            currentIndex: value
         })
     }
 
@@ -144,7 +145,14 @@ export default class Main extends React.Component {
         const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         switch (phase) {
             case 'contentlist':
-                return <ContentList content={currentFolder.content} />
+                if (currentFolder.type === 'content') {
+
+                    return <ContentList content={currentFolder.content} />
+                } else {
+
+                    return <CodeList code={currentFolder.content} />
+                }
+
             case 'newfolder':
                 return <FormFolder addCallback={this.handleSubmitFolder} />
             // Explorer
@@ -161,6 +169,7 @@ export default class Main extends React.Component {
     render() {
         const { name, folders } = this.state.data
         const { ready, currentIndex } = this.state
+        // currentIndex can be 0
         const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         const currentFolderName = currentFolder ? currentFolder.name : undefined
 

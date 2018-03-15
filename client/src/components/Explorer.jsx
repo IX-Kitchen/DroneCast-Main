@@ -15,7 +15,7 @@ const Explorer = ({ folders, removeCallback, addCallback, handleClick }) =>
             <Grid container columns={3}>
                 {folders.map((item, index) => (
                     <Grid.Column key={item.name}>
-                        <Button labelPosition='left' icon size="big" onClick={handleClick}>
+                        <Button labelPosition='left' value={index} icon size="big" onClick={handleClick}>
                             {item.name}
                             <Icon name='folder' />
                         </Button>
