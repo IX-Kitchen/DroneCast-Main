@@ -8,6 +8,7 @@ export default class AppList extends React.Component {
     constructor() {
         super();
         this.state = { apps: [], ready: false };
+        this.deleteApp = this.deleteApp.bind(this)
     }
     updateData() {
         request
@@ -23,10 +24,10 @@ export default class AppList extends React.Component {
     componentDidMount() {
         this.updateData();
     }
-    deleteApp(id) {
+    deleteApp(event, {value}) {
         this.setState({ ready: false })
         request
-            .delete(API_ROOT + 'apps/delete/' + id)
+            .delete(API_ROOT + 'apps/delete/' + value)
             .then((response) => {
                 this.updateData()
                 console.log(response.body.response)
@@ -82,7 +83,7 @@ export default class AppList extends React.Component {
                                             </Button.Content>
                                         </Button>
                                     </Link>
-                                    <Button basic color='red' animated='fade' onClick={() => this.deleteApp(item._id)}>
+                                    <Button basic color='red' value={item._id} animated='fade' onClick={this.deleteApp}>
                                         <Button.Content visible>
                                             <Icon name='delete' />
                                         </Button.Content>

@@ -150,7 +150,12 @@ export default class Main extends React.Component {
                     return <ContentList content={currentFolder.content} />
                 } else {
 
-                    return <CodeList code={currentFolder.content} />
+                    return <CodeList
+                        folderName={currentFolder.name}
+                        code={currentFolder.content}
+                        index={currentIndex}
+                        appid={this.props.match.params.id}
+                        getData={this.getData} />
                 }
 
             case 'newfolder':
@@ -184,7 +189,7 @@ export default class Main extends React.Component {
                             </Button>
                         </Link>
                     </Menu.Item>
-                    {currentIndex !== undefined &&
+                    {currentFolder && currentFolder.type === 'content' &&
                         <Menu.Item position="right">
                             <ModalDrop
                                 folderName={currentFolderName}

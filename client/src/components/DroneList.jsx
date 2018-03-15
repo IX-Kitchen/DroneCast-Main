@@ -22,11 +22,11 @@ export default class AppList extends React.Component {
             })
     }
 
-    deleteDrone(proxy,target) {
+    deleteDrone(proxy,{id}) {
         console.log(arguments)
         this.setState({ ready: false })
         request
-            .delete(API_ROOT + 'drones/delete/' + target.id)
+            .delete(API_ROOT + 'drones/delete/' + id)
             .then((response) => {
                 this.updateData()
             })

@@ -117,6 +117,25 @@ async function addAppContent(id, folderName, index, content) {
         console.log(err.stack);
     }
 }
+async function addAppCode(index, id, folder, folderName, file) {
+    const field = `appdata.folders.${index}.content.${folder}`
+    const nameField = `appdata.folders.${index}.name`
+    const setName = {[nameField]:folderName}
+    const push = {[field]: file}
+    console.log("DBlib add app code:", push)
+    try {
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+
+        const col = db.collection(appCol);
+
+        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: setName, $addToSet: push });
+        console.log(r.modifiedCount)
+        client.close();
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
 
 async function insertApp(name, author, scenario, category, appdata, drones) {
     try {
@@ -243,6 +262,7 @@ module.exports = {
     findApp: findApp,
     updateApp: updateApp,
     addAppContent: addAppContent,
+    addAppCode: addAppCode,
     insertDrone: insertDrone,
     updateDrone: updateDrone,
     listAllDrones: listAllDrones,

@@ -3,7 +3,7 @@ import { Button, Modal, Icon } from 'semantic-ui-react'
 import Dropzone from './Dropzone';
 
 const style = {
-    marginTop: 'auto',
+    marginTop: '10%',
     marginBottom: 'auto',
     marginLeft: 'auto',
     marginRight: 'auto'
@@ -11,7 +11,7 @@ const style = {
 
 const ModalDrop = ({ index, appid, folderName, getData }) =>
 
-    <Modal style={style} trigger={
+    <Modal closeOnDimmerClick={false} closeIcon style={style} trigger={
         <Button icon labelPosition='left'>
             <Icon name='upload' />
             Upload content

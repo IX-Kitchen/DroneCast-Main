@@ -12,7 +12,7 @@ var componentConfig = {
     postUrl: API_ROOT + 'apps/appupload'
 };
 var djsConfig = {
-    acceptedFiles: ".html,.css,.js",
+    acceptedFiles: "text/html,text/css,.js",
     autoProcessQueue: true,
     addRemoveLinks: false,
     paramName: "appUploader"
@@ -23,10 +23,13 @@ var eventHandlers = {
     error: (file, error, xhr) => console.log("Error component", error, xhr)
     //success: (file) => console.log("Success"),
 }
-const AppDropzone = ({ appid, getData }) => {
+const AppDropzone = ({ appid, getData, folder, folderName, index }) => {
 
     djsConfig.params = {
-        appid: appid
+        appid: appid,
+        folder: folder,
+        index: index,
+        folderName: folderName
     }
     eventHandlers.complete = getData ? getData : undefined;
     return (

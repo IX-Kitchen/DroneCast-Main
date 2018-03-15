@@ -58,11 +58,11 @@ const contentUpload = multer({ storage: contentStorage }).array("imgUploader", 3
 // Upload App's HTML
 const appStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const dir = `./apps/${req.body.appid}`
+        const dir = `./database/apps/${req.body.appid}`
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
-        console.log("Server appstorage", req.body, file)
+        //console.log("Server appstorage", req.body, file)
         cb(null, dir)
     },
     filename: function (req, file, callback) {
@@ -103,9 +103,12 @@ app.post("/api/apps/appupload", function (req, res) {
             console.log(err)
             return res.end("Something went wrong Uploading the app!");
         }
-        const { appid } = req.body
-        console.log("App upload complete")
-        res.send({ response: "App Upload complete!" })
+        const { appid, folder, folderName, index } = req.body
+        for (let i = 0; i < req.files.length; i++) {
+            await dbLib.addAppCode(index, appid, folder, folderName, req.files[i].filename)
+        }
+        //console.log("App upload complete")
+        res.send({ response: "contentUpload complete!" })
     });
 });
 
@@ -119,7 +122,7 @@ app.post("/api/apps/upload", function (req, res) {
         for (let i = 0; i < req.files.length; i++) {
             await dbLib.addAppContent(appid, folderName, index, req.files[i].filename)
         }
-        console.log("contentUpload complete")
+        //console.log("contentUpload complete")
         res.send({ response: "contentUpload complete!" })
     });
 });

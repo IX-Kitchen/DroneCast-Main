@@ -89,7 +89,7 @@ export default class NewAppForm extends React.Component {
         <Form onSubmit={this.handleSubmit} size='big'>
           <Form.Field>
             <label>App Name</label>
-            <input placeholder='App Name' name='name' onChange={this.handleChange} />
+            <input required placeholder='App Name' name='name' onChange={this.handleChange} />
           </Form.Field>
           <Form.Group grouped>
             <Segment basic loading={!ready}>

@@ -1,17 +1,24 @@
 import React from 'react'
 import { List } from 'semantic-ui-react'
+import ModalAppUpload from './ModalAppUpload'
 
-const CodeList = ({ code }) =>
+const CodeList = ({ code, appid, getData, folderName, index }) =>
     <div>
         <List>
             <List.Item>
                 <List.Icon name='folder' />
                 <List.Content>
-                    <List.Header>Phone</List.Header>
-                    <List.Description>Source files for phone client</List.Description>
+                    <List.Header>
+                        Phone
+                        <ModalAppUpload
+                            appid={appid} getData={getData}
+                            folder='phone'
+                            index={index}
+                            folderName={folderName} />
+                    </List.Header>
                     <List.List>
                         {code.phone.map(item => (
-                            <List.Item>
+                            <List.Item key={item}>
                                 <List.Icon name='file' />
                                 <List.Content>
                                     <List.Header>{item}</List.Header>
@@ -24,11 +31,14 @@ const CodeList = ({ code }) =>
             <List.Item>
                 <List.Icon name='folder' />
                 <List.Content>
-                    <List.Header>Drone</List.Header>
-                    <List.Description>Source files for drone client</List.Description>
+                    <List.Header>
+                        Drone
+                        <ModalAppUpload appid={appid} getData={getData} folder='drone' folderName={folderName} />
+                    </List.Header>
+
                     <List.List>
                         {code.drone.map(item => (
-                            <List.Item>
+                            <List.Item key={item}>
                                 <List.Icon name='file' />
                                 <List.Content>
                                     <List.Header>{item}</List.Header>
