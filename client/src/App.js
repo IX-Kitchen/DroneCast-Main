@@ -7,6 +7,7 @@ import MyApp from './components/MyApp';
 import NewAppForm from './components/NewAppForm';
 import NewDroneForm from './components/NewDroneForm';
 import QRCodeDisplay from './components/QRDisplay';
+import FolderForm from './components/FolderForm'
 
 const style = {
   height: "100%"
@@ -23,6 +24,7 @@ const App = () =>
           <Route exact path="/newdrone/:id?" component={NewDroneForm} />
           <Route exact path="/myapp/:id?" component={MyAppHTML} />
           <Route exact path="/myapp/:id/edit" component={MyApp} />
+          <Route exact path="/myapp/:id/newfolder" component={FolderForm} />
           <Route exact path="/qr/:id?" component={QRCodeDisplay} />
         </Switch>
       </main>

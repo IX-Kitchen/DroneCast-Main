@@ -1,5 +1,6 @@
 import React from 'react'
 import Navigator from "./Navigator"
+import FormFolder from "./FolderForm"
 import ModalDrop from './ModalDrop'
 import { Link } from 'react-router-dom'
 import Explorer from './Explorer'
@@ -20,20 +21,24 @@ const json = {
 }
 */
 
-export default class Main extends React.PureComponent {
+// Phase: ContentList/Explorer/NewFolder
+export default class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: { appId: "", folders: [] },
+            data: { name: "", folders: [] },
             currentIndex: undefined,
-            ready: false
+            ready: false,
+            phase: 'explorer'
         }
         this.handleBackClick = this.handleBackClick.bind(this);
         this.getData = this.getData.bind(this);
         this.handleAddFolder = this.handleAddFolder.bind(this)
+        this.handleSubmitFolder = this.handleSubmitFolder.bind(this)
         this.handleRemoveFolder = this.handleRemoveFolder.bind(this)
         this.handleFolderClick = this.handleFolderClick.bind(this)
         this.handleNavClick = this.handleNavClick.bind(this)
+        this.Display = this.Display.bind(this)
     }
 
     componentDidMount() {
@@ -46,7 +51,7 @@ export default class Main extends React.PureComponent {
             .then((response) => {
                 const data =
                     {
-                        appId: response.body.name,
+                        name: response.body.name,
                         folders: response.body.appdata.folders
                     }
                 this.setState({ data: data, ready: true });
@@ -57,38 +62,59 @@ export default class Main extends React.PureComponent {
             })
     }
 
-    handleAddFolder() {
-        const name = "Folder" + (this.state.data.folders.length + 1);
-        const newFolder = {
-            "name": name,
-            "content": []
-        };
+    handleSubmitFolder(name, type) {
+        let newFolder
+        switch (type) {
+            case 'code':
+                newFolder = {
+                    "name": name,
+                    'type': type,
+                    "code": [
+                        { "phone": [] },
+                        { "drone": [] }
+                    ]
+                };
+                break
+            default:
+                newFolder = {
+                    "name": name,
+                    'type': type,
+                    "content": []
+                };
+                break
+        }
         const folders = [...this.state.data.folders, newFolder]
         const newJson = {
             ...this.state.data,
             folders: folders
         }
-        this.setState({ data: newJson })
+        this.setState({ data: newJson, phase: 'explorer' }, this.updateData)
+    }
+    handleAddFolder() {
+        this.setState({ phase: 'newfolder' })
     }
 
-    handleRemoveFolder() {
-        let folders = this.state.data.folders.slice()
-        folders.pop();
-        let newJson = {
+    handleRemoveFolder(event, { value }) {
+        const { folders } = this.state.data
+        const newFolders = folders.filter(folder => folder.name !== value)
+        const newJson = {
             ...this.state.data,
-            folders: folders
+            folders: newFolders
         }
-        this.setState({ data: newJson })
+        this.setState({ data: newJson }, this.updateData)
     }
 
     handleFolderClick(index) {
         this.setState({
+            phase: 'contentlist',
             currentIndex: index
         })
     }
 
     handleNavClick(type) {
+        //this.updateData()
         this.setState({
+            phase: 'explorer',
             currentIndex: undefined
         })
     }
@@ -99,7 +125,6 @@ export default class Main extends React.PureComponent {
             .put(API_ROOT + 'apps/update/' + this.props.match.params.id)
             .send({ folders: folders })
             .then((response) => {
-
             })
             .catch((error) => {
                 console.log(error)
@@ -111,9 +136,30 @@ export default class Main extends React.PureComponent {
         this.updateData()
     }
 
-    render() {
+    // Switch display
+    Display(props) {
+        const { folders } = this.state.data
+        const { currentIndex, phase } = this.state
+        // CurrentIndex can also be 0
+        const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
+        switch (phase) {
+            case 'contentlist':
+                return <ContentList content={currentFolder.content} />
+            case 'newfolder':
+                return <FormFolder addCallback={this.handleSubmitFolder} />
+            // Explorer
+            default:
+                return <Explorer
+                    addCallback={this.handleAddFolder}
+                    removeCallback={this.handleRemoveFolder}
+                    folders={folders}
+                    appid={this.props.match.params.id}
+                    handleClick={this.handleFolderClick} />
+        }
+    }
 
-        const { appId, folders } = this.state.data
+    render() {
+        const { name, folders } = this.state.data
         const { ready, currentIndex } = this.state
         const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         const currentFolderName = currentFolder ? currentFolder.name : undefined
@@ -139,21 +185,12 @@ export default class Main extends React.PureComponent {
                         </Menu.Item>}
                 </Menu>
                 <Navigator
-                    id={appId}
+                    id={name}
                     folder={currentFolderName}
                     handleClick={this.handleNavClick} />
                 <Divider horizontal />
                 <Segment color='teal' loading={!ready}>
-                    {currentIndex !== undefined ? (
-                        <ContentList content={currentFolder.content} />
-                    ) : (
-
-                            <Explorer
-                                addCallback={this.handleAddFolder}
-                                removeCallback={this.handleRemoveFolder}
-                                folders={folders}
-                                handleClick={this.handleFolderClick} />
-                        )}
+                    <this.Display />
                 </Segment>
             </div>
         );

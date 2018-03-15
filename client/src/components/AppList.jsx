@@ -3,7 +3,6 @@ import { Label, Table, Button, Icon, Segment } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import request from 'superagent'
 import { API_ROOT } from '../api-config';
-import ModalAppUpload from './ModalAppUpload'
 
 export default class AppList extends React.Component {
     constructor() {
@@ -63,17 +62,6 @@ export default class AppList extends React.Component {
                                     ))}
                                 </Table.Cell>
                                 <Table.Cell>
-                                    <Link to={"/myapp/" + item._id}>
-                                        <Button basic color='black' animated='fade'>
-                                            <Button.Content visible>
-                                                <Icon name='external' />
-                                            </Button.Content>
-                                            <Button.Content hidden>
-                                                App
-                                            </Button.Content>
-                                        </Button>
-                                    </Link>
-                                    <ModalAppUpload appid={item._id} />
                                     <Link to={"/myapp/" + item._id + "/edit"}>
                                         <Button basic color='black' animated='fade'>
                                             <Button.Content visible>

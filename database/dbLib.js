@@ -101,11 +101,9 @@ async function updateApp(id, appdata) {
 async function addAppContent(id, folderName, index, content) {
     const field = `appdata.folders.${index}.content`
     const nameField = `appdata.folders.${index}.name`
-    const setName = {}
-    setName[nameField] = folderName
-    const push = {}
-    push[field] = content
-    console.log("DBlib addapp:", push)
+    const setName = {[nameField]:folderName}
+    const push = {[field]: content}
+    console.log("DBlib add app:", push)
     try {
         const client = await MongoClient.connect(url);
         const db = client.db(dbName);

@@ -4,6 +4,7 @@ test.js
 /socket
 /apps/
 /database/media/
+/database/apps
 
 # Environment variables
 .env

@@ -12,7 +12,7 @@ var componentConfig = {
     postUrl: API_ROOT + 'apps/upload'
 };
 var djsConfig = {
-    acceptedFiles: "image/*, video/*",
+    acceptedFiles: "image/*, video/*, text/html, text/css, text/javascript",
     autoProcessQueue: true,
     addRemoveLinks: false,
     paramName: "imgUploader",
@@ -21,7 +21,7 @@ var djsConfig = {
 
 var eventHandlers = {
     //init: (dropzone) => { myDropZone = dropzone},
-    error: (file, error, xhr) => console.log("Error component", error, xhr)
+    //error: (file, error, xhr) => console.log("Error component", error, xhr)
     //success: (file) => console.log("Success"),
 }
 

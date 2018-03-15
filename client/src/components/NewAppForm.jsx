@@ -38,7 +38,13 @@ export default class NewAppForm extends React.Component {
     const newAppData = {
       folders: [
         {
-          name: "Folder1",
+          name: "Code",
+          type: 'code',
+          code: []
+        },
+        {
+          name: "Content",
+          type: 'content',
           content: []
         }
       ]
