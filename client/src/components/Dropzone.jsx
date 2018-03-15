@@ -21,25 +21,22 @@ var djsConfig = {
 
 var eventHandlers = {
     //init: (dropzone) => { myDropZone = dropzone},
-    error: (file, error, xhr) => console.log("Error component",error, xhr)
+    error: (file, error, xhr) => console.log("Error component", error, xhr)
     //success: (file) => console.log("Success"),
 }
-export default class Dropzone extends React.Component {
 
-    componentWillMount(){
-        djsConfig.params = {
-            appid: this.props.appid,
-            index: this.props.index,
-            folderName: this.props.folderName
-        }
-        eventHandlers.complete = this.props.getData;
+const Dropzone = ({ appid, index, folderName, getData }) => {
+
+    djsConfig.params = {
+        appid: appid,
+        index: index,
+        folderName: folderName
     }
-    
-    render() {
-        return (
-            <DropzoneComponent config={componentConfig}
-                eventHandlers={eventHandlers}
-                djsConfig={djsConfig} />
-        );
-    }
+    eventHandlers.complete = getData;
+    return (
+        <DropzoneComponent config={componentConfig}
+            eventHandlers={eventHandlers}
+            djsConfig={djsConfig} />
+    );
 }
+export default Dropzone

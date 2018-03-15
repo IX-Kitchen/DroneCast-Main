@@ -33,8 +33,10 @@ export default class QRCodeDisplay extends React.Component {
     }
 
     render() {
-        const qrdata = { appdata: API_ROOT + 'apps/find/' + this.props.match.params.id }
-        qrdata['socketUrl'] = SOCKET_ROOT
+        const qrdata = JSON.stringify({
+            appdata: API_ROOT + 'apps/find/' + this.props.match.params.id,
+            socketUrl: SOCKET_ROOT
+        })
         const { appdata, appid } = this.state.qr
         const { ready } = this.state
         return (
@@ -46,7 +48,7 @@ export default class QRCodeDisplay extends React.Component {
                 </Link>
                 <Header textAlign='center' as='h2'>{appid}</Header>
                 <Segment loading={!ready} style={{ left: '40%', position: 'fixed', top: '25%', zIndex: 1000 }}>
-                    {appdata && <QRCode size={256} value={JSON.stringify(qrdata)} />}
+                    {appdata && <QRCode size={256} value={qrdata} />}
                 </Segment>
             </div>
         )

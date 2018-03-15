@@ -20,7 +20,7 @@ const json = {
 }
 */
 
-export default class Main extends React.Component {
+export default class Main extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -32,6 +32,8 @@ export default class Main extends React.Component {
         this.getData = this.getData.bind(this);
         this.handleAddFolder = this.handleAddFolder.bind(this)
         this.handleRemoveFolder = this.handleRemoveFolder.bind(this)
+        this.handleFolderClick = this.handleFolderClick.bind(this)
+        this.handleNavClick = this.handleNavClick.bind(this)
     }
 
     componentDidMount() {
@@ -107,7 +109,6 @@ export default class Main extends React.Component {
 
     handleBackClick() {
         this.updateData()
-
     }
 
     render() {
@@ -140,7 +141,7 @@ export default class Main extends React.Component {
                 <Navigator
                     id={appId}
                     folder={currentFolderName}
-                    handleClick={(type) => this.handleNavClick(type)} />
+                    handleClick={this.handleNavClick} />
                 <Divider horizontal />
                 <Segment color='teal' loading={!ready}>
                     {currentIndex !== undefined ? (
@@ -151,7 +152,7 @@ export default class Main extends React.Component {
                                 addCallback={this.handleAddFolder}
                                 removeCallback={this.handleRemoveFolder}
                                 folders={folders}
-                                handleClick={(index) => this.handleFolderClick(index)} />
+                                handleClick={this.handleFolderClick} />
                         )}
                 </Segment>
             </div>

@@ -8,6 +8,7 @@ export default class AppList extends React.Component {
     constructor() {
         super();
         this.state = { drones: [], ready: false };
+        this.deleteDrone = this.deleteDrone.bind(this)
     }
     updateData() {
         request
@@ -21,10 +22,11 @@ export default class AppList extends React.Component {
             })
     }
 
-    deleteDrone(id) {
+    deleteDrone(proxy,target) {
+        console.log(arguments)
         this.setState({ ready: false })
         request
-            .delete(API_ROOT + 'drones/delete/' + id)
+            .delete(API_ROOT + 'drones/delete/' + target.id)
             .then((response) => {
                 this.updateData()
             })
@@ -68,7 +70,7 @@ export default class AppList extends React.Component {
                                             </Button.Content>
                                         </Button>
                                     </Link>
-                                    <Button basic color='red' animated='fade' onClick={() => this.deleteDrone(item.name)}>
+                                    <Button basic id={item.name} color='red' animated='fade' onClick={this.deleteDrone}>
                                         <Button.Content visible>
                                             <Icon name='delete' />
                                         </Button.Content>
