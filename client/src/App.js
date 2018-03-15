@@ -8,12 +8,15 @@ import NewAppForm from './components/NewAppForm';
 import NewDroneForm from './components/NewDroneForm';
 import QRCodeDisplay from './components/QRDisplay';
 
+const style = {
+  height: "100%"
+}
 
 const App = () =>
   <BrowserRouter>
     <div>
       <h1>DroneCast Platform</h1>
-      <main>
+      <main style={style}>
         <Switch>
           <Route exact path="/" component={Main} />
           <Route exact path="/newapp" component={NewAppForm} />
