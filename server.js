@@ -66,7 +66,7 @@ const appStorage = multer.diskStorage({
         cb(null, dir)
     },
     filename: function (req, file, callback) {
-        if(file.mimetype==='text/html'){
+        if (file.mimetype === 'text/html') {
             file.originalname = 'index.html'
         }
         callback(null, file.originalname);
@@ -75,18 +75,25 @@ const appStorage = multer.diskStorage({
 
 const appUpload = multer({ storage: appStorage }).array("appUploader", 5);
 
-app.get("/test", function (req, res) {
+app.get("/test", function (err, req, res, next) {
     res.send("OK!")
 });
 
 app.post("/api/apps/new", async function (req, res) {
-
-    await dbLib.insertApp(req.body.name, "author", "scenario", "category", req.body.appData, req.body.drones)
+    try {
+        await dbLib.insertApp(req.body.name, "author", "scenario", "category", req.body.appData, req.body.drones)
+    } catch (error) {
+        next(error)
+    }
     res.send({ response: "New!" })
 });
 
 app.put("/api/apps/update/:id", async function (req, res) {
-    await dbLib.updateApp(req.params.id, req.body)
+    try {
+        await dbLib.updateApp(req.params.id, req.body)
+    } catch (error) {
+        next(error)
+    }
     res.send({ response: "Updated!" })
 })
 
@@ -118,13 +125,21 @@ app.post("/api/apps/upload", function (req, res) {
 });
 
 app.get("/api/apps/list", async function (req, res) {
-    const data = await dbLib.listAllApp();
-    res.json(data);
+    try {
+        const data = await dbLib.listAllApp();
+        res.json(data);
+    } catch (error) {
+        next(error)
+    }
 });
 
 app.get("/api/apps/find/:id", async function (req, res) {
-    const data = await dbLib.findApp(req.params.id)
-    res.json(data);
+    try {
+        const data = await dbLib.findApp(req.params.id)
+        res.json(data);
+    } catch (error) {
+        next(error)
+    }
 });
 
 app.get("/api/content/:id", function (req, res) {
@@ -132,36 +147,70 @@ app.get("/api/content/:id", function (req, res) {
 });
 
 app.get("/api/drones/list", async function (req, res) {
-    const data = await dbLib.listAllDrones();
-    res.json(data);
+    try {
+        const data = await dbLib.listAllDrones();
+        res.json(data);
+    } catch (error) {
+        next(error)
+    }
 });
 
 app.post("/api/drones/new", async function (req, res) {
     if (req.body) {
-        await dbLib.insertDrone(req.body.name, false)
-        res.send({ response: "Added " + req.body.name + " to the DB" })
+        try {
+            await dbLib.insertDrone(req.body.name, false)
+            res.send({ response: "Added " + req.body.name + " to the DB" })
+        } catch (error) {
+            next(error)
+        }
+
     } else {
-        res.send({ response: 'Error on adding a drone' })
+        next(new Error('Error on adding a drone'))
     }
 });
 
 app.put("/api/drones/edit/:id", async function (req, res) {
     if (req.body) {
-        await dbLib.updateDrone(req.params.id, req.body.name)
-        res.send({ response: "Drone " + req.params.id + " updated" })
+        try {
+            await dbLib.updateDrone(req.params.id, req.body.name)
+            res.send({ response: "Drone " + req.params.id + " updated" })
+        } catch (error) {
+            next(error)
+        }
     } else {
-        res.send({ response: 'Error on adding a drone' })
+        next(new Error('Error on adding a drone'))
     }
 });
 
 app.delete("/api/apps/delete/:id", async function (req, res) {
-    await dbLib.deleteApp(req.params.id)
-    res.send({ response: "App deleted" })
+    try {
+        await dbLib.deleteApp(req.params.id)
+        res.send({ response: "App deleted" })
+    } catch (error) {
+        next(error)
+    }
+
 })
 app.delete("/api/drones/delete/:id", async function (req, res) {
-    await dbLib.deleteDrone(req.params.id)
-    res.send({ response: "Drone deleted" })
+    try {
+        await dbLib.deleteDrone(req.params.id)
+        res.send({ response: "Drone deleted" })
+    } catch (error) {
+        next(error)
+    }
+
 })
+
+// Last middleware - No response - 404
+app.use(function (req, res, next) {
+    res.status(404);
+    res.send({ error: 'Route not defined' });
+});
+
+// Error handling
+app.use(function (error, req, res, next) {
+    res.json({ message: error.message });
+});
 
 // Start server
 server.listen(port, async function () {
@@ -171,6 +220,13 @@ server.listen(port, async function () {
     await dbLib.createCol("Dev", "Apps");
     await dbLib.createCol("Dev", "Drones")
 });
+
+// Async/await error handler
+function wrapAsync(fn) {
+    return function (req, res, next) {
+        fn(req, res, next).catch(next);
+    };
+}
 
 // Socket logic
 var avDrones = new Map()
