@@ -116,7 +116,6 @@ app.post("/api/apps/appupload", function (req, res) {
         for (let i = 0; i < req.files.length; i++) {
             await dbLib.addAppCode(index, appid, folder, folderName, req.files[i].filename)
         }
-        //console.log("App upload complete")
         res.send({ response: "contentUpload complete!" })
     });
 });
@@ -131,7 +130,6 @@ app.post("/api/apps/upload", function (req, res) {
         for (let i = 0; i < req.files.length; i++) {
             await dbLib.addAppContent(appid, folderName, index, req.files[i].filename)
         }
-        //console.log("contentUpload complete")
         res.send({ response: "contentUpload complete!" })
     });
 });

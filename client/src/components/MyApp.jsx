@@ -10,20 +10,8 @@ import request from 'superagent'
 import { API_ROOT } from '../api-config';
 import CodeList from './CodeList';
 
-/*
-const json = {
-    "appId": "Test",
-    "folders": [
-        {
-            "name": "Folder1",
-            "content": ["Video1", "Video2"]
-        }
-    ]
-}
-*/
-
 // Phase: ContentList/Explorer/NewFolder
-export default class Main extends React.Component {
+export default class MyApp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -39,6 +27,7 @@ export default class Main extends React.Component {
         this.handleRemoveFolder = this.handleRemoveFolder.bind(this)
         this.handleFolderClick = this.handleFolderClick.bind(this)
         this.handleNavClick = this.handleNavClick.bind(this)
+        this.handleChangeFolderName = this.handleChangeFolderName.bind(this)
         this.Display = this.Display.bind(this)
     }
 
@@ -91,6 +80,19 @@ export default class Main extends React.Component {
         }
         this.setState({ data: newJson, phase: 'explorer' }, this.updateData)
     }
+
+    handleChangeFolderName(oldName,newName) {
+        const { folders } = this.state.data
+        folders.forEach((folder) => {
+            folder.name = folder.name===oldName ? newName : folder.name
+        })
+        const newJson = {
+            ...this.state.data,
+            folders: folders
+        }
+        this.setState({ data: newJson, phase: 'explorer' }, this.updateData)
+    }
+
     handleAddFolder() {
         this.setState({ phase: 'newfolder' })
     }
@@ -167,6 +169,7 @@ export default class Main extends React.Component {
                     removeCallback={this.handleRemoveFolder}
                     folders={folders}
                     appid={this.props.match.params.id}
+                    changeCallback={this.handleChangeFolderName}
                     handleClick={this.handleFolderClick} />
         }
     }
