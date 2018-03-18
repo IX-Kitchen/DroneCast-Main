@@ -33,7 +33,11 @@ const CodeList = ({ code, appid, getData, folderName, index }) =>
                 <List.Content>
                     <List.Header>
                         Drone
-                        <ModalAppUpload appid={appid} getData={getData} folder='drone' folderName={folderName} />
+                        <ModalAppUpload
+                            appid={appid} getData={getData}
+                            folder='drone'
+                            index={index}
+                            folderName={folderName} />
                     </List.Header>
 
                     <List.List>

@@ -130,7 +130,6 @@ async function addAppCode(index, id, folder, folderName, file) {
         const col = db.collection(appCol);
 
         const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: setName, $addToSet: push });
-        console.log(r.modifiedCount)
         client.close();
     } catch (err) {
         console.log(err.stack);

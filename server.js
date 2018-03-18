@@ -41,7 +41,8 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 
 // Serve static files
-app.use(express.static(__dirname + '/apps'));
+// URL/id/drone
+app.use(express.static(__dirname + '/database/apps'));
 
 const fs = require('fs');
 
@@ -58,7 +59,15 @@ const contentUpload = multer({ storage: contentStorage }).array("imgUploader", 3
 // Upload App's HTML
 const appStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const dir = `./database/apps/${req.body.appid}`
+        let dir = "./database/apps"
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+        }
+        dir = `${dir}/${req.body.appid}`
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+        }
+        dir = `${dir}/${req.body.folder}`
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
@@ -75,7 +84,7 @@ const appStorage = multer.diskStorage({
 
 const appUpload = multer({ storage: appStorage }).array("appUploader", 5);
 
-app.get("/test", function (err, req, res, next) {
+app.get("/test", function (req, res, next) {
     res.send("OK!")
 });
 
@@ -223,13 +232,6 @@ server.listen(port, async function () {
     await dbLib.createCol("Dev", "Apps");
     await dbLib.createCol("Dev", "Drones")
 });
-
-// Async/await error handler
-function wrapAsync(fn) {
-    return function (req, res, next) {
-        fn(req, res, next).catch(next);
-    };
-}
 
 // Socket logic
 var avDrones = new Map()
