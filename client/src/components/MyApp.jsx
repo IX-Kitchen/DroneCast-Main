@@ -8,15 +8,18 @@ import ContentList from './ContentList'
 import { Button, Icon, Menu, Divider, Segment } from 'semantic-ui-react'
 import request from 'superagent'
 import { API_ROOT } from '../api-config';
+import CodeFolders from './CodeFolders';
 import CodeList from './CodeList';
 
-// Phase: ContentList/Explorer/NewFolder
+// Phase: ContentList/Explorer/NewFolder/codefolders/codelist
 export default class MyApp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             data: { name: "", folders: [] },
             currentIndex: undefined,
+            currentFolderName: '',
+            codeFolder: '',
             ready: false,
             phase: 'explorer'
         }
@@ -81,10 +84,10 @@ export default class MyApp extends React.Component {
         this.setState({ data: newJson, phase: 'explorer' }, this.updateData)
     }
 
-    handleChangeFolderName(oldName,newName) {
+    handleChangeFolderName(oldName, newName) {
         const { folders } = this.state.data
         folders.forEach((folder) => {
-            folder.name = folder.name===oldName ? newName : folder.name
+            folder.name = folder.name === oldName ? newName : folder.name
         })
         const newJson = {
             ...this.state.data,
@@ -108,18 +111,46 @@ export default class MyApp extends React.Component {
     }
 
     handleFolderClick(event, { value }) {
-        this.setState({
-            phase: 'contentlist',
-            currentIndex: value
-        })
+        // Code folders
+        if (typeof value === 'string') {
+            this.setState({
+                phase: 'codelist',
+                codeFolder: value
+            })
+            return
+        }
+        const folder = this.state.data.folders[value]
+        //console.log("MyApp handle folderclick",folder)      
+        if (folder.type === 'code') {
+            this.setState({
+                phase: 'codefolders',
+                currentIndex: value,
+                currentFolderName: folder.name
+            })
+        } else {
+            this.setState({
+                phase: 'contentlist',
+                currentIndex: value,
+                currentFolderName: folder.name
+            })
+        }
     }
 
-    handleNavClick(type) {
+    handleNavClick(event, { value }) {
         //this.updateData()
-        this.setState({
-            phase: 'explorer',
-            currentIndex: undefined
-        })
+        if(value==='app'){
+            this.setState({
+                phase: 'explorer',
+                currentIndex: undefined,
+                codeFolder:'',
+                currentFolderName: ''
+            })
+        }else{
+            this.setState({
+                phase: 'codefolders',
+                codeFolder:''
+            })
+        }
     }
 
     updateData() {
@@ -142,27 +173,25 @@ export default class MyApp extends React.Component {
     // Switch display
     Display(props) {
         const { folders } = this.state.data
-        const { currentIndex, phase } = this.state
+        const { currentIndex, phase, codeFolder } = this.state
         // CurrentIndex can also be 0
         const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         switch (phase) {
             case 'contentlist':
-                if (currentFolder.type === 'content') {
-
-                    return <ContentList content={currentFolder.content} />
-                } else {
-
-                    return <CodeList
-                        folderName={currentFolder.name}
-                        code={currentFolder.content}
-                        index={currentIndex}
-                        appid={this.props.match.params.id}
-                        getData={this.getData} />
-                }
-
+                return <ContentList content={currentFolder.content} />
             case 'newfolder':
                 return <FormFolder addCallback={this.handleSubmitFolder} />
             // Explorer
+            case 'codefolders':
+                return <CodeFolders
+                    handleClick={this.handleFolderClick} />
+            case 'codelist':
+                return <CodeList
+                    folderName={codeFolder}
+                    code={currentFolder.content[codeFolder]}
+                    index={currentIndex}
+                    appid={this.props.match.params.id}
+                    getData={this.getData} />
             default:
                 return <Explorer
                     addCallback={this.handleAddFolder}
@@ -176,11 +205,9 @@ export default class MyApp extends React.Component {
 
     render() {
         const { name, folders } = this.state.data
-        const { ready, currentIndex } = this.state
+        const { ready, currentIndex, currentFolderName, codeFolder } = this.state
         // currentIndex can be 0
         const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
-        const currentFolderName = currentFolder ? currentFolder.name : undefined
-
         return (
             <div>
                 <Menu secondary>
@@ -188,7 +215,7 @@ export default class MyApp extends React.Component {
                         <Link to="/">
                             <Button icon labelPosition='left' onClick={this.handleBackClick}>
                                 <Icon name='reply' />
-                                Back
+                                Home
                             </Button>
                         </Link>
                     </Menu.Item>
@@ -204,6 +231,7 @@ export default class MyApp extends React.Component {
                 <Navigator
                     id={name}
                     folder={currentFolderName}
+                    codeFolder={codeFolder}
                     handleClick={this.handleNavClick} />
                 <Divider horizontal />
                 <Segment color='teal' loading={!ready}>

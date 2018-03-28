@@ -15,7 +15,7 @@ export default class Explorer extends React.PureComponent {
     changeName() {
         const { folder, name } = this.state
         this.props.changeCallback(folder, name)
-        this.setState({name:''})
+        this.setState({ name: '' })
     }
     handleInputChange(event) {
         this.setState({ name: event.target.value });
@@ -41,37 +41,41 @@ export default class Explorer extends React.PureComponent {
                     <Grid container columns={3}>
                         {folders.map((item, index) => (
                             <Grid.Column key={item.name}>
-                                <Button labelPosition='left' value={index} icon size="big" onClick={handleClick}>
-                                    {item.name}
-                                    <Icon name='folder' />
-                                </Button>
-                                <Button size='mini' value={item.name} negative animated='fade'
-                                    onClick={removeCallback}>
-                                    <Button.Content visible>
-                                        <Icon name='delete' />
-                                    </Button.Content>
-                                    <Button.Content hidden>
-                                        Delete
-                            </Button.Content>
-                                </Button>
-                                <Portal trigger={
-                                    <Button size='mini' value={item.name} color='black' basic
-                                        animated='fade' onClick={this.openInput}>
+                                <Grid.Row>
+                                    <Button labelPosition='left' value={index} icon size="big" onClick={handleClick}>
+                                        {item.name}
+                                        <Icon name='folder' />
+                                    </Button>
+                                </Grid.Row>
+                                <Grid.Row textAlign='center'>
+                                    <Button size='mini' value={item.name} negative animated='fade'
+                                        onClick={removeCallback}>
                                         <Button.Content visible>
-                                            <Icon name='edit' />
+                                            <Icon name='delete' />
                                         </Button.Content>
                                         <Button.Content hidden>
-                                            Name
+                                            Delete
+                            </Button.Content>
+                                    </Button>
+                                    <Portal trigger={
+                                        <Button size='mini' value={item.name} color='black' basic
+                                            animated='fade' onClick={this.openInput}>
+                                            <Button.Content visible>
+                                                <Icon name='edit' />
                                             </Button.Content>
-                                    </Button>}>
-                                    <Segment style={{ left: '40%', position: 'fixed', top: '50%', zIndex: 1000 }}>
-                                        <Header>New folder's name</Header>
-                                        <Form onSubmit={this.changeName}>
-                                            <Form.Input required label='Enter new Name' onChange={this.handleInputChange} />
-                                            <Form.Button>Submit</Form.Button>
-                                        </Form>
-                                    </Segment>
-                                </Portal>
+                                            <Button.Content hidden>
+                                                Name
+                                            </Button.Content>
+                                        </Button>}>
+                                        <Segment style={{ left: '40%', position: 'fixed', top: '50%', zIndex: 1000 }}>
+                                            <Header>New folder's name</Header>
+                                            <Form onSubmit={this.changeName}>
+                                                <Form.Input required label='Enter new Name' onChange={this.handleInputChange} />
+                                                <Form.Button>Submit</Form.Button>
+                                            </Form>
+                                        </Segment>
+                                    </Portal>
+                                </Grid.Row>
                             </Grid.Column>
                         ))}
                     </Grid>

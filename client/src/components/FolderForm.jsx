@@ -22,14 +22,14 @@ export default class FolderForm extends React.Component {
     }
 
     handleSubmit(event) {
-        const {name, type } = this.state
-        
+        const { name, type } = this.state
+
         this.props.addCallback(name, type)
-        
+
         event.preventDefault();
     }
     render() {
-        const {type} = this.state
+        const { type } = this.state
         return (
             <div>
                 <Form onSubmit={this.handleSubmit}>
@@ -40,7 +40,7 @@ export default class FolderForm extends React.Component {
                     <Form.Group inline>
                         <label>Size</label>
                         <Form.Radio label='Content' value='content' checked={type === 'content'} onChange={this.handleTypeChange} />
-                        <Form.Radio label='Code' value='code' checked={type === 'code'} onChange={this.handleTypeChange} />
+                        <Form.Radio label='HTML' value='code' checked={type === 'code'} onChange={this.handleTypeChange} />
                     </Form.Group>
                     <Button type='submit'>Submit</Button>
 

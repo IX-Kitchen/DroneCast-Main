@@ -30,7 +30,6 @@ export default class AppList extends React.Component {
             .delete(API_ROOT + 'apps/delete/' + value)
             .then((response) => {
                 this.updateData()
-                console.log(response.body.response)
             })
             .catch((error) => {
                 console.log(error)
