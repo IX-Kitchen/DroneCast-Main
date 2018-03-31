@@ -10,11 +10,15 @@ const CodeFolders = ({ handleClick }) =>
             size='big'
             verticalAlign='middle'>
             <Grid container columns={2}>
-                <Button content='Drone' labelPosition='left' value={'drone'} icon='folder' size="big"
-                    onClick={handleClick} />
-                <Button content='Phone' labelPosition='left' value={'phone'} icon='folder' size="big"
-                    onClick={handleClick} />
+                <Grid.Column>
+                    <Button content='Drone' labelPosition='left' value={'drone'} icon='folder' size="big"
+                        onClick={handleClick} />
+                </Grid.Column>
+                <Grid.Column>
+                    <Button content='Phone' labelPosition='left' value={'phone'} icon='folder' size="big"
+                        onClick={handleClick} />
+                </Grid.Column>
             </Grid>
         </Transition.Group>
-    </div>
+    </div >
 export default CodeFolders

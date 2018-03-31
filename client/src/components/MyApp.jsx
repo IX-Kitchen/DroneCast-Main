@@ -9,6 +9,7 @@ import { Button, Icon, Menu, Divider, Segment } from 'semantic-ui-react'
 import request from 'superagent'
 import { API_ROOT } from '../api-config';
 import CodeFolders from './CodeFolders';
+import ModalAppUpload from './ModalAppUpload'
 import CodeList from './CodeList';
 
 // Phase: ContentList/Explorer/NewFolder/codefolders/codelist
@@ -138,17 +139,17 @@ export default class MyApp extends React.Component {
 
     handleNavClick(event, { value }) {
         //this.updateData()
-        if(value==='app'){
+        if (value === 'app') {
             this.setState({
                 phase: 'explorer',
                 currentIndex: undefined,
-                codeFolder:'',
+                codeFolder: '',
                 currentFolderName: ''
             })
-        }else{
+        } else {
             this.setState({
                 phase: 'codefolders',
-                codeFolder:''
+                codeFolder: ''
             })
         }
     }
@@ -186,6 +187,7 @@ export default class MyApp extends React.Component {
                 return <CodeFolders
                     handleClick={this.handleFolderClick} />
             case 'codelist':
+                console.log('myapp', codeFolder, currentFolder.content[codeFolder], currentIndex, this.props.match.params.id)
                 return <CodeList
                     folderName={codeFolder}
                     code={currentFolder.content[codeFolder]}
@@ -204,10 +206,11 @@ export default class MyApp extends React.Component {
     }
 
     render() {
-        const { name, folders } = this.state.data
-        const { ready, currentIndex, currentFolderName, codeFolder } = this.state
+        console.log(this.state)
+        const { name } = this.state.data
+        const { ready, currentIndex, currentFolderName, codeFolder, phase } = this.state
         // currentIndex can be 0
-        const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
+        //const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         return (
             <div>
                 <Menu secondary>
@@ -219,13 +222,21 @@ export default class MyApp extends React.Component {
                             </Button>
                         </Link>
                     </Menu.Item>
-                    {currentFolder && currentFolder.type === 'content' &&
+                    {phase === 'contentlist' &&
                         <Menu.Item position="right">
                             <ModalDrop
                                 folderName={currentFolderName}
                                 index={currentIndex}
                                 appid={this.props.match.params.id}
                                 getData={this.getData} />
+                        </Menu.Item>}
+                    {phase === 'codelist' &&
+                        <Menu.Item position="right">
+                            <ModalAppUpload
+                                appid={this.props.match.params.id} getData={this.getData}
+                                folder={codeFolder}
+                                index={currentIndex}
+                                folderName={currentFolderName} />
                         </Menu.Item>}
                 </Menu>
                 <Navigator

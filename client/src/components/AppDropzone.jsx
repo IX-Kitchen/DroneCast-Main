@@ -26,6 +26,8 @@ var eventHandlers = {
 }
 const AppDropzone = ({ appid, getData, folder, folderName, index }) => {
 
+    // Folder = Drone
+    // FolderName = DB bug, keep name
     djsConfig.params = {
         appid: appid,
         folder: folder,

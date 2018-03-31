@@ -17,11 +17,9 @@ const app = express();
 // Reuse express server
 const server = require('http').createServer(app);
 // Port
-const port = process.env.PORT || 8080;
+const port = process.env.BACKEND_PORT || 8080;
 // CORS
 const cors = require('cors');
-
-var request = require('superagent')
 
 const io = require('socket.io')(server)
 

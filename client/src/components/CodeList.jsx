@@ -1,14 +1,15 @@
 import React from 'react'
-import { } from 'semantic-ui-react'
-import ModalAppUpload from './ModalAppUpload'
+import { Embed } from 'semantic-ui-react'
+import { BACK_ROOT } from '../api-config';
 
 const CodeList = ({ code, appid, getData, folderName, index }) =>
 
     <div>
-        <ModalAppUpload
-            appid={appid} getData={getData}
-            folder={folderName}
-            index={index}
-            folderName={folderName} />
+        {code.includes('index.html') &&
+            <Embed
+                active={true}
+                url={`${BACK_ROOT}/${appid}/${folderName}`}
+            />
+        }
     </div>
 export default CodeList

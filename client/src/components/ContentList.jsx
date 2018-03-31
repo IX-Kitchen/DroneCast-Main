@@ -1,6 +1,9 @@
 import React from 'react'
-import { Image, Grid, Transition } from 'semantic-ui-react'
+import { Embed, Image, Grid, Transition } from 'semantic-ui-react'
 import { API_ROOT } from '../api-config';
+
+//const imageExtensions = ['jpg', 'gif', 'bmp', 'png'];
+const videoExtensions = ['m4v', 'avi', 'mpg', 'mp4', 'webm']
 
 const ContentList = ({ content }) =>
     <div>
@@ -13,8 +16,14 @@ const ContentList = ({ content }) =>
             <Grid container columns={3}>
                 {content.map((item, index) => (
                     <Grid.Column key={item}>
-                        <Image rounded size="small"
-                            src={API_ROOT + 'content/' + item} />
+                        {videoExtensions.includes(item.split('.').pop()) ? (
+                            <Embed
+                                icon='video play outline'
+                                url={`${API_ROOT}content/${item}`} />
+                        ) : (
+                                <Image rounded size="small"
+                                    src={`${API_ROOT}content/${item}`} />
+                            )}
                     </Grid.Column>
                 ))}
             </Grid>

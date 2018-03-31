@@ -12,10 +12,12 @@ const style = {
 const ModalDrop = ({ index, appid, folderName, getData }) =>
 
     <Modal closeOnDimmerClick={false} closeIcon style={style} trigger={
-        <Button icon labelPosition='left'>
-            <Icon name='upload' />
-            Upload content
-                </Button>
+        <Button basic color='black' animated='fade'>
+            <Button.Content hidden>Upload</Button.Content>
+            <Button.Content visible>
+                <Icon name='upload' />
+            </Button.Content>
+        </Button>
     }>
         <Modal.Header>Upload Content</Modal.Header>
         <Modal.Content>
