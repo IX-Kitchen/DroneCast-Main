@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button, Modal, Icon } from 'semantic-ui-react'
-import Dropzone from './Dropzone';
 
 const style = {
     marginTop: '10%',
@@ -9,23 +8,19 @@ const style = {
     marginRight: 'auto'
 }
 
-const ModalDrop = ({ index, appid, folderName, getData }) =>
+const ModalAppUpload = ({ render, header }) =>
 
     <Modal closeOnDimmerClick={false} closeIcon style={style} trigger={
-        <Button basic color='black' animated='fade'>
+        <Button basic color= 'black' animated='fade'>
             <Button.Content hidden>Upload</Button.Content>
             <Button.Content visible>
                 <Icon name='upload' />
             </Button.Content>
         </Button>
     }>
-        <Modal.Header>Upload Content</Modal.Header>
+        <Modal.Header>{header}</Modal.Header>
         <Modal.Content>
-            <Dropzone
-                index={index}
-                folderName={folderName}
-                appid={appid}
-                getData={getData} />
+            {render()}
         </Modal.Content>
     </Modal>
-export default ModalDrop
+export default ModalAppUpload

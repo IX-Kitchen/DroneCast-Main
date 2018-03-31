@@ -46,7 +46,13 @@ const fs = require('fs');
 
 // Upload content
 const contentStorage = multer.diskStorage({
-    destination: "./database/media",
+    destination: function (req, file, cb) {
+        let dir = "./database/media"
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+        }  
+        cb(null, dir)
+    },
     filename: function (req, file, callback) {
         callback(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
     }
@@ -108,7 +114,7 @@ app.post("/api/apps/appupload", function (req, res) {
     appUpload(req, res, async function (err) {
         if (err) {
             console.log(err)
-            return res.end("Something went wrong Uploading the app!");
+            return res.status(500).send("Something went wrong Uploading the app!");
         }
         const { appid, folder, folderName, index } = req.body
         for (let i = 0; i < req.files.length; i++) {
@@ -122,7 +128,7 @@ app.post("/api/apps/upload", function (req, res) {
     contentUpload(req, res, async function (err) {
         if (err) {
             console.log(err)
-            return res.end("Something went wrong contentUploading content!");
+            return res.status(500).send("Something went wrong contentUploading content!");
         }
         const { appid, index, folderName } = req.body
         for (let i = 0; i < req.files.length; i++) {

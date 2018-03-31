@@ -1,7 +1,6 @@
 import React from 'react'
 import Navigator from "./Navigator"
 import FormFolder from "./FolderForm"
-import ModalDrop from './ModalDrop'
 import { Link } from 'react-router-dom'
 import Explorer from './Explorer'
 import ContentList from './ContentList'
@@ -9,8 +8,10 @@ import { Button, Icon, Menu, Divider, Segment } from 'semantic-ui-react'
 import request from 'superagent'
 import { API_ROOT } from '../api-config';
 import CodeFolders from './CodeFolders';
-import ModalAppUpload from './ModalAppUpload'
+import ModalDrop from './ModalDrop'
 import CodeList from './CodeList';
+import HTMLDrop from './HTMLDrop';
+import ContentDrop from './ContentDrop';
 
 // Phase: ContentList/Explorer/NewFolder/codefolders/codelist
 export default class MyApp extends React.Component {
@@ -177,6 +178,7 @@ export default class MyApp extends React.Component {
         const { currentIndex, phase, codeFolder } = this.state
         // CurrentIndex can also be 0
         const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
+        const { id } = this.props.match.params
         switch (phase) {
             case 'contentlist':
                 return <ContentList content={currentFolder.content} />
@@ -187,19 +189,18 @@ export default class MyApp extends React.Component {
                 return <CodeFolders
                     handleClick={this.handleFolderClick} />
             case 'codelist':
-                console.log('myapp', codeFolder, currentFolder.content[codeFolder], currentIndex, this.props.match.params.id)
                 return <CodeList
                     folderName={codeFolder}
                     code={currentFolder.content[codeFolder]}
                     index={currentIndex}
-                    appid={this.props.match.params.id}
+                    appid={id}
                     getData={this.getData} />
             default:
                 return <Explorer
                     addCallback={this.handleAddFolder}
                     removeCallback={this.handleRemoveFolder}
                     folders={folders}
-                    appid={this.props.match.params.id}
+                    appid={id}
                     changeCallback={this.handleChangeFolderName}
                     handleClick={this.handleFolderClick} />
         }
@@ -209,6 +210,7 @@ export default class MyApp extends React.Component {
         console.log(this.state)
         const { name } = this.state.data
         const { ready, currentIndex, currentFolderName, codeFolder, phase } = this.state
+        const { id } = this.props.match.params
         // currentIndex can be 0
         //const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         return (
@@ -224,19 +226,28 @@ export default class MyApp extends React.Component {
                     </Menu.Item>
                     {phase === 'contentlist' &&
                         <Menu.Item position="right">
-                            <ModalDrop
-                                folderName={currentFolderName}
+                            <ModalDrop render={(header="Upload content") => (<ContentDrop
                                 index={currentIndex}
-                                appid={this.props.match.params.id}
+                                folderName={currentFolderName}
+                                appid={id}
                                 getData={this.getData} />
+                            )} />
                         </Menu.Item>}
                     {phase === 'codelist' &&
                         <Menu.Item position="right">
-                            <ModalAppUpload
+                            <ModalDrop render={(header='Upload code') => (
+                                <HTMLDrop
+                                    appid={id}
+                                    folder={codeFolder}
+                                    folderName={currentFolderName}
+                                    index={currentIndex}
+                                    getData={this.getData} />
+                            )} />
+                            {/* <ModalAppUpload
                                 appid={this.props.match.params.id} getData={this.getData}
                                 folder={codeFolder}
                                 index={currentIndex}
-                                folderName={currentFolderName} />
+                                folderName={currentFolderName} /> */}
                         </Menu.Item>}
                 </Menu>
                 <Navigator
