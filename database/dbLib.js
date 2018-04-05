@@ -10,16 +10,18 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').load();
 }
 
-const username = process.env.DB_USERNAME;
+const username = process.env.DB_USERNAME
 const password = process.env.DB_PASSWORD
-const host = process.env.DB_HOST
+const host = process.env.HOST
+const port = process.env.DB_PORT
 const dbName = process.env.DB_DATABASE_NAME
-const options = process.env.DB_OPTIONS;
+const options = process.env.DB_OPTIONS
 
 // Connection URL
 let url
 if (username) {
-    url = 'mongodb://' + username + ':' + password + '@' + host + '/' + options;
+    url = `mongodb://${username}:${password}@${host}:${port}/${options}`
+    //url = 'mongodb://' + username + ':' + password + '@' + host + '/' + options;
 } else {
     url = 'mongodb://' + host + '/' + options
 }
@@ -31,6 +33,18 @@ const droneCol = "Drones"
 const appSchema = require('./AppSchema');
 const droneSchema = require('./DroneSchema');
 
+async function testConnection() {
+    try {
+        const client = await MongoClient.connect(url);
+        console.log("dbLib: Connected successfully to server");
+        client.close();
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
+async function testError() {
+    throw Error("Test error")
+}
 async function createCol(dbName, colName) {
     var schema;
 
@@ -101,8 +115,8 @@ async function updateApp(id, appdata) {
 async function addAppContent(id, folderName, index, content) {
     const field = `appdata.folders.${index}.content`
     const nameField = `appdata.folders.${index}.name`
-    const setName = {[nameField]:folderName}
-    const push = {[field]: content}
+    const setName = { [nameField]: folderName }
+    const push = { [field]: content }
     console.log("DBlib add app:", push)
     try {
         const client = await MongoClient.connect(url);
@@ -120,8 +134,8 @@ async function addAppContent(id, folderName, index, content) {
 async function addAppCode(index, id, folder, folderName, file) {
     const field = `appdata.folders.${index}.content.${folder}`
     const nameField = `appdata.folders.${index}.name`
-    const setName = {[nameField]:folderName}
-    const push = {[field]: file}
+    const setName = { [nameField]: folderName }
+    const push = { [field]: file }
     console.log("DBlib add app code:", push)
     try {
         const client = await MongoClient.connect(url);
@@ -254,6 +268,8 @@ async function deleteDrone(id) {
 }
 
 module.exports = {
+    testConnection: testConnection,
+    testError: testError,
     createCol: createCol,
     insertApp: insertApp,
     dropCol: dropCol,

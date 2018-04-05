@@ -50,7 +50,7 @@ const contentStorage = multer.diskStorage({
         let dir = "./database/media"
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
-        }  
+        }
         cb(null, dir)
     },
     filename: function (req, file, callback) {
@@ -85,9 +85,9 @@ const appStorage = multer.diskStorage({
         callback(null, file.originalname);
     }
 });
-
 const appUpload = multer({ storage: appStorage }).array("appUploader", 5);
 
+//Routes
 app.get("/test", function (req, res, next) {
     res.send("OK!")
 });
@@ -156,10 +156,24 @@ app.get("/api/apps/find/:id", async function (req, res) {
     }
 });
 
+//Content
 app.get("/api/content/:id", function (req, res) {
     res.sendFile(path.join(__dirname, './database/media', req.params.id));
 });
+app.get("/api/apps/:id/qr", async function (req, res) {
+    try {
+        //const data = await dbLib.findApp(req.params.id)
+        const qrdata = {
+            appdata: `${process.env.HOST}:${process.env.BACKEND_PORT}/api/apps/find/${req.params.id}`,
+            socketURL: `${process.env.HOST}:${process.env.BACKEND_PORT}`
+        }
+        res.json(qrdata);
+    } catch (error) {
+        next(error)
+    }
+})
 
+//Drones
 app.get("/api/drones/list", async function (req, res) {
     try {
         const data = await dbLib.listAllDrones();
@@ -229,10 +243,16 @@ app.use(function (error, req, res, next) {
 // Start server
 server.listen(port, async function () {
     console.log('Server listening at port %d', port, "in", process.env.NODE_ENV);
+    dbLib.testConnection();
+    dbLib.testError()
     // Debug
     //await dbLib.dropCol();
-    await dbLib.createCol("Dev", "Apps");
-    await dbLib.createCol("Dev", "Drones")
+    try {
+        await dbLib.createCol("Dev", "Apps");
+        await dbLib.createCol("Dev", "Drones")
+    } catch (error) {
+        console.log("Error creating collections")
+    }
 });
 
 // Socket logic
