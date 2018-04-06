@@ -48,7 +48,7 @@ export default class AppList extends React.Component {
                 <Table basic='very'>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>Drones</Table.HeaderCell>
+                            <Table.HeaderCell>Displays</Table.HeaderCell>
                             <Table.HeaderCell>Actions</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>

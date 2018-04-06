@@ -26,9 +26,9 @@ export default class Main extends React.Component {
                 </Link>
                 list = <AppList />
                 break
-            case 'drones':
+            case 'displays':
                 addButton = <Link to="/newdrone">
-                    <Button color='green'> Create New Drone </Button>
+                    <Button color='green'> Create New Display </Button>
                 </Link>
                 list = <DroneList />
                 break
@@ -38,7 +38,7 @@ export default class Main extends React.Component {
             <div>
                 <Menu tabular>
                     <Menu.Item name='apps' active={activeItem === 'apps'} onClick={this.handleItemClick} />
-                    <Menu.Item name='drones' active={activeItem === 'drones'} onClick={this.handleItemClick} />
+                    <Menu.Item name='displays' active={activeItem === 'displays'} onClick={this.handleItemClick} />
                 </Menu>
                 <Segment color='blue'>
                     {addButton}

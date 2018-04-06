@@ -86,7 +86,7 @@ export default class NewAppForm extends React.Component {
           <Form.Group grouped>
             <Segment basic loading={!ready}>
               {availableDrones.length > 0 &&
-                <Label pointing='below'>Select the drones for this app</Label>
+                <Label pointing='below'>Select the displays for this app</Label>
               }
               {availableDrones.map(item => (
                 <Form.Checkbox key={item._id} label={item.name} onClick={this.handleChange} />

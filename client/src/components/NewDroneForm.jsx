@@ -52,7 +52,7 @@ export default class NewAppForm extends React.Component {
       <div>
         <Form onSubmit={this.handleSubmit}>
           <Form.Field>
-            <label>Drone Name</label>
+            <label>Display Name</label>
             <input required placeholder='App Name' name='name' onChange={this.handleChange} />
           </Form.Field>
           <Button type='submit'>Submit</Button>
