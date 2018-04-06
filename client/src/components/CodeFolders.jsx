@@ -11,11 +11,11 @@ const CodeFolders = ({ handleClick }) =>
             verticalAlign='middle'>
             <Grid container columns={2}>
                 <Grid.Column>
-                    <Button content='Display' labelPosition='left' value={'drone'} icon='folder' size="big"
+                    <Button content='Display' labelPosition='left' value={'Display'} icon='folder' size="big"
                         onClick={handleClick} />
                 </Grid.Column>
                 <Grid.Column>
-                    <Button content='Phone' labelPosition='left' value={'phone'} icon='folder' size="big"
+                    <Button content='Phone' labelPosition='left' value={'Phone'} icon='folder' size="big"
                         onClick={handleClick} />
                 </Grid.Column>
             </Grid>

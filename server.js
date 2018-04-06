@@ -51,10 +51,14 @@ const contentStorage = multer.diskStorage({
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
+        dir = `${dir}/${req.body.appid}`
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+        }
         cb(null, dir)
     },
     filename: function (req, file, callback) {
-        callback(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
+        callback(null, file.originalname);
     }
 });
 
@@ -141,10 +145,11 @@ app.put("/api/apps/:id/remove/:content", async function (req, res) {
     const { index } = req.body
     try {
         await dbLib.deleteAppContent(req.params.id, index, req.params.content)
+        fs.unlink(`${__dirname}/database/media/${req.params.id}/${req.params.content}`,
+            () => res.send({ response: "Content removed!" }))
     } catch (error) {
-        res.status(500).send("Erro removing content")
+        res.status(500).send("Error removing content")
     }
-    res.send({ response: "contentUpload removed!" })
 });
 
 app.get("/api/apps/list", async function (req, res) {
@@ -166,8 +171,8 @@ app.get("/api/apps/find/:id", async function (req, res) {
 });
 
 //Content
-app.get("/api/content/:id", function (req, res) {
-    res.sendFile(path.join(__dirname, './database/media', req.params.id));
+app.get("/api/apps/:id/content/:name", function (req, res) {
+    res.sendFile(path.join(__dirname, './database/media/', req.params.id, '/', req.params.name));
 });
 app.get("/api/apps/:id/qr", async function (req, res) {
     try {
@@ -222,11 +227,12 @@ app.put("/api/drones/edit/:id", async function (req, res) {
 app.delete("/api/apps/delete/:id", async function (req, res) {
     try {
         await dbLib.deleteApp(req.params.id)
+        deleteFolderRecursive(__dirname + '/database/apps/' + req.params.id)
+        deleteFolderRecursive(__dirname + '/database/media/' + req.params.id)
         res.send({ response: "App deleted" })
     } catch (error) {
         next(error)
     }
-
 })
 app.delete("/api/drones/delete/:id", async function (req, res) {
     try {
@@ -240,6 +246,7 @@ app.delete("/api/drones/delete/:id", async function (req, res) {
 
 // Last middleware - No response - 404
 app.use(function (req, res, next) {
+    console.log(req.path)
     res.status(404);
     res.send({ error: 'Route not defined' });
 });
@@ -315,3 +322,17 @@ apps.on('connection', (socket) => {
         }
     })
 });
+
+var deleteFolderRecursive = function (path) {
+    if (fs.existsSync(path)) {
+        fs.readdirSync(path).forEach(function (file, index) {
+            var curPath = path + "/" + file;
+            if (fs.lstatSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+};

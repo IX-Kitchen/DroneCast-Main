@@ -1,6 +1,6 @@
 import React from 'react'
 import Navigator from "./Navigator"
-import FormFolder from "./FolderForm"
+import FolderForm from "./FolderForm"
 import { Link } from 'react-router-dom'
 import Explorer from './Explorer'
 import ContentList from './ContentList'
@@ -66,8 +66,8 @@ export default class MyApp extends React.Component {
                     "name": name,
                     'type': type,
                     "content": {
-                        "phone": [],
-                        "drone": []
+                        "Phone": [],
+                        "Display": []
                     }
                 };
                 break
@@ -198,9 +198,11 @@ export default class MyApp extends React.Component {
         const { id } = this.props.match.params
         switch (phase) {
             case 'contentlist':
-                return <ContentList content={currentFolder.content} onClick={this.handleDeleteContent} />
+                return <ContentList content={currentFolder.content}
+                onClick={this.handleDeleteContent}
+                appid = {id}/>
             case 'newfolder':
-                return <FormFolder addCallback={this.handleSubmitFolder} />
+                return <FolderForm addCallback={this.handleSubmitFolder} />
             // Explorer
             case 'codefolders':
                 return <CodeFolders

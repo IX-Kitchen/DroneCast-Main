@@ -12,7 +12,7 @@ var componentConfig = {
     postUrl: API_ROOT + 'apps/upload'
 };
 var djsConfig = {
-    acceptedFiles: "image/*, video/*, text/html, text/css, text/javascript",
+    acceptedFiles: "image/*, video/*",
     autoProcessQueue: true,
     addRemoveLinks: false,
     paramName: "imgUploader",

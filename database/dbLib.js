@@ -124,7 +124,7 @@ async function addAppContent(id, index, content) {
         const col = db.collection(appCol);
 
         //const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: setName, $push: push });
-        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, {$push: push });
+        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, {$addToSet: push });
         client.close();
     } catch (err) {
         console.log(err.stack);
@@ -150,7 +150,6 @@ async function addAppCode(index, id, folder, folderName, file) {
     const nameField = `appdata.folders.${index}.name`
     const setName = { [nameField]: folderName }
     const push = { [field]: file }
-    console.log("DBlib add app code:", push)
     try {
         const client = await MongoClient.connect(url);
         const db = client.db(dbName);
