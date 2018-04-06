@@ -130,12 +130,21 @@ app.post("/api/apps/upload", function (req, res) {
             console.log(err)
             return res.status(500).send("Something went wrong contentUploading content!");
         }
-        const { appid, index, folderName } = req.body
+        const { appid, index } = req.body
         for (let i = 0; i < req.files.length; i++) {
-            await dbLib.addAppContent(appid, folderName, index, req.files[i].filename)
+            await dbLib.addAppContent(appid, index, req.files[i].filename)
         }
         res.send({ response: "contentUpload complete!" })
     });
+});
+app.put("/api/apps/:id/remove/:content", async function (req, res) {
+    const { index } = req.body
+    try {
+        await dbLib.deleteAppContent(req.params.id, index, req.params.content)
+    } catch (error) {
+        res.status(500).send("Erro removing content")
+    }
+    res.send({ response: "contentUpload removed!" })
 });
 
 app.get("/api/apps/list", async function (req, res) {
@@ -244,7 +253,7 @@ app.use(function (error, req, res, next) {
 server.listen(port, async function () {
     console.log('Server listening at port %d', port, "in", process.env.NODE_ENV);
     dbLib.testConnection();
-    dbLib.testError()
+    //dbLib.testError()
     // Debug
     //await dbLib.dropCol();
     try {

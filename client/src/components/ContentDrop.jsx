@@ -25,12 +25,11 @@ var eventHandlers = {
     //success: (file) => console.log("Success"),
 }
 
-const Dropzone = ({ appid, index, folderName, getData }) => {
+const Dropzone = ({ appid, index, getData }) => {
 
     djsConfig.params = {
         appid: appid,
-        index: index,
-        folderName: folderName
+        index: index
     }
     eventHandlers.complete = getData;
     return (

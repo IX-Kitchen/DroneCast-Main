@@ -112,20 +112,34 @@ async function updateApp(id, appdata) {
     }
 }
 
-async function addAppContent(id, folderName, index, content) {
+async function addAppContent(id, index, content) {
     const field = `appdata.folders.${index}.content`
-    const nameField = `appdata.folders.${index}.name`
-    const setName = { [nameField]: folderName }
+    //const nameField = `appdata.folders.${index}.name`
+    //const setName = { [nameField]: folderName }
     const push = { [field]: content }
-    console.log("DBlib add app:", push)
     try {
         const client = await MongoClient.connect(url);
         const db = client.db(dbName);
 
         const col = db.collection(appCol);
 
-        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: setName, $push: push });
-        console.log(r.modifiedCount)
+        //const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: setName, $push: push });
+        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, {$push: push });
+        client.close();
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
+async function deleteAppContent(id, index, content) {
+    const field = `appdata.folders.${index}.content`
+    const pull = { [field]: [content] }
+    try {
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+
+        const col = db.collection(appCol);
+
+        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $pullAll: pull });
         client.close();
     } catch (err) {
         console.log(err.stack);
@@ -277,6 +291,7 @@ module.exports = {
     findApp: findApp,
     updateApp: updateApp,
     addAppContent: addAppContent,
+    deleteAppContent: deleteAppContent,
     addAppCode: addAppCode,
     insertDrone: insertDrone,
     updateDrone: updateDrone,

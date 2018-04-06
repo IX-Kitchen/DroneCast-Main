@@ -33,6 +33,7 @@ export default class MyApp extends React.Component {
         this.handleFolderClick = this.handleFolderClick.bind(this)
         this.handleNavClick = this.handleNavClick.bind(this)
         this.handleChangeFolderName = this.handleChangeFolderName.bind(this)
+        this.handleDeleteContent = this.handleDeleteContent.bind(this)
         this.Display = this.Display.bind(this)
     }
 
@@ -172,6 +173,22 @@ export default class MyApp extends React.Component {
         this.updateData()
     }
 
+    handleDeleteContent(event, { value }) {
+        this.setState({ ready: false })
+        const { currentIndex } = this.state
+
+        request
+            .put(`${API_ROOT}apps/${this.props.match.params.id}/remove/${value}`)
+            .send({ index: currentIndex })
+            .then((response) => {
+                this.getData()
+            })
+            .catch((error) => {
+                console.log(error)
+                return [error]
+            })
+    }
+
     // Switch display
     Display(props) {
         const { folders } = this.state.data
@@ -181,7 +198,7 @@ export default class MyApp extends React.Component {
         const { id } = this.props.match.params
         switch (phase) {
             case 'contentlist':
-                return <ContentList content={currentFolder.content} />
+                return <ContentList content={currentFolder.content} onClick={this.handleDeleteContent} />
             case 'newfolder':
                 return <FormFolder addCallback={this.handleSubmitFolder} />
             // Explorer
@@ -192,9 +209,7 @@ export default class MyApp extends React.Component {
                 return <CodeList
                     folderName={codeFolder}
                     code={currentFolder.content[codeFolder]}
-                    index={currentIndex}
-                    appid={id}
-                    getData={this.getData} />
+                    appid={id} />
             default:
                 return <Explorer
                     addCallback={this.handleAddFolder}
@@ -226,16 +241,15 @@ export default class MyApp extends React.Component {
                     </Menu.Item>
                     {phase === 'contentlist' &&
                         <Menu.Item position="right">
-                            <ModalDrop render={(header="Upload content") => (<ContentDrop
+                            <ModalDrop render={(header = "Upload content") => (<ContentDrop
                                 index={currentIndex}
-                                folderName={currentFolderName}
                                 appid={id}
                                 getData={this.getData} />
                             )} />
                         </Menu.Item>}
                     {phase === 'codelist' &&
                         <Menu.Item position="right">
-                            <ModalDrop render={(header='Upload code') => (
+                            <ModalDrop render={(header = 'Upload code') => (
                                 <HTMLDrop
                                     appid={id}
                                     folder={codeFolder}
@@ -243,11 +257,6 @@ export default class MyApp extends React.Component {
                                     index={currentIndex}
                                     getData={this.getData} />
                             )} />
-                            {/* <ModalAppUpload
-                                appid={this.props.match.params.id} getData={this.getData}
-                                folder={codeFolder}
-                                index={currentIndex}
-                                folderName={currentFolderName} /> */}
                         </Menu.Item>}
                 </Menu>
                 <Navigator
