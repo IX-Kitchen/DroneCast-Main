@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const username = process.env.DB_USERNAME
 const password = process.env.DB_PASSWORD
-const host = process.env.HOST
+const host = process.env.DB_HOST
 const port = process.env.DB_PORT
 const dbName = process.env.DB_DATABASE_NAME
 const options = process.env.DB_OPTIONS
@@ -36,7 +36,7 @@ const droneSchema = require('./DroneSchema');
 async function testConnection() {
     try {
         const client = await MongoClient.connect(url);
-        console.log("dbLib: Connected successfully to server");
+        console.log("dbLib: Connected successfully to database");
         client.close();
     } catch (err) {
         console.log(err.stack);

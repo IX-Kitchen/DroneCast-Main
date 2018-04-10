@@ -7,6 +7,7 @@ if (hostname === '') {
 } else {
     backendHost = "http://localhost:8080";
 }
+//TO-DO 
 backendHost = "http://localhost:8080"
 export const BACK_ROOT = backendHost
 export const API_ROOT = `${backendHost}/api/`;

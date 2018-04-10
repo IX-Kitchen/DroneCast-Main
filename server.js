@@ -176,12 +176,13 @@ app.get("/api/apps/:id/content/:name", function (req, res) {
 });
 app.get("/api/apps/:id/qr", async function (req, res) {
     try {
-        //const data = await dbLib.findApp(req.params.id)
-        const qrdata = {
-            appdata: `${process.env.HOST}:${process.env.BACKEND_PORT}/api/apps/find/${req.params.id}`,
-            socketURL: `${process.env.HOST}:${process.env.BACKEND_PORT}`
-        }
-        res.json(qrdata);
+        const data = await dbLib.findApp(req.params.id)
+        data["socketURL"] = `${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}`
+        // const qrdata = {
+        //     appdata: `${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/api/apps/find/${req.params.id}`,
+        //     socketURL: `${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}`
+        // }
+        res.json(data);
     } catch (error) {
         next(error)
     }
@@ -246,7 +247,6 @@ app.delete("/api/drones/delete/:id", async function (req, res) {
 
 // Last middleware - No response - 404
 app.use(function (req, res, next) {
-    console.log(req.path)
     res.status(404);
     res.send({ error: 'Route not defined' });
 });
@@ -274,7 +274,8 @@ server.listen(port, async function () {
 // Socket logic
 var avDrones = new Map()
 
-const dronesIo = io.of('/drones'), apps = io.of('/clients');
+const dronesIo = io.of('/drones'),
+    apps = io.of('/clients');
 
 dronesIo.on('connection', (socket) => {
     console.log("Drone connected");
