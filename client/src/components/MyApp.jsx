@@ -6,10 +6,9 @@ import Explorer from './Explorer'
 import ContentList from './ContentList'
 import { Button, Icon, Menu, Divider, Segment } from 'semantic-ui-react'
 import request from 'superagent'
-import { API_ROOT } from '../api-config';
+import { API_ROOT, BACK_ROOT } from '../api-config';
 import CodeFolders from './CodeFolders';
 import ModalDrop from './ModalDrop'
-import CodeList from './CodeList';
 import HTMLDrop from './HTMLDrop';
 import ContentDrop from './ContentDrop';
 
@@ -114,16 +113,18 @@ export default class MyApp extends React.Component {
     }
 
     handleFolderClick(event, { value }) {
-        // Code folders
+        // Click on code folder (it is represented by a string, not an index)
         if (typeof value === 'string') {
-            this.setState({
-                phase: 'codelist',
-                codeFolder: value
-            })
+            const url = `${BACK_ROOT}/${this.props.match.params.id}/${value}`;
+            window.open(url, '_blank');
+            // this.setState({
+            //     phase: 'codelist',
+            //     codeFolder: value
+            // })
             return
         }
-        const folder = this.state.data.folders[value]
-        //console.log("MyApp handle folderclick",folder)      
+        //Click on a folder represented by an index
+        const folder = this.state.data.folders[value]     
         if (folder.type === 'code') {
             this.setState({
                 phase: 'codefolders',
@@ -192,7 +193,7 @@ export default class MyApp extends React.Component {
     // Switch display
     Display(props) {
         const { folders } = this.state.data
-        const { currentIndex, phase, codeFolder } = this.state
+        const { currentIndex, phase } = this.state
         // CurrentIndex can also be 0
         const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         const { id } = this.props.match.params
@@ -207,11 +208,11 @@ export default class MyApp extends React.Component {
             case 'codefolders':
                 return <CodeFolders
                     handleClick={this.handleFolderClick} />
-            case 'codelist':
-                return <CodeList
-                    folderName={codeFolder}
-                    code={currentFolder.content[codeFolder]}
-                    appid={id} />
+            // case 'codelist':
+            //     return <CodeList
+            //         folderName={codeFolder}
+            //         code={currentFolder.content[codeFolder]}
+            //         appid={id} />
             default:
                 return <Explorer
                     addCallback={this.handleAddFolder}

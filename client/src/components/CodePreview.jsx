@@ -2,8 +2,7 @@ import React from 'react'
 import { Embed } from 'semantic-ui-react'
 import { BACK_ROOT } from '../api-config';
 
-const CodeList = ({ code, appid, folderName}) =>
-
+const CodePreview = ({ code, appid, folderName}) =>
     <div>
         {code.includes('index.html') &&
             <Embed
@@ -12,4 +11,4 @@ const CodeList = ({ code, appid, folderName}) =>
             />
         }
     </div>
-export default CodeList
+export default CodePreview
