@@ -275,14 +275,14 @@ server.listen(port, async function () {
 var avDrones = new Map()
 
 const dronesIo = io.of('/drones'),
-    apps = io.of('/clients');
+    appsIo = io.of('/clients');
 
 dronesIo.on('connection', (socket) => {
     console.log("Drone connected");
 
     socket.on('message', (msg) => {
         console.log("From Drone to server:", msg);
-        //apps.emit('message',msg)
+        //To apps -> apps.emit('message',msg)
     });
 
     socket.on('init', (msg) => {
@@ -304,11 +304,15 @@ dronesIo.on('connection', (socket) => {
         }
     })
 });
-apps.on('connection', (socket) => {
+appsIo.on('connection', (socket) => {
     console.log("Client connected");
 
     socket.on('message', (msg) => {
         console.log("From client to server:", msg);
+    });
+    socket.on('toHTML', (msg) => {
+        console.log("From HTML to HTML:", msg);
+        dronesIo.emit('toHTML', msg)
     });
     socket.on('data', (msg) => {
         console.log("Data sent from client to drone:", msg)
@@ -321,6 +325,9 @@ apps.on('connection', (socket) => {
                 }
             });
         }
+    })
+    socket.on('disconnect', (reason) => {
+        console.log('Client disconnected. Reason:', reason)
     })
 });
 

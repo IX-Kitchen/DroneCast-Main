@@ -9,10 +9,9 @@ import request from 'superagent'
 import { API_ROOT, BACK_ROOT } from '../api-config';
 import CodeFolders from './CodeFolders';
 import ModalDrop from './ModalDrop'
-import HTMLDrop from './HTMLDrop';
 import ContentDrop from './ContentDrop';
 
-// Phase: ContentList/Explorer/NewFolder/codefolders/codelist
+// Phase: ContentList/Explorer/NewFolder/codefolders
 export default class MyApp extends React.Component {
     constructor(props) {
         super(props);
@@ -193,7 +192,7 @@ export default class MyApp extends React.Component {
     // Switch display
     Display(props) {
         const { folders } = this.state.data
-        const { currentIndex, phase } = this.state
+        const { currentIndex, phase, currentFolderName } = this.state
         // CurrentIndex can also be 0
         const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         const { id } = this.props.match.params
@@ -207,12 +206,10 @@ export default class MyApp extends React.Component {
             // Explorer
             case 'codefolders':
                 return <CodeFolders
-                    handleClick={this.handleFolderClick} />
-            // case 'codelist':
-            //     return <CodeList
-            //         folderName={codeFolder}
-            //         code={currentFolder.content[codeFolder]}
-            //         appid={id} />
+                    handleClick={this.handleFolderClick}
+                    id={id}
+                    currentFolderName={currentFolderName}
+                    currentIndex={currentIndex} />
             default:
                 return <Explorer
                     addCallback={this.handleAddFolder}
@@ -248,17 +245,6 @@ export default class MyApp extends React.Component {
                                 index={currentIndex}
                                 appid={id}
                                 getData={this.getData} />
-                            )} />
-                        </Menu.Item>}
-                    {phase === 'codelist' &&
-                        <Menu.Item position="right">
-                            <ModalDrop render={(header = 'Upload code') => (
-                                <HTMLDrop
-                                    appid={id}
-                                    folder={codeFolder}
-                                    folderName={currentFolderName}
-                                    index={currentIndex}
-                                    getData={this.getData} />
                             )} />
                         </Menu.Item>}
                 </Menu>

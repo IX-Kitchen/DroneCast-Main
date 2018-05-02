@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Client Test</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
+  <script src="client.js" type="text/javascript"></script> 
+</head>
+
+<body>
+  <h1>Client Test</h1>
+  <form id="main">
+    <textarea id="textArea" class="scroll" rows="4" cols="50"
+    style="font-size: 15pt" placeholder="Insert text"></textarea>
+    <div id="properties">
+      Font Color:
+      <input type="color" id="colorPicker" value="#000000">
+      </br> Font Size (pt):
+      <input type="number" id="sizePicker" value="15">
+      </br> Background Color:
+      <input type="color" id="backgroundPicker" value="#FFFFFF">
+      <br/> Scroll rate:
+      <input type="number" id="scrollPicker" value=1>
+    </div>
+    <button type="button" class="property" onclick="onSend()">Send</button>  
+  </form>
+</body>
+
+</html>
