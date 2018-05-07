@@ -5,7 +5,9 @@ var backPicker
 var scrollPicker
 var textArea
 
-const socket = io('http://localhost:8080/clients');
+const prod = 'http://dronecast.westeurope.cloudapp.azure.com:8080/clients'
+const dev = "http://localhost:8080/clients"
+const socket = io(dev);
 
 window.addEventListener("load", startup, false);
 window.addEventListener("beforeunload", closeSocket, false);
@@ -51,6 +53,9 @@ function watchScrollPicker(event){
 // }
 
 function onSend(){
+    if (textArea.value === ""){
+        alert("Text is empty")
+    }
     let data= {
         text: textArea.value,
         fontColor: colorPicker.value,
@@ -59,5 +64,4 @@ function onSend(){
         scrollRate: scrollPicker.value
     }
     socket.emit('toHTML', data);
-    alert("Data sent!")
 }

@@ -311,7 +311,7 @@ appsIo.on('connection', (socket) => {
         console.log("From client to server:", msg);
     });
     socket.on('toHTML', (msg) => {
-        console.log("From HTML to HTML:", msg);
+        //console.log("From HTML to HTML:", msg);
         dronesIo.emit('toHTML', msg)
     });
     socket.on('data', (msg) => {

@@ -11,18 +11,18 @@
 
 <body>
   <h1>Client Test</h1>
-  <form id="main">
+  <form class="main">
     <textarea id="textArea" class="scroll" rows="4" cols="50"
-    style="font-size: 15pt" placeholder="Insert text"></textarea>
+    style="font-size: 25pt"></textarea>
     <div id="properties">
       Font Color:
       <input type="color" id="colorPicker" value="#000000">
       </br> Font Size (pt):
-      <input type="number" id="sizePicker" value="15">
+      <input type="number" id="sizePicker" value="25">
       </br> Background Color:
       <input type="color" id="backgroundPicker" value="#FFFFFF">
-      <br/> Scroll rate:
-      <input type="number" id="scrollPicker" value=1>
+      <br/> Scroll rate (s):
+      <input type="number" id="scrollPicker" value=5>
     </div>
     <button type="button" class="property" onclick="onSend()">Send</button>  
   </form>

@@ -1,0 +1,75 @@
+.main{
+    height: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+.marquee {
+    height: 100%;	
+    overflow: hidden;
+    position: relative;
+   }
+.marquee h3 {
+    font-size: 3em;
+    color: black;
+    position: relative;
+    top:50%;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    /* line-height: 50px; */
+    text-align: center;
+    /* Starting position */
+    -moz-transform:translateX(100%);
+    -webkit-transform:translateX(100%);	
+    transform:translateX(100%);
+    /* Apply animation to this element */	
+    -moz-animation: example1 5s linear infinite;
+    -webkit-animation: example1 5s linear infinite;
+    animation: example1 5s linear infinite;
+   }
+   /* Move it (define the animation) */
+@-moz-keyframes example1 {
+0%   { -moz-transform: translateX(100%); }
+100% { -moz-transform: translateX(-100%); }
+}
+@-webkit-keyframes example1 {
+0%   { -webkit-transform: translateX(100%); }
+100% { -webkit-transform: translateX(-100%); }
+}
+@keyframes example1 {
+    0%   { 
+    -moz-transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%); 		
+    }
+    100% { 
+    -moz-transform: translateX(-100%);
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%); 
+    }
+}
+
+.scroll{
+    overflow: auto;
+    height: auto;
+    width: 50%;
+}
+
+#properties{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.property{
+    height: 10%;
+}
