@@ -20,9 +20,11 @@ const server = require('http').createServer(app);
 const port = process.env.BACKEND_PORT || 8080;
 // CORS
 const cors = require('cors');
-
+// Sockets
 const io = require('socket.io')(server)
-
+// Zip
+const fs = require('fs');
+const archiver = require('archiver');
 
 // Connection to Mongo
 const dbLib = require('./database/dbLib.js');
@@ -41,8 +43,6 @@ app.use(cors());
 // Serve static files
 // URL/id/drone
 app.use(express.static(__dirname + '/database/apps'));
-
-const fs = require('fs');
 
 // Upload content
 const contentStorage = multer.diskStorage({
@@ -186,6 +186,28 @@ app.get("/api/apps/:id/qr", async function (req, res) {
     } catch (error) {
         next(error)
     }
+})
+app.get("/api/apps/:id/download/:name", async function (req, res, next) {
+    let archive = archiver('zip', {});
+    archive.on('error', function (err) {
+        throw err;
+    });
+    archive.on('warning', function (err) {
+        if (err.code === 'ENOENT') {
+            console.log(err)
+        } else {
+            throw err;
+        }
+    });
+    const path = `./database/apps/${req.params.id}/${req.params.name}`
+    if (!fs.existsSync(path)) {
+        return next({message: "Path does not exist"})
+    }
+    archive.directory(path, false);
+    archive.pipe(res)
+    archive.finalize()
+    res.header('Content-Type', 'application/zip');
+    res.header('Content-Disposition', `attachment; filename=${req.params.id}.zip`);
 })
 
 //Drones

@@ -32,6 +32,7 @@ export default class MyApp extends React.Component {
         this.handleNavClick = this.handleNavClick.bind(this)
         this.handleChangeFolderName = this.handleChangeFolderName.bind(this)
         this.handleDeleteContent = this.handleDeleteContent.bind(this)
+        this.downloadClick = this.downloadClick.bind(this)
         this.Display = this.Display.bind(this)
     }
 
@@ -188,6 +189,9 @@ export default class MyApp extends React.Component {
                 return [error]
             })
     }
+    downloadClick(event, { value }){
+        window.open(`${API_ROOT}apps/${this.props.match.params.id}/download/${value}`, '_blank');
+    }
 
     // Switch display
     Display(props) {
@@ -207,6 +211,7 @@ export default class MyApp extends React.Component {
             case 'codefolders':
                 return <CodeFolders
                     handleClick={this.handleFolderClick}
+                    downloadClick={this.downloadClick}
                     id={id}
                     currentFolderName={currentFolderName}
                     currentIndex={currentIndex} />

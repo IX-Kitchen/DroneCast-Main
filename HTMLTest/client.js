@@ -7,7 +7,7 @@ var textArea
 
 const prod = 'http://dronecast.westeurope.cloudapp.azure.com:8080/clients'
 const dev = "http://localhost:8080/clients"
-const socket = io(dev);
+const socket = io(prod);
 
 window.addEventListener("load", startup, false);
 window.addEventListener("beforeunload", closeSocket, false);
@@ -23,10 +23,10 @@ function startup() {
     scrollPicker = document.querySelector("#scrollPicker");
     textArea = document.querySelector("#textArea");    
 
-    colorPicker.addEventListener("change", watchColorPicker, false);
-    sizePicker.addEventListener("change", watchSizePicker, false);
-    backPicker.addEventListener("change", watchBackPicker, false);    
-    scrollPicker.addEventListener("change", watchScrollPicker, false);
+    // colorPicker.addEventListener("change", watchColorPicker, false);
+    // sizePicker.addEventListener("change", watchSizePicker, false);
+    // backPicker.addEventListener("change", watchBackPicker, false);    
+    // scrollPicker.addEventListener("change", watchScrollPicker, false);
     //textArea.addEventListener("change", watchTextArea, false);
 }
 

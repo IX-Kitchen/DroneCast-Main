@@ -7,33 +7,38 @@
 }
 
 html, body {
-    margin: 0;
     height: 100%;
+    margin: 0;
 }
 
 .marquee {
-    height: 100%;	
+    height: 100%;
+    flex: 1;
+    margin: 0 auto;
+    text-align: center;
+    vertical-align: middle;
     overflow: hidden;
     position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
    }
 .marquee h3 {
+    white-space: nowrap;
     font-size: 3em;
     color: black;
-    position: relative;
-    top:50%;
-    width: 100%;
-    height: 100%;
+    width: -moz-max-content;
+    width: -webkit-max-content;
     margin: 0;
     /* line-height: 50px; */
-    text-align: center;
     /* Starting position */
-    -moz-transform:translateX(100%);
+    -moz-transform:translateX(100%) translateY(-50%);
     -webkit-transform:translateX(100%);	
     transform:translateX(100%);
     /* Apply animation to this element */	
-    -moz-animation: example1 5s linear infinite;
-    -webkit-animation: example1 5s linear infinite;
-    animation: example1 5s linear infinite;
+    -moz-animation: example1 3s linear infinite;
+    -webkit-animation: example1 3s linear infinite;
+    animation: example1 3s linear infinite;
    }
    /* Move it (define the animation) */
 @-moz-keyframes example1 {
@@ -48,7 +53,7 @@ html, body {
     0%   { 
     -moz-transform: translateX(100%);
     -webkit-transform: translateX(100%);
-    transform: translateX(100%); 		
+    transform: translateX(100vw); 		
     }
     100% { 
     -moz-transform: translateX(-100%);
