@@ -1,9 +1,11 @@
+
 .main{
     height: 80%;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    align-items: center
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 html, body {
@@ -23,6 +25,8 @@ html, body {
     justify-content: center;
     flex-direction: column;
    }
+
+
 .marquee h3 {
     white-space: nowrap;
     font-size: 3em;
@@ -39,7 +43,7 @@ html, body {
     -moz-animation: example1 3s linear infinite;
     -webkit-animation: example1 3s linear infinite;
     animation: example1 3s linear infinite;
-   }
+}
    /* Move it (define the animation) */
 @-moz-keyframes example1 {
 0%   { -moz-transform: translateX(100%); }
@@ -65,7 +69,7 @@ html, body {
 .scroll{
     overflow: auto;
     height: auto;
-    width: 50%;
+    width: 70%;
 }
 
 #properties{

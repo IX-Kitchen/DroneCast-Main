@@ -68,6 +68,7 @@ const contentUpload = multer({ storage: contentStorage }).array("imgUploader", 3
 const appStorage = multer.diskStorage({
     destination: function (req, file, cb) {
         let dir = "./database/apps"
+        let name = file.originalname.slice()
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
@@ -75,18 +76,30 @@ const appStorage = multer.diskStorage({
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
+        //database/apps/appId/Display-Phone
         dir = `${dir}/${req.body.folder}`
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
+        }
+        if(name.includes("-")){
+            let index = name.indexOf("-")
+            let folder = name.slice(0,index)
+            dir = `${dir}/${folder}`
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir);
         }
         //console.log("Server appstorage", req.body, file)
         cb(null, dir)
     },
     filename: function (req, file, callback) {
-        if (file.mimetype === 'text/html') {
-            file.originalname = 'index.html'
+        let name = file.originalname.slice()
+        if(name.includes("-")){
+            let index = name.indexOf("-")
+            name = name.slice(index+1)
         }
-        callback(null, file.originalname);
+        if (file.mimetype === 'text/html') {
+            name = 'index.html'
+        }
+        callback(null, name);
     }
 });
 const appUpload = multer({ storage: appStorage }).array("appUploader", 5);

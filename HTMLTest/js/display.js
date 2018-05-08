@@ -20,7 +20,7 @@ function startup() {
 socket.on('toHTML', (data) => {
     document.body.style.backgroundColor = data.backColor
     textArea.style.color = data.fontColor
-    textArea.style.fontSize = `${data.fontSize}pt`
+    textArea.style.fontSize = `${data.fontSize}vh`
     textArea.textContent = data.text
     textArea.style.animationDuration = `${data.scrollRate}s`
 })

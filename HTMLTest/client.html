@@ -3,28 +3,28 @@
 
 <head>
   <title>Client Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8" />
-  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+  <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
-  <script src="client.js" type="text/javascript"></script> 
+  <script src="js/client.js" type="text/javascript"></script>
 </head>
 
 <body>
   <h1>Client Test</h1>
   <form class="main">
-    <textarea id="textArea" class="scroll" rows="4" cols="50"
-    style="font-size: 25pt"></textarea>
+    <textarea id="textArea" class="scroll" rows="4" cols="50" style="font-size: 5vh"></textarea>
     <div id="properties">
       Font Color:
       <input type="color" id="colorPicker" value="#000000">
-      </br> Font Size (pt):
-      <input type="number" id="sizePicker" value="25">
+      </br> Font Size:
+      <input type="number" id="sizePicker" value="5">
       </br> Background Color:
       <input type="color" id="backgroundPicker" value="#FFFFFF">
       <br/> Animation duration (s):
       <input type="number" id="scrollPicker" value=5>
     </div>
-    <button type="button" class="property" onclick="onSend()">Send</button>  
+    <button type="button" class="property" onclick="onSend()">Send</button>
   </form>
 </body>
 
