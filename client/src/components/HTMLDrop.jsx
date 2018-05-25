@@ -28,10 +28,11 @@ var eventHandlers = {
 function rename(file) {
     if (file.fullPath !== undefined) {
         // It does not accept folder/file.js
-        return file.fullPath.replace("/","-")
+        const temp = file.fullPath.replace(new RegExp('/', 'g'),"-")
+        return temp
     }
 }
-const AppDropzone = ({ appid, getData, folder, folderName, index }) => {
+const HTMLDrop = ({ appid, getData, folder, folderName, index }) => {
 
     // Folder = Drone
     // FolderName = DB bug, keep name
@@ -49,4 +50,4 @@ const AppDropzone = ({ appid, getData, folder, folderName, index }) => {
     );
 }
 
-export default AppDropzone
+export default HTMLDrop

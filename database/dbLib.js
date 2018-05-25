@@ -124,7 +124,7 @@ async function addAppContent(id, index, content) {
         const col = db.collection(appCol);
 
         //const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: setName, $push: push });
-        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, {$addToSet: push });
+        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $addToSet: push });
         client.close();
     } catch (err) {
         console.log(err.stack);
@@ -145,21 +145,36 @@ async function deleteAppContent(id, index, content) {
         console.log(err.stack);
     }
 }
-async function addAppCode(index, id, folder, folderName, file) {
-    const field = `appdata.folders.${index}.content.${folder}`
+async function addAppCode(index, id, folder, path, folderName, file) {
+    const field = `appdata.folders.${index}.content`
     const nameField = `appdata.folders.${index}.name`
     const setName = { [nameField]: folderName }
-    const push = { [field]: file }
     try {
         const client = await MongoClient.connect(url);
         const db = client.db(dbName);
-
         const col = db.collection(appCol);
+        const push = { [field]: path }
+        const r1 = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: setName, $addToSet: push })
 
-        const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: setName, $addToSet: push });
+        // if (path) {
+        //     // Exists js, css folder?
+        //     const r1 = await col.count({ _id: mongo.ObjectID(id), [`${field}.${path}`]: { $exists: true } })
+        //     if (r1 === 0) {
+        //         const push = { [field]: { [path]: [file] } }
+        //         await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: setName, $push: push });
+        //     } else {
+        //         const push = { [`${field}.$.${path}`]: file}
+        //         await col.updateOne({ _id: mongo.ObjectID(id), [`${field}.${path}`]: { $exists: true } },
+        //             { $set: setName, $addToSet: push }
+        //         );
+        //     }
+        // } else {
+        //     const push = { [field]: file }
+        //     const r = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: setName, $addToSet: push });
+        // }
         client.close();
     } catch (err) {
-        console.log(err.stack);
+        console.log(err);
     }
 }
 

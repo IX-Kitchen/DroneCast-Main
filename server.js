@@ -48,13 +48,14 @@ app.use(express.static(__dirname + '/database/apps'));
 const contentStorage = multer.diskStorage({
     destination: function (req, file, cb) {
         let dir = "./database/media"
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-        }
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+
         dir = `${dir}/${req.body.appid}`
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-        }
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+
+        dir = `${dir}/${req.body.folderName}`
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+
         cb(null, dir)
     },
     filename: function (req, file, callback) {
@@ -69,21 +70,22 @@ const appStorage = multer.diskStorage({
     destination: function (req, file, cb) {
         let dir = "./database/apps"
         let name = file.originalname.slice()
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-        }
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir)
+
         dir = `${dir}/${req.body.appid}`
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-        }
-        //database/apps/appId/Display-Phone
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir)
+
+        dir = `${dir}/${req.body.folderName}`
+        console.log(req.body, dir)
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir)
+
+        //database/apps/appId/folderName/Display-Phone
         dir = `${dir}/${req.body.folder}`
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-        }
-        if(name.includes("-")){
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir)
+
+        if (name.includes("-")) {
             let index = name.indexOf("-")
-            let folder = name.slice(0,index)
+            let folder = name.slice(0, index)
             dir = `${dir}/${folder}`
             if (!fs.existsSync(dir)) fs.mkdirSync(dir);
         }
@@ -92,11 +94,11 @@ const appStorage = multer.diskStorage({
     },
     filename: function (req, file, callback) {
         let name = file.originalname.slice()
-        if(name.includes("-")){
+        if (name.includes("-")) {
             let index = name.indexOf("-")
-            name = name.slice(index+1)
+            name = name.slice(index + 1)
         }
-        if (file.mimetype === 'text/html') {
+        if (file.mimetype === 'text/html' && !name.includes("-")) {
             name = 'index.html'
         }
         callback(null, name);
@@ -133,10 +135,18 @@ app.post("/api/apps/appupload", function (req, res) {
             console.log(err)
             return res.status(500).send("Something went wrong Uploading the app!");
         }
-        const { appid, folder, folderName, index } = req.body
-        for (let i = 0; i < req.files.length; i++) {
-            await dbLib.addAppCode(index, appid, folder, folderName, req.files[i].filename)
-        }
+        // console.log(req.files)
+        // const { appid, folder, folderName, index } = req.body
+        // for (let i = 0; i < req.files.length; i++) {
+        //     let path
+        //     let name = req.files[i].originalname.slice()
+        //     if (name.includes("-")) {
+        //         let index = name.indexOf("-")
+        //         path = name.slice(0, index)
+        //         name = name.slice(index + 1)
+        //         await dbLib.addAppCode(index, appid, folder, path, folderName)
+        //     }
+        // }
         res.send({ response: "contentUpload complete!" })
     });
 });
@@ -184,8 +194,8 @@ app.get("/api/apps/find/:id", async function (req, res) {
 });
 
 //Content
-app.get("/api/apps/:id/content/:name", function (req, res) {
-    res.sendFile(path.join(__dirname, './database/media/', req.params.id, '/', req.params.name));
+app.get("/api/apps/:id/content/:folder/:name", function (req, res) {
+    res.sendFile(path.join(__dirname, './database/media/', req.params.id, '/', req.params.folder, '/', req.params.name));
 });
 app.get("/api/apps/:id/qr", async function (req, res) {
     try {
@@ -214,7 +224,7 @@ app.get("/api/apps/:id/download/:name", async function (req, res, next) {
     });
     const path = `./database/apps/${req.params.id}/${req.params.name}`
     if (!fs.existsSync(path)) {
-        return next({message: "Path does not exist"})
+        return next({ message: "Path does not exist" })
     }
     archive.directory(path, false);
     archive.pipe(res)

@@ -114,8 +114,9 @@ export default class MyApp extends React.Component {
 
     handleFolderClick(event, { value }) {
         // Click on code folder (it is represented by a string, not an index)
+        const {currentFolderName} = this.state
         if (typeof value === 'string') {
-            const url = `${BACK_ROOT}/${this.props.match.params.id}/${value}`;
+            const url = `${BACK_ROOT}/${this.props.match.params.id}/${currentFolderName}/${value}`;
             window.open(url, '_blank');
             // this.setState({
             //     phase: 'codelist',
@@ -204,6 +205,7 @@ export default class MyApp extends React.Component {
             case 'contentlist':
                 return <ContentList content={currentFolder.content}
                 onClick={this.handleDeleteContent}
+                folder={currentFolderName}
                 appid = {id}/>
             case 'newfolder':
                 return <FolderForm addCallback={this.handleSubmitFolder} />
@@ -249,6 +251,7 @@ export default class MyApp extends React.Component {
                             <ModalDrop render={(header = "Upload content") => (<ContentDrop
                                 index={currentIndex}
                                 appid={id}
+                                folderName={currentFolderName}
                                 getData={this.getData} />
                             )} />
                         </Menu.Item>}

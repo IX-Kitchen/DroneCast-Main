@@ -16,7 +16,7 @@ const imageStyle = {
     margin: '0 auto'
 }
 
-const ContentList = ({ content, onClick, appid}) =>
+const ContentList = ({ content, onClick, appid, folder}) =>
     <Transition.Group
         as={Grid}
         duration={200}
@@ -35,23 +35,23 @@ const ContentList = ({ content, onClick, appid}) =>
                             {videoExtensions.includes(item.split('.').pop()) ? (
                                 <Modal style={modalStyle} basic size="small"
                                     trigger={<video width="150" height="84,4">
-                                        <source src={`${API_ROOT}apps/${appid}/content/${item}`} />
+                                        <source src={`${API_ROOT}apps/${appid}/content/${folder}/${item}`} />
                                     </video>}>
                                     <Modal.Header>{item}</Modal.Header>
                                     <Modal.Content>
                                         <Embed
                                             icon='video play'
-                                            url={`${API_ROOT}apps/${appid}/content/${item}`} />
+                                            url={`${API_ROOT}apps/${appid}/content/${folder}/${item}`} />
                                     </Modal.Content>
                                 </Modal>
                             ) : (
                                     <Modal style={modalStyle} basic
                                         trigger={<Image rounded size="small"
-                                            src={`${API_ROOT}apps/${appid}/content/${item}`} />}>
+                                            src={`${API_ROOT}apps/${appid}/content/${folder}/${item}`} />}>
                                         <Modal.Header style={imageStyle}>{item}</Modal.Header>
                                         <Modal.Content style={imageStyle}>
                                             <Image rounded size="big"
-                                                src={`${API_ROOT}apps/${appid}/content/${item}`} />
+                                                src={`${API_ROOT}apps/${appid}/content/${folder}/${item}`} />
                                         </Modal.Content>
                                     </Modal>
                                 )}

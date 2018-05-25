@@ -48,5 +48,5 @@ const CodeFolders = ({ id, currentFolderName, currentIndex, handleClick, downloa
                 </Grid.Column>
             </Grid>
         </Transition.Group>
-    </div >
+    </div>
 export default CodeFolders
