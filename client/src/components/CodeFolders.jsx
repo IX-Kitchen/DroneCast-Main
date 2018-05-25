@@ -3,7 +3,7 @@ import { Transition, Grid, Button, Icon } from 'semantic-ui-react'
 import HTMLDrop from './HTMLDrop';
 import ModalDrop from './ModalDrop'
 
-const CodeFolders = ({ id, currentFolderName, currentIndex, handleClick, downloadClick }) =>
+const CodeFolders = ({ appid, folderId, currentIndex, handleClick, downloadClick }) =>
     <div>
         <Transition.Group
             as={Grid}
@@ -17,9 +17,9 @@ const CodeFolders = ({ id, currentFolderName, currentIndex, handleClick, downloa
                         onClick={handleClick} />
                     <ModalDrop render={(header = 'Upload code') => (
                         <HTMLDrop
-                            appid={id}
-                            folder={'Display'}
-                            folderName={currentFolderName}
+                            appid={appid}
+                            folderName={'Display'}
+                            folderId={folderId}
                             index={currentIndex} />
                     )} />
                     <Button basic color='black' animated='fade' value={'Display'} onClick={downloadClick}>
@@ -34,9 +34,9 @@ const CodeFolders = ({ id, currentFolderName, currentIndex, handleClick, downloa
                         onClick={handleClick} />
                     <ModalDrop render={(header = 'Upload code') => (
                         <HTMLDrop
-                            appid={id}
-                            folder={'Phone'}
-                            folderName={currentFolderName}
+                            appid={appid}
+                            folderName={'Phone'}
+                            folderId={folderId}
                             index={currentIndex} />
                     )} />
                     <Button basic color='black' animated='fade' value={'Phone'} onClick={downloadClick}>

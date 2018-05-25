@@ -53,7 +53,7 @@ const contentStorage = multer.diskStorage({
         dir = `${dir}/${req.body.appid}`
         if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
-        dir = `${dir}/${req.body.folderName}`
+        dir = `${dir}/${req.body.folderId}`
         if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
         cb(null, dir)
@@ -75,12 +75,11 @@ const appStorage = multer.diskStorage({
         dir = `${dir}/${req.body.appid}`
         if (!fs.existsSync(dir)) fs.mkdirSync(dir)
 
-        dir = `${dir}/${req.body.folderName}`
-        console.log(req.body, dir)
+        dir = `${dir}/${req.body.folderId}`
         if (!fs.existsSync(dir)) fs.mkdirSync(dir)
 
         //database/apps/appId/folderName/Display-Phone
-        dir = `${dir}/${req.body.folder}`
+        dir = `${dir}/${req.body.folderName}`
         if (!fs.existsSync(dir)) fs.mkdirSync(dir)
 
         if (name.includes("-")) {

@@ -3,6 +3,7 @@ import { Button, Form, Segment, Label } from 'semantic-ui-react'
 import request from "superagent"
 import { Redirect } from 'react-router-dom';
 import { API_ROOT } from '../api-config';
+import shortid from 'shortid'
 
 export default class NewAppForm extends React.Component {
   constructor(props) {
@@ -40,6 +41,7 @@ export default class NewAppForm extends React.Component {
         {
           name: "Content",
           type: 'content',
+          id: shortid.generate(),
           content: []
         }
       ]

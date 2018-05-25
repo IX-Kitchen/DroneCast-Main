@@ -32,13 +32,13 @@ function rename(file) {
         return temp
     }
 }
-const HTMLDrop = ({ appid, getData, folder, folderName, index }) => {
+const HTMLDrop = ({ appid, getData, folderId, folderName, index }) => {
 
     // Folder = Drone
     // FolderName = DB bug, keep name
     djsConfig.params = {
         appid: appid,
-        folder: folder,
+        folderId: folderId,
         index: index,
         folderName: folderName
     }

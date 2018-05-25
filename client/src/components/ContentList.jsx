@@ -16,7 +16,7 @@ const imageStyle = {
     margin: '0 auto'
 }
 
-const ContentList = ({ content, onClick, appid, folder}) =>
+const ContentList = ({ content, onClick, appid, folder }) =>
     <Transition.Group
         as={Grid}
         duration={200}

@@ -10,6 +10,7 @@ import { API_ROOT, BACK_ROOT } from '../api-config';
 import CodeFolders from './CodeFolders';
 import ModalDrop from './ModalDrop'
 import ContentDrop from './ContentDrop';
+import shortid from 'shortid'
 
 // Phase: ContentList/Explorer/NewFolder/codefolders
 export default class MyApp extends React.Component {
@@ -19,7 +20,7 @@ export default class MyApp extends React.Component {
             data: { name: "", folders: [] },
             currentIndex: undefined,
             currentFolderName: '',
-            codeFolder: '',
+            currentFolderId: '',
             ready: false,
             phase: 'explorer'
         }
@@ -64,6 +65,7 @@ export default class MyApp extends React.Component {
                 newFolder = {
                     "name": name,
                     'type': type,
+                    'id': shortid.generate(),
                     "content": {
                         "Phone": [],
                         "Display": []
@@ -74,6 +76,7 @@ export default class MyApp extends React.Component {
                 newFolder = {
                     "name": name,
                     'type': type,
+                    'id': shortid.generate(),
                     "content": []
                 };
                 break
@@ -114,31 +117,21 @@ export default class MyApp extends React.Component {
 
     handleFolderClick(event, { value }) {
         // Click on code folder (it is represented by a string, not an index)
-        const {currentFolderName} = this.state
+        const { currentFolderId } = this.state
         if (typeof value === 'string') {
-            const url = `${BACK_ROOT}/${this.props.match.params.id}/${currentFolderName}/${value}`;
+            const url = `${BACK_ROOT}/${this.props.match.params.id}/${currentFolderId}/${value}`;
             window.open(url, '_blank');
-            // this.setState({
-            //     phase: 'codelist',
-            //     codeFolder: value
-            // })
             return
         }
         //Click on a folder represented by an index
-        const folder = this.state.data.folders[value]     
-        if (folder.type === 'code') {
-            this.setState({
-                phase: 'codefolders',
-                currentIndex: value,
-                currentFolderName: folder.name
-            })
-        } else {
-            this.setState({
-                phase: 'contentlist',
-                currentIndex: value,
-                currentFolderName: folder.name
-            })
-        }
+        const folder = this.state.data.folders[value]
+        let phase = folder.type === 'code' ? 'codefolders' : 'contentlist'
+        this.setState({
+            phase: phase,
+            currentIndex: value,
+            currentFolderName: folder.name,
+            currentFolderId: folder.id
+        })
     }
 
     handleNavClick(event, { value }) {
@@ -147,13 +140,11 @@ export default class MyApp extends React.Component {
             this.setState({
                 phase: 'explorer',
                 currentIndex: undefined,
-                codeFolder: '',
                 currentFolderName: ''
             })
         } else {
             this.setState({
-                phase: 'codefolders',
-                codeFolder: ''
+                phase: 'codefolders'
             })
         }
     }
@@ -190,23 +181,23 @@ export default class MyApp extends React.Component {
                 return [error]
             })
     }
-    downloadClick(event, { value }){
+    downloadClick(event, { value }) {
         window.open(`${API_ROOT}apps/${this.props.match.params.id}/download/${value}`, '_blank');
     }
 
     // Switch display
     Display(props) {
         const { folders } = this.state.data
-        const { currentIndex, phase, currentFolderName } = this.state
+        const { currentIndex, phase, currentFolderId } = this.state
         // CurrentIndex can also be 0
         const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         const { id } = this.props.match.params
         switch (phase) {
             case 'contentlist':
                 return <ContentList content={currentFolder.content}
-                onClick={this.handleDeleteContent}
-                folder={currentFolderName}
-                appid = {id}/>
+                    onClick={this.handleDeleteContent}
+                    folder={currentFolderId}
+                    appid={id} />
             case 'newfolder':
                 return <FolderForm addCallback={this.handleSubmitFolder} />
             // Explorer
@@ -214,8 +205,8 @@ export default class MyApp extends React.Component {
                 return <CodeFolders
                     handleClick={this.handleFolderClick}
                     downloadClick={this.downloadClick}
-                    id={id}
-                    currentFolderName={currentFolderName}
+                    appid={id}
+                    folderId={currentFolderId}
                     currentIndex={currentIndex} />
             default:
                 return <Explorer
@@ -231,7 +222,7 @@ export default class MyApp extends React.Component {
     render() {
         console.log(this.state)
         const { name } = this.state.data
-        const { ready, currentIndex, currentFolderName, codeFolder, phase } = this.state
+        const { ready, currentIndex, currentFolderName, currentFolderId, phase } = this.state
         const { id } = this.props.match.params
         // currentIndex can be 0
         //const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
@@ -251,7 +242,7 @@ export default class MyApp extends React.Component {
                             <ModalDrop render={(header = "Upload content") => (<ContentDrop
                                 index={currentIndex}
                                 appid={id}
-                                folderName={currentFolderName}
+                                folderId={currentFolderId}
                                 getData={this.getData} />
                             )} />
                         </Menu.Item>}
@@ -259,7 +250,6 @@ export default class MyApp extends React.Component {
                 <Navigator
                     id={name}
                     folder={currentFolderName}
-                    codeFolder={codeFolder}
                     handleClick={this.handleNavClick} />
                 <Divider horizontal />
                 <Segment color='teal' loading={!ready}>

@@ -25,12 +25,12 @@ var eventHandlers = {
     //success: (file) => console.log("Success"),
 }
 
-const Dropzone = ({ appid, index, getData, folderName }) => {
+const ContentDrop = ({ appid, index, getData, folderId }) => {
 
     djsConfig.params = {
         appid: appid,
         index: index,
-        folderName: folderName
+        folderId: folderId
     }
     eventHandlers.complete = getData;
     return (
@@ -39,4 +39,4 @@ const Dropzone = ({ appid, index, getData, folderName }) => {
             djsConfig={djsConfig} />
     );
 }
-export default Dropzone
+export default ContentDrop
