@@ -24,7 +24,7 @@ export default class AppList extends React.Component {
     componentDidMount() {
         this.updateData();
     }
-    deleteApp(event, {value}) {
+    deleteApp(event, { value }) {
         this.setState({ ready: false })
         request
             .delete(API_ROOT + 'apps/delete/' + value)
@@ -40,7 +40,7 @@ export default class AppList extends React.Component {
     render() {
         const { apps, ready } = this.state
         return (
-            <Segment color='teal' loading={!ready}>
+            <Segment color='teal' loading={!ready && apps !== null}>
                 <Table basic='very'>
                     <Table.Header>
                         <Table.Row>

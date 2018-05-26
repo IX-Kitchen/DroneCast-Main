@@ -182,7 +182,8 @@ export default class MyApp extends React.Component {
             })
     }
     downloadClick(event, { value }) {
-        window.open(`${API_ROOT}apps/${this.props.match.params.id}/download/${value}`, '_blank');
+        const {currentFolderId} = this.state
+        window.open(`${API_ROOT}apps/${this.props.match.params.id}/download/${currentFolderId}/${value}`, '_blank');
     }
 
     // Switch display

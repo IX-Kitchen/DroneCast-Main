@@ -209,7 +209,7 @@ app.get("/api/apps/:id/qr", async function (req, res) {
         next(error)
     }
 })
-app.get("/api/apps/:id/download/:name", async function (req, res, next) {
+app.get("/api/apps/:id/download/:folderid/:name", function (req, res, next) {
     let archive = archiver('zip', {});
     archive.on('error', function (err) {
         throw err;
@@ -221,9 +221,9 @@ app.get("/api/apps/:id/download/:name", async function (req, res, next) {
             throw err;
         }
     });
-    const path = `./database/apps/${req.params.id}/${req.params.name}`
+    const path = `./database/apps/${req.params.id}/${req.params.folderid}/${req.params.name}`
     if (!fs.existsSync(path)) {
-        return next({ message: "Path does not exist" })
+        return next({ message: "Path to be downloaded does not exist" })
     }
     archive.directory(path, false);
     archive.pipe(res)
