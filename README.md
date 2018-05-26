@@ -16,42 +16,51 @@ Node.js and MongoDB are needed:
 * [Node.js](https://nodejs.org)
 * [MongoDB](https://www.mongodb.com/download-center?jmp=nav#community)
 
-### Installing
+### Deployment
 
+1. Install dependencies
 ```
 git clone https://github.com/IX-Kitchen/DroneCast-Main.git
 cd DroneCast-Main/
-# Change to a stable commit
-git checkout v1.0
-```
-Install dependencies
-```
 npm install
-(cd client; npm install)
+(cd client && yarn install)
 ```
-Set server url and port configuration in the file ./client/src/api-config.js if needed
+2. Set deployment variables
 
-Set the environment variables in the .env.example file and change its name to .env
-(Default variables will work if everything is running in localhost)
+Change the variables in the file *.env.example* file and change its name to *.env*
+(Default variables are for local deployment)
+```
+mv .env.example .env
+```
 
-Start backend server (Default port: 8080, nohup can be used to run the task in background)
+By default, the client access the api using the same host. Example:
+Client -> http://test.com:3000/
+API -> http://test.com:8080/
+
+The API URL can be hardcoded in the file *./client/src/api-config.js* if it is needed.
+
+3. Start the application
+
+Start backend server (Default port: 8080, nohup can be used to run the task not attached to the session):
 ```
 # nohup node server.js &
-node server.js
+# or
+# node server.js
 ```
 The console should show the following message
 
 ```
 Server listening at port 8080
 ```
-Start React development server
+Start React development server (npm or yarn)
 ```
 # (cd client: nohup npm start &)
-(cd client ; npm start)
+# or
+# (cd client && npm start)
 ```
 
 Now you can access the backend API at:
-http://localhost:8080/api
+http://HOST:8080/
 
 and the frontend app at:
-http://localhost:3000
+http://HOST:3000/

@@ -40,7 +40,7 @@ export default class AppList extends React.Component {
     render() {
         const { apps, ready } = this.state
         return (
-            <Segment color='teal' loading={!ready && apps !== null}>
+            <Segment color='teal' loading={!ready || apps === null}>
                 <Table basic='very'>
                     <Table.Header>
                         <Table.Row>
