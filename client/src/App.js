@@ -1,7 +1,7 @@
 import React from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import { BrowserRouter, Switch, Route, Link } from 'react-router-dom'
-import { Button, Icon, Divider } from 'semantic-ui-react'
+import { Button, Icon, Divider, Menu } from 'semantic-ui-react'
 import Main from './components/Main'
 import MyApp from './components/MyApp';
 import NewAppForm from './components/NewAppForm';
@@ -18,12 +18,13 @@ const App = () =>
     <div>
       <h1>DroneCast Platform</h1>
       <Divider hidden />
-      <Link to="/">
-        <Button icon labelPosition='left'>
-          <Icon name='reply' />
-          Home
-        </Button>
-      </Link>
+      <Menu >
+        <Menu.Item
+          name='Home'
+          as={Link} to='/'
+          active={true}
+        />
+      </Menu>
       <main style={style}>
         <Switch>
           <Route exact path="/" component={Main} />

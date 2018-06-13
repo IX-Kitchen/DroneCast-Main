@@ -263,7 +263,7 @@ export default class MyApp extends React.Component {
         return (
             <div>
                 <h2 style={{ textAlign: 'center' }}>{name}</h2>
-                <Menu pointing secondary>
+                <Menu pointing tabular>
                     <Menu.Item name='app' id='app' active={tab === 'app'} onClick={this.handleTabClick} />
                     <Menu.Item name='bound displays' id='displays' active={tab === 'displays'} onClick={this.handleTabClick} />
                     {phase === 'contentlist' &&
