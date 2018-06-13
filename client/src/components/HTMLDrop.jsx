@@ -17,7 +17,7 @@ var djsConfig = {
     addRemoveLinks: false,
     renameFile: rename,
     paramName: "appUploader",
-    dictDefaultMessage: "Drop your code here (Names with hyphen are not allowed)"
+    dictDefaultMessage: "Drop your code here (Names with hyphen are not allowed).Files or zip files"
 };
 
 var eventHandlers = {

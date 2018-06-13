@@ -25,6 +25,7 @@ const io = require('socket.io')(server)
 // Zip
 const fs = require('fs');
 const archiver = require('archiver');
+const admzip = require('adm-zip');
 
 // Connection to Mongo
 const dbLib = require('./database/dbLib.js');
@@ -78,7 +79,7 @@ const appStorage = multer.diskStorage({
         dir = `${dir}/${req.body.folderId}`
         if (!fs.existsSync(dir)) fs.mkdirSync(dir)
 
-        //database/apps/appId/folderName/Display-Phone
+        //database/apps/appId/folderName(Display-Phone)
         dir = `${dir}/${req.body.folderName}`
         if (!fs.existsSync(dir)) fs.mkdirSync(dir)
 
@@ -129,24 +130,45 @@ app.put("/api/apps/update/:id", async function (req, res) {
 })
 
 app.post("/api/apps/appupload", function (req, res) {
-    appUpload(req, res, async function (err) {
+    appUpload(req, res, function (err) {
         if (err) {
             console.log(err)
             return res.status(500).send("Something went wrong Uploading the app!");
         }
-        // console.log(req.files)
-        // const { appid, folder, folderName, index } = req.body
-        // for (let i = 0; i < req.files.length; i++) {
-        //     let path
-        //     let name = req.files[i].originalname.slice()
-        //     if (name.includes("-")) {
-        //         let index = name.indexOf("-")
-        //         path = name.slice(0, index)
-        //         name = name.slice(index + 1)
-        //         await dbLib.addAppCode(index, appid, folder, path, folderName)
-        //     }
-        // }
+        req.files.forEach( file =>{
+            let path = file.destination
+            let filePath = file.path
+            if (file.originalname.indexOf('.rar') > -1 || file.originalname.indexOf('.zip') > -1){
+                // Delete previous files. Requires root permission
+                // fs.readdir(path, (err, files) => {
+                //     if (err) throw err;                
+                //     for (const file of files) {
+                //       fs.unlink(path, err => {
+                //         if (err) throw err;
+                //       });
+                //     }
+                //   });
+                let zip = new admzip(filePath);
+                zip.extractAllTo(path, true);
+            }
+        })
+        
         res.send({ response: "contentUpload complete!" })
+
+        /**
+        console.log(req.files)
+        const { appid, folder, folderName, index } = req.body
+        for (let i = 0; i < req.files.length; i++) {
+            let path
+            let name = req.files[i].originalname.slice()
+            if (name.includes("-")) {
+                let index = name.indexOf("-")
+                path = name.slice(0, index)
+                name = name.slice(index + 1)
+                await dbLib.addAppCode(index, appid, folder, path, folderName)
+            }
+        }
+         */
     });
 });
 
