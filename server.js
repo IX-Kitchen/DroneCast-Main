@@ -135,10 +135,12 @@ app.post("/api/apps/appupload", function (req, res) {
             console.log(err)
             return res.status(500).send("Something went wrong Uploading the app!");
         }
-        req.files.forEach( file =>{
-            let path = file.destination
+        let isIndex = false
+        let path
+        req.files.forEach(file => {
+            path = file.destination
             let filePath = file.path
-            if (file.originalname.indexOf('.rar') > -1 || file.originalname.indexOf('.zip') > -1){
+            if (file.originalname.indexOf('.rar') > -1 || file.originalname.indexOf('.zip') > -1) {
                 // Delete previous files. Requires root permission
                 // fs.readdir(path, (err, files) => {
                 //     if (err) throw err;                
@@ -148,28 +150,43 @@ app.post("/api/apps/appupload", function (req, res) {
                 //       });
                 //     }
                 //   });
+
+                // Check for index.html
+
                 let zip = new admzip(filePath);
                 zip.extractAllTo(path, true);
             }
         })
-        
-        res.send({ response: "contentUpload complete!" })
-
-        /**
-        console.log(req.files)
-        const { appid, folder, folderName, index } = req.body
-        for (let i = 0; i < req.files.length; i++) {
-            let path
-            let name = req.files[i].originalname.slice()
-            if (name.includes("-")) {
-                let index = name.indexOf("-")
-                path = name.slice(0, index)
-                name = name.slice(index + 1)
-                await dbLib.addAppCode(index, appid, folder, path, folderName)
+        fs.readdir(path, (err, files) => {
+            if (err) throw err;
+            for (const file of files) {
+                isIndex = file === 'index.html'
             }
+        });
+        if (!isIndex) {
+            console.log('no hay index', path)
+            fs.writeFile(path + '/index.html', "There is not an index.html file", (err) => {
+                if (err) throw err;
+            })
         }
-         */
     });
+
+    res.send({ response: "contentUpload complete!" })
+
+    /**
+    console.log(req.files)
+    const { appid, folder, folderName, index } = req.body
+    for (let i = 0; i < req.files.length; i++) {
+        let path
+        let name = req.files[i].originalname.slice()
+        if (name.includes("-")) {
+            let index = name.indexOf("-")
+            path = name.slice(0, index)
+            name = name.slice(index + 1)
+            await dbLib.addAppCode(index, appid, folder, path, folderName)
+        }
+    }
+     */
 });
 
 app.post("/api/apps/upload", function (req, res) {
