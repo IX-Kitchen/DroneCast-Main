@@ -25,7 +25,7 @@ export default class NewAppForm extends React.Component {
     const { id } = this.props.match.params
     if (id) {
       request
-        .put(API_ROOT + 'drones/edit/' + id)
+        .put(API_ROOT + 'displays/edit/' + id)
         .send({ name: name })
         .then((response) => {
           this.setState({ redirect: true })
@@ -35,7 +35,7 @@ export default class NewAppForm extends React.Component {
         })
     } else {
       request
-        .post(API_ROOT + 'drones/new')
+        .post(API_ROOT + 'displays/new')
         .send({ name: name })
         .then((response) => {
           this.setState({ redirect: true })

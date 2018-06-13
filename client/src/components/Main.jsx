@@ -33,10 +33,10 @@ export default class Main extends React.Component {
                 list = <DroneList />
                 break
             default:
-            }
+        }
         return (
             <div>
-                <Menu tabular>
+                <Menu pointing secondary>
                     <Menu.Item name='apps' active={activeItem === 'apps'} onClick={this.handleItemClick} />
                     <Menu.Item name='displays' active={activeItem === 'displays'} onClick={this.handleItemClick} />
                 </Menu>

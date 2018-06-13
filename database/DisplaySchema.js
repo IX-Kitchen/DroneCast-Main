@@ -2,8 +2,8 @@
 
 module.exports = {
     $jsonSchema: {
-        title: "DroneSchema",
-        description: "A drone description",
+        title: "DisplaySchema",
+        description: "A display description",
         bsonType: "object",
         required: ["name"],
         properties: {

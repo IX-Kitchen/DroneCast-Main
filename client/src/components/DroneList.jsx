@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import request from 'superagent'
 import { API_ROOT } from '../api-config';
 
-export default class AppList extends React.Component {
+export default class DroneList extends React.Component {
     constructor() {
         super();
         this.state = { drones: [], ready: false };
@@ -12,7 +12,7 @@ export default class AppList extends React.Component {
     }
     updateData() {
         request
-            .get(API_ROOT + 'drones/list')
+            .get(API_ROOT + 'displays/list')
             .then((response) => {
                 this.setState({ drones: response.body, ready: true });
             })
@@ -22,7 +22,7 @@ export default class AppList extends React.Component {
             })
     }
 
-    deleteDrone(proxy,{id}) {
+    deleteDrone(proxy, { id }) {
         console.log(arguments)
         this.setState({ ready: false })
         request

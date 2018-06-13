@@ -5,7 +5,7 @@ module.exports = {
         title: "AppSchema",
         description: "An app description",
         bsonType: "object",
-        required: ["name", "date", "author", "scenario", "appdata", "drones"],
+        required: ["name", "date", "author", "scenario", "appdata"],
         properties: {
             name: {
                 bsonType: "string",
@@ -15,9 +15,9 @@ module.exports = {
                 bsonType: "date",
                 description: "Date of uploading"
             },
-            drones: {
+            displays: {
                 bsonType: "array",
-                description: "Drones bound to the app"
+                description: "Displays bound to the app"
             },
             author: {
                 bsonType: "string",

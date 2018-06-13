@@ -59,7 +59,7 @@ export default class AppList extends React.Component {
     render() {
         const { apps, ready, confirm } = this.state
         return (
-            <Segment color='teal' loading={!ready || apps === null}>
+            <Segment color='red' loading={!ready || apps === null}>
                 <Confirm open={confirm} style={style}
                     onCancel={this.handleCancel} onConfirm={this.handleConfirm}
                     confirmButton="Delete"
@@ -80,7 +80,7 @@ export default class AppList extends React.Component {
                                     <Label color='brown' ribbon>{item.name}</Label>
                                 </Table.Cell>
                                 <Table.Cell>
-                                    {apps[index].drones.map(item => (
+                                    {apps[index].displays.map(item => (
                                         <Label basic color='blue' key={item}>{item}</Label>
                                     ))}
                                 </Table.Cell>

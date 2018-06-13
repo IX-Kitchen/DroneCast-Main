@@ -28,10 +28,10 @@ if (username) {
 
 // Collection name
 const appCol = 'Apps'
-const droneCol = "Drones"
+const displayCol = "Displays"
 // Schema
 const appSchema = require('./AppSchema');
-const droneSchema = require('./DroneSchema');
+const displaySchema = require('./DisplaySchema');
 
 async function testConnection() {
     try {
@@ -52,8 +52,8 @@ async function createCol(dbName, colName) {
         case "Apps":
             schema = appSchema
             break
-        case "Drones":
-            schema = droneSchema
+        case "Displays":
+            schema = displaySchema
             break
         default:
             schema = appSchema
@@ -61,9 +61,10 @@ async function createCol(dbName, colName) {
     try {
         const client = await MongoClient.connect(url);
         const db = client.db(dbName);
-        let col = await db.createCollection(colName, {
-            validator: schema
-        })
+        let col = await db.createCollection(colName)
+        // let col = await db.createCollection(colName, {
+        //     validator: schema
+        // })
         assert.equal(colName, col.collectionName);
         client.close();
     } catch (err) {
@@ -97,7 +98,7 @@ async function findApp(id) {
     }
 }
 
-async function updateApp(id, appdata) {
+async function updateAppData(id, appdata) {
     try {
         const client = await MongoClient.connect(url);
         const db = client.db(dbName);
@@ -106,6 +107,18 @@ async function updateApp(id, appdata) {
 
         await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: { appdata: appdata } });
 
+        client.close();
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
+
+async function updateAppDisplays(id, displays) {
+    try {
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+        const col = db.collection(appCol);
+        await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: { displays: displays } });
         client.close();
     } catch (err) {
         console.log(err.stack);
@@ -178,14 +191,14 @@ async function addAppCode(index, id, folder, path, folderName, file) {
     }
 }
 
-async function insertApp(name, author, scenario, category, appdata, drones) {
+async function newApp(name, author, scenario, category, appdata, displays) {
     try {
         const client = await MongoClient.connect(url);
         let db = client.db(dbName);
         let r = await db.collection(appCol).insertOne(
             {
                 name: name, date: new Date(), author: author,
-                scenario: scenario, category: category, appdata: appdata, drones: drones
+                scenario: scenario, category: category, appdata: appdata, displays: displays
             }
         );
         assert.equal(1, r.insertedCount);
@@ -196,41 +209,39 @@ async function insertApp(name, author, scenario, category, appdata, drones) {
     }
 }
 
-async function insertDrone(name, onair) {
+async function insertDisplay(name, onair) {
     try {
         const client = await MongoClient.connect(url);
         let db = client.db(dbName);
-        const col = db.collection(droneCol);
+        const col = db.collection(displayCol);
         const result = await col.updateOne({ name: name }, { $set: { name: name, onair: onair } }, { upsert: true });
-        if (result.upsertedCount) {
-            console.log("DB: New Drone -", name)
-        }
         client.close();
     } catch (err) {
         console.log(err.stack);
     }
 }
 
-async function updateDrone(id, name) {
+async function updateDisplay(id, name) {
     try {
         const client = await MongoClient.connect(url);
         let db = client.db(dbName);
-        const col = db.collection(droneCol);
+        const col = db.collection(displayCol);
         const result = await col.updateOne({ _id: mongo.ObjectID(id) }, { $set: { name: name } });
         if (result.upsertedCount) {
-            console.log("DB: New Drone -", name)
+            console.log("DB: New Display -", name)
         }
         client.close();
     } catch (err) {
         console.log(err.stack);
     }
+    // Change name in appdata
 }
 
-async function listAllDrones() {
+async function listAllDisplays() {
     try {
         const client = await MongoClient.connect(url);
         let db = client.db(dbName);
-        let col = db.collection(droneCol);
+        let col = db.collection(displayCol);
         let data = await col.find().toArray();
         client.close();
         return data;
@@ -278,18 +289,18 @@ async function deleteApp(id) {
     }
 }
 
-async function deleteDrone(id) {
+async function deleteDisplay(id) {
     try {
         const client = await MongoClient.connect(url);
         const db = client.db(dbName);
 
-        const col = db.collection(droneCol);
+        const col = db.collection(displayCol);
 
         let r = await col.deleteOne({ name: id });
         assert.equal(1, r.deletedCount);
 
-        db.collection(appCol).updateMany({}, { $pull: { drones: id } });
-        console.log("DB: Delete Drone -", id)
+        db.collection(appCol).updateMany({}, { $pull: { displays: id } });
+        console.log("DB: Delete Display -", id)
         client.close();
     } catch (err) {
         console.log(err.stack);
@@ -300,17 +311,18 @@ module.exports = {
     testConnection: testConnection,
     testError: testError,
     createCol: createCol,
-    insertApp: insertApp,
+    newApp: newApp,
     dropCol: dropCol,
     listAllApp: listAllApp,
     findApp: findApp,
-    updateApp: updateApp,
+    updateAppData: updateAppData,
     addAppContent: addAppContent,
     deleteAppContent: deleteAppContent,
     addAppCode: addAppCode,
-    insertDrone: insertDrone,
-    updateDrone: updateDrone,
-    listAllDrones: listAllDrones,
+    insertDisplay: insertDisplay,
+    updateDisplay: updateDisplay,
+    listAllDisplays: listAllDisplays,
     deleteApp: deleteApp,
-    deleteDrone: deleteDrone
+    deleteDisplay: deleteDisplay,
+    updateAppDisplays: updateAppDisplays
 };

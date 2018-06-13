@@ -10,8 +10,8 @@ export default class NewAppForm extends React.Component {
     super(props);
     this.state = {
       name: '',
-      availableDrones: [],
-      drones: [],
+      availableDisplays: [],
+      displays: [],
       redirect: false,
       ready: false
     };
@@ -21,18 +21,18 @@ export default class NewAppForm extends React.Component {
   }
 
   handleChange(event, data) {
-    var { drones } = this.state
+    const { displays } = this.state
+    let newDisplays = displays.slice()
     if (data) {
       if (data.checked) {
-        drones.push(data.label)
+        newDisplays = [...newDisplays, data.label]
       } else {
-        drones = drones.filter(drone => drone !== data.label)
+        newDisplays = displays.filter(disp => disp !== data.label)
       }
-      this.setState({ drones: drones });
+      this.setState({ displays: newDisplays });
     } else {
       this.setState({ name: event.target.value });
     }
-
   }
 
   handleSubmit(event, data) {
@@ -47,7 +47,7 @@ export default class NewAppForm extends React.Component {
       ]
     }
     const postData = {
-      drones: this.state.drones,
+      displays: this.state.displays,
       name: this.state.name,
       appData: newAppData
     }
@@ -61,14 +61,13 @@ export default class NewAppForm extends React.Component {
         console.log(error)
       })
     event.preventDefault();
-
   }
 
   componentDidMount() {
     request
-      .get(API_ROOT + 'drones/list')
+      .get(API_ROOT + 'displays/list')
       .then((response) => {
-        this.setState({ availableDrones: response.body, ready: true });
+        this.setState({ availableDisplays: response.body, ready: true });
       })
       .catch((error) => {
         console.log(error)
@@ -77,7 +76,7 @@ export default class NewAppForm extends React.Component {
   }
 
   render() {
-    const { redirect, availableDrones, ready } = this.state
+    const { redirect, availableDisplays, ready } = this.state
     return (
       <div>
         <Form onSubmit={this.handleSubmit} size='big'>
@@ -87,10 +86,10 @@ export default class NewAppForm extends React.Component {
           </Form.Field>
           <Form.Group grouped>
             <Segment basic loading={!ready}>
-              {availableDrones.length > 0 &&
+              {availableDisplays.length > 0 &&
                 <Label pointing='below'>Select the displays for this app</Label>
               }
-              {availableDrones.map(item => (
+              {availableDisplays.map(item => (
                 <Form.Checkbox key={item._id} label={item.name} onClick={this.handleChange} />
               ))}
             </Segment>

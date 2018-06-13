@@ -1,15 +1,15 @@
 import React from 'react'
 import Navigator from "./Navigator"
 import FolderForm from "./FolderForm"
-import { Link } from 'react-router-dom'
 import Explorer from './Explorer'
 import ContentList from './ContentList'
-import { Button, Icon, Menu, Divider, Segment } from 'semantic-ui-react'
+import { Menu, Segment } from 'semantic-ui-react'
 import request from 'superagent'
-import { API_ROOT, BACK_ROOT } from '../api-config';
-import CodeFolders from './CodeFolders';
+import { API_ROOT, BACK_ROOT } from '../api-config'
+import CodeFolders from './CodeFolders'
 import ModalDrop from './ModalDrop'
-import ContentDrop from './ContentDrop';
+import ContentDrop from './ContentDrop'
+import DisplaysEditing from './DisplaysEditing'
 import shortid from 'shortid'
 
 // Phase: ContentList/Explorer/NewFolder/codefolders
@@ -18,11 +18,13 @@ export default class MyApp extends React.Component {
         super(props);
         this.state = {
             data: { name: "", folders: [] },
+            displays: [],
             currentIndex: undefined,
             currentFolderName: '',
             currentFolderId: '',
             ready: false,
-            phase: 'explorer'
+            phase: 'explorer',
+            tab: 'app'
         }
         this.handleBackClick = this.handleBackClick.bind(this);
         this.getData = this.getData.bind(this);
@@ -35,6 +37,9 @@ export default class MyApp extends React.Component {
         this.handleDeleteContent = this.handleDeleteContent.bind(this)
         this.downloadClick = this.downloadClick.bind(this)
         this.Display = this.Display.bind(this)
+        this.handleTabClick = this.handleTabClick.bind(this)
+        this.handleUpdateDisplays = this.handleUpdateDisplays.bind(this)
+        this.handleRemoveDisplay = this.handleRemoveDisplay.bind(this)
     }
 
     componentDidMount() {
@@ -46,11 +51,11 @@ export default class MyApp extends React.Component {
             .get(API_ROOT + 'apps/find/' + this.props.match.params.id)
             .then((response) => {
                 const data =
-                    {
-                        name: response.body.name,
-                        folders: response.body.appdata.folders
-                    }
-                this.setState({ data: data, ready: true });
+                {
+                    name: response.body.name,
+                    folders: response.body.appdata.folders
+                }
+                this.setState({ data: data, ready: true, displays: response.body.displays });
             })
             .catch((error) => {
                 console.log(error)
@@ -105,9 +110,9 @@ export default class MyApp extends React.Component {
         this.setState({ phase: 'newfolder' })
     }
 
-    handleRemoveFolder(event, { value }) {
+    handleRemoveFolder(name) {
         const { folders } = this.state.data
-        const newFolders = folders.filter(folder => folder.name !== value)
+        const newFolders = folders.filter(folder => folder.name !== name)
         const newJson = {
             ...this.state.data,
             folders: newFolders
@@ -152,7 +157,7 @@ export default class MyApp extends React.Component {
     updateData() {
         const { folders } = this.state.data
         request
-            .put(API_ROOT + 'apps/update/' + this.props.match.params.id)
+            .put(API_ROOT + 'apps/updatedata/' + this.props.match.params.id)
             .send({ folders: folders })
             .then((response) => {
             })
@@ -160,6 +165,25 @@ export default class MyApp extends React.Component {
                 console.log(error)
                 return [error]
             })
+    }
+
+    handleUpdateDisplays(displays) {
+        request
+            .put(API_ROOT + 'apps/updatedisplays/' + this.props.match.params.id)
+            .send(displays)
+            .then((response) => {
+                this.setState({ displays: displays })
+            })
+            .catch((error) => {
+                console.log(error)
+                return [error]
+            })
+    }
+
+    handleRemoveDisplay(event, { id }) {
+        const { displays } = this.state
+        const newDisplays = displays.filter(disp => disp !== id)
+        this.handleUpdateDisplays(newDisplays)
     }
 
     handleBackClick() {
@@ -182,81 +206,96 @@ export default class MyApp extends React.Component {
             })
     }
     downloadClick(event, { value }) {
-        const {currentFolderId} = this.state
+        const { currentFolderId } = this.state
         window.open(`${API_ROOT}apps/${this.props.match.params.id}/download/${currentFolderId}/${value}`, '_blank');
+    }
+    handleTabClick(event, { id }) {
+        this.setState({ tab: id })
     }
 
     // Switch display
     Display(props) {
         const { folders } = this.state.data
-        const { currentIndex, phase, currentFolderId } = this.state
+        const { currentIndex, phase, currentFolderId, tab, displays } = this.state
         // CurrentIndex can also be 0
         const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         const { id } = this.props.match.params
-        switch (phase) {
-            case 'contentlist':
-                return <ContentList content={currentFolder.content}
-                    onClick={this.handleDeleteContent}
-                    folder={currentFolderId}
-                    appid={id} />
-            case 'newfolder':
-                return <FolderForm addCallback={this.handleSubmitFolder} />
-            // Explorer
-            case 'codefolders':
-                return <CodeFolders
-                    handleClick={this.handleFolderClick}
-                    downloadClick={this.downloadClick}
-                    appid={id}
-                    folderId={currentFolderId}
-                    currentIndex={currentIndex} />
-            default:
-                return <Explorer
-                    addCallback={this.handleAddFolder}
-                    removeCallback={this.handleRemoveFolder}
-                    folders={folders}
-                    appid={id}
-                    changeCallback={this.handleChangeFolderName}
-                    handleClick={this.handleFolderClick} />
+        if (tab === 'app') {
+            switch (phase) {
+                case 'contentlist':
+                    return <ContentList content={currentFolder.content}
+                        onClick={this.handleDeleteContent}
+                        folder={currentFolderId}
+                        appid={id} />
+                case 'newfolder':
+                    return <FolderForm addCallback={this.handleSubmitFolder} />
+                // Explorer
+                case 'codefolders':
+                    return <CodeFolders
+                        handleClick={this.handleFolderClick}
+                        downloadClick={this.downloadClick}
+                        appid={id}
+                        folderId={currentFolderId}
+                        currentIndex={currentIndex} />
+                default:
+                    return <Explorer
+                        addCallback={this.handleAddFolder}
+                        removeCallback={this.handleRemoveFolder}
+                        folders={folders}
+                        appid={id}
+                        changeCallback={this.handleChangeFolderName}
+                        handleClick={this.handleFolderClick} />
+            }
+        } else {
+            return <DisplaysEditing displays={displays}
+                handleRemoveDisplay={this.handleRemoveDisplay}
+                handleUpdateDisplays={this.handleUpdateDisplays} />
         }
     }
 
     render() {
-        console.log(this.state)
+        //console.log(this.state)
         const { name } = this.state.data
-        const { ready, currentIndex, currentFolderName, currentFolderId, phase } = this.state
+        const { ready, currentIndex, currentFolderName, currentFolderId, phase, tab } = this.state
         const { id } = this.props.match.params
         // currentIndex can be 0
         //const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         return (
             <div>
-                <Menu secondary>
-                    <Menu.Item>
-                        <Link to="/">
-                            <Button icon labelPosition='left' onClick={this.handleBackClick}>
-                                <Icon name='reply' />
-                                Home
-                            </Button>
-                        </Link>
-                    </Menu.Item>
+                <h2 style={{ textAlign: 'center' }}>{name}</h2>
+                <Menu pointing secondary>
+                    <Menu.Item name='app' id='app' active={tab === 'app'} onClick={this.handleTabClick} />
+                    <Menu.Item name='bound displays' id='displays' active={tab === 'displays'} onClick={this.handleTabClick} />
                     {phase === 'contentlist' &&
                         <Menu.Item position="right">
-                            <ModalDrop render={(header = "Upload content") => (<ContentDrop
-                                index={currentIndex}
-                                appid={id}
-                                folderId={currentFolderId}
-                                getData={this.getData} />
-                            )} />
+
                         </Menu.Item>}
                 </Menu>
-                <Navigator
-                    id={name}
-                    folder={currentFolderName}
-                    handleClick={this.handleNavClick} />
-                <Divider horizontal />
-                <Segment color='teal' loading={!ready}>
+                {(tab === 'app') &&
+                    <Menu borderless secondary>
+
+                        <Menu.Item position='left' >
+                            <Navigator
+                                id={name}
+                                folder={currentFolderName}
+                                handleClick={this.handleNavClick} />
+                        </Menu.Item>
+                        {phase === 'contentlist' &&
+                            <Menu.Item position='right'>
+                                <ModalDrop render={(header = "Upload content") => (<ContentDrop
+                                    index={currentIndex}
+                                    appid={id}
+                                    folderId={currentFolderId}
+                                    getData={this.getData} />
+                                )} />
+                            </Menu.Item>
+                        }
+                    </Menu>
+                }
+                <Segment color='blue' loading={!ready}>
                     <this.Display />
                 </Segment>
-            </div>
+            </div >
         );
     }
 }

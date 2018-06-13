@@ -1,16 +1,28 @@
 import React from 'react'
-import { Icon, Button, Grid, Transition, Portal, Segment, Header, Form } from 'semantic-ui-react'
+import { Icon, Button, Grid, Transition, Portal, Segment, Header, Form, Confirm } from 'semantic-ui-react'
+
+const style = {
+    marginTop: '10%',
+    marginBottom: 'auto',
+    marginLeft: 'auto',
+    marginRight: 'auto'
+}
 export default class Explorer extends React.PureComponent {
     constructor() {
         super()
         this.state = {
             open: false,
             folder: '',
-            name: ''
+            name: '',
+            selected: '',
+            confirm: false
         }
         this.changeName = this.changeName.bind(this)
         this.handleInputChange = this.handleInputChange.bind(this)
         this.openInput = this.openInput.bind(this)
+        this.showConfirm = this.showConfirm.bind(this)
+        this.handleCancel = this.handleCancel.bind(this)
+        this.handleConfirm = this.handleConfirm.bind(this)
     }
     changeName() {
         const { folder, name } = this.state
@@ -25,10 +37,25 @@ export default class Explorer extends React.PureComponent {
             folder: value
         })
     }
+    showConfirm(event, { value }) {
+        this.setState({ confirm: true, selected: value })
+    }
+    handleConfirm() {
+        this.props.removeCallback(this.state.selected)
+        this.setState({ confirm: false })
+    }
+    handleCancel() {
+        this.setState({ confirm: false })
+    }
     render() {
-        const { folders, removeCallback, addCallback, handleClick } = this.props
+        const { folders, addCallback, handleClick } = this.props
+        const { confirm } = this.state
         return (
             <div>
+                <Confirm open={confirm} style={style}
+                    onCancel={this.handleCancel} onConfirm={this.handleConfirm}
+                    confirmButton="Delete"
+                />
                 <Button.Group>
                     <Button positive icon='plus' onClick={addCallback} />
                 </Button.Group>
@@ -49,13 +76,13 @@ export default class Explorer extends React.PureComponent {
                                 </Grid.Row>
                                 <Grid.Row textAlign='center'>
                                     <Button size='mini' value={item.name} negative animated='fade'
-                                        onClick={removeCallback}>
+                                        onClick={this.showConfirm}>
                                         <Button.Content visible>
                                             <Icon name='delete' />
                                         </Button.Content>
                                         <Button.Content hidden>
                                             Delete
-                            </Button.Content>
+                                        </Button.Content>
                                     </Button>
                                     <Portal trigger={
                                         <Button size='mini' value={item.name} color='black' basic

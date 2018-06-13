@@ -45,7 +45,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 
 // Serve static files
-// URL/id/drone
+// URL/id/display
 app.use(express.static(__dirname + '/database/apps'));
 
 // Upload content
@@ -117,7 +117,7 @@ app.get("/test", function (req, res, next) {
 app.post("/api/apps/new", async function (req, res, next) {
     let appId
     try {
-        appId = await dbLib.insertApp(req.body.name, "author", "scenario", "category", req.body.appData, req.body.drones)
+        appId = await dbLib.newApp(req.body.name, "author", "scenario", "category", req.body.appData, req.body.displays)
     } catch (error) {
         next(error)
     }
@@ -139,9 +139,18 @@ app.post("/api/apps/new", async function (req, res, next) {
     res.send({ response: "New App created" })
 });
 
-app.put("/api/apps/update/:id", async function (req, res, next) {
+app.put("/api/apps/updatedata/:id", async function (req, res, next) {
     try {
-        await dbLib.updateApp(req.params.id, req.body)
+        await dbLib.updateAppData(req.params.id, req.body)
+    } catch (error) {
+        next(error)
+    }
+    res.send({ response: "Updated!" })
+})
+
+app.put("/api/apps/updatedisplays/:id", async function (req, res, next) {
+    try {
+        await dbLib.updateAppDisplays(req.params.id, req.body)
     } catch (error) {
         next(error)
     }
@@ -289,40 +298,40 @@ app.get("/api/apps/:id/download/:folderid/:name", function (req, res, next) {
     res.header('Content-Disposition', `attachment; filename=${req.params.id}.zip`);
 })
 
-//Drones
-app.get("/api/drones/list", async function (req, res, next) {
+//Displays
+app.get("/api/displays/list", async function (req, res, next) {
     try {
-        const data = await dbLib.listAllDrones();
+        const data = await dbLib.listAllDisplays();
         res.json(data);
     } catch (error) {
         next(error)
     }
 });
 
-app.post("/api/drones/new", async function (req, res, next) {
+app.post("/api/displays/new", async function (req, res, next) {
     if (req.body) {
         try {
-            await dbLib.insertDrone(req.body.name, false)
+            await dbLib.insertDisplay(req.body.name, false)
             res.send({ response: "Added " + req.body.name + " to the DB" })
         } catch (error) {
             next(error)
         }
 
     } else {
-        next(new Error('Error on adding a drone'))
+        next(new Error('Error on adding a display'))
     }
 });
 
-app.put("/api/drones/edit/:id", async function (req, res, next) {
+app.put("/api/displays/edit/:id", async function (req, res, next) {
     if (req.body) {
         try {
-            await dbLib.updateDrone(req.params.id, req.body.name)
-            res.send({ response: "Drone " + req.params.id + " updated" })
+            await dbLib.updateDisplay(req.params.id, req.body.name)
+            res.send({ response: "Display " + req.params.id + " updated" })
         } catch (error) {
             next(error)
         }
     } else {
-        next(new Error('Error on adding a drone'))
+        next(new Error('Error on adding a display'))
     }
 });
 
@@ -336,10 +345,10 @@ app.delete("/api/apps/delete/:id", async function (req, res, next) {
         next(error)
     }
 })
-app.delete("/api/drones/delete/:id", async function (req, res, next) {
+app.delete("/api/displays/delete/:id", async function (req, res, next) {
     try {
-        await dbLib.deleteDrone(req.params.id)
-        res.send({ response: "Drone deleted" })
+        await dbLib.deleteDisplay(req.params.id)
+        res.send({ response: "Display deleted" })
     } catch (error) {
         next(error)
     }
@@ -366,23 +375,23 @@ server.listen(port, async function () {
     //await dbLib.dropCol();
     try {
         await dbLib.createCol("Dev", "Apps");
-        await dbLib.createCol("Dev", "Drones")
+        await dbLib.createCol("Dev", "Displays")
     } catch (error) {
         console.log("Error creating collections")
     }
 });
 
 // Socket logic
-var avDrones = new Map()
+var avDisplays = new Map()
 
-const dronesIo = io.of('/drones'),
+const displaysIo = io.of('/displays'),
     appsIo = io.of('/clients');
 
-dronesIo.on('connection', (socket) => {
-    console.log("Drone connected");
+displaysIo.on('connection', (socket) => {
+    console.log("Display connected");
 
     socket.on('message', (msg) => {
-        console.log("From Drone to server:", msg);
+        console.log("From Display to server:", msg);
         //To apps -> apps.emit('message',msg)
     });
 
@@ -390,16 +399,16 @@ dronesIo.on('connection', (socket) => {
         if (typeof msg === 'string') {
             msg = JSON.parse(msg)
         }
-        console.log("SOCKET_DRONE: Init msg from drone:", msg.id)
-        dbLib.insertDrone(msg.id, true)
-        avDrones.set(msg.id, socket)
+        console.log("SOCKET_DRONE: Init msg from display:", msg.id)
+        dbLib.insertDisplay(msg.id, true)
+        avDisplays.set(msg.id, socket)
     })
 
     socket.on('disconnect', (reason) => {
-        for (let [key, value] of avDrones.entries()) {
+        for (let [key, value] of avDisplays.entries()) {
             if (value.id === socket.id) {
-                dbLib.insertDrone(key, false)
-                avDrones.delete(key)
+                dbLib.insertDisplay(key, false)
+                avDisplays.delete(key)
                 return
             }
         }
@@ -413,15 +422,15 @@ appsIo.on('connection', (socket) => {
     });
     socket.on('toHTML', (msg) => {
         //console.log("From HTML to HTML:", msg);
-        dronesIo.emit('toHTML', msg)
+        displaysIo.emit('toHTML', msg)
     });
     socket.on('data', (msg) => {
-        console.log("Data sent from client to drone:", msg)
-        const { drones } = msg // Drones bound to the app
-        for (let key of avDrones.keys()) {
-            drones.forEach(drone => {
-                if (drone === key) {
-                    const sock = avDrones.get(key)
+        console.log("Data sent from client to display:", msg)
+        const { displays } = msg // Displays bound to the app
+        for (let key of avDisplays.keys()) {
+            displays.forEach(display => {
+                if (display === key) {
+                    const sock = avDisplays.get(key)
                     sock.emit('message', msg.content)
                 }
             });
@@ -433,6 +442,7 @@ appsIo.on('connection', (socket) => {
 });
 
 var deleteFolderRecursive = function (path) {
+    console.log('Delete folder:',path)
     if (fs.existsSync(path)) {
         fs.readdirSync(path).forEach(function (file, index) {
             var curPath = path + "/" + file;
