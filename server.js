@@ -27,6 +27,9 @@ const fs = require('fs');
 const archiver = require('archiver');
 const admzip = require('adm-zip');
 
+// Copy folders utility
+const ncp = require('ncp').ncp;
+
 // Connection to Mongo
 const dbLib = require('./database/dbLib.js');
 
@@ -79,7 +82,7 @@ const appStorage = multer.diskStorage({
         dir = `${dir}/${req.body.folderId}`
         if (!fs.existsSync(dir)) fs.mkdirSync(dir)
 
-        //database/apps/appId/folderName(Display-Phone)
+        //database/apps/appId/folderUUID/Name(Display-Phone)
         dir = `${dir}/${req.body.folderName}`
         if (!fs.existsSync(dir)) fs.mkdirSync(dir)
 
@@ -111,16 +114,32 @@ app.get("/test", function (req, res, next) {
     res.send("OK!")
 });
 
-app.post("/api/apps/new", async function (req, res) {
+app.post("/api/apps/new", async function (req, res, next) {
+    let appId
     try {
-        await dbLib.insertApp(req.body.name, "author", "scenario", "category", req.body.appData, req.body.drones)
+        appId = await dbLib.insertApp(req.body.name, "author", "scenario", "category", req.body.appData, req.body.drones)
     } catch (error) {
         next(error)
     }
-    res.send({ response: "New!" })
+
+    // Copy HTMLTest in the new app's folder
+    let dir = "./database/apps"
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir)
+
+    dir = `${dir}/${appId}`
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir)
+    dir = `${dir}/Example`
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir)
+    ncp('./HTMLTest', dir, function (err) {
+        if (err) {
+          return console.error(err);
+        }
+        console.log('done!');
+       });
+    res.send({ response: "New App created" })
 });
 
-app.put("/api/apps/update/:id", async function (req, res) {
+app.put("/api/apps/update/:id", async function (req, res, next) {
     try {
         await dbLib.updateApp(req.params.id, req.body)
     } catch (error) {
@@ -164,7 +183,6 @@ app.post("/api/apps/appupload", function (req, res) {
             }
         });
         if (!isIndex) {
-            console.log('no hay index', path)
             fs.writeFile(path + '/index.html', "There is not an index.html file", (err) => {
                 if (err) throw err;
             })
@@ -213,7 +231,7 @@ app.put("/api/apps/:id/remove/:content", async function (req, res) {
     }
 });
 
-app.get("/api/apps/list", async function (req, res) {
+app.get("/api/apps/list", async function (req, res, next) {
     try {
         const data = await dbLib.listAllApp();
         res.json(data);
@@ -222,7 +240,7 @@ app.get("/api/apps/list", async function (req, res) {
     }
 });
 
-app.get("/api/apps/find/:id", async function (req, res) {
+app.get("/api/apps/find/:id", async function (req, res, next) {
     try {
         const data = await dbLib.findApp(req.params.id)
         res.json(data);
@@ -235,7 +253,7 @@ app.get("/api/apps/find/:id", async function (req, res) {
 app.get("/api/apps/:id/content/:folder/:name", function (req, res) {
     res.sendFile(path.join(__dirname, './database/media/', req.params.id, '/', req.params.folder, '/', req.params.name));
 });
-app.get("/api/apps/:id/qr", async function (req, res) {
+app.get("/api/apps/:id/qr", async function (req, res, next) {
     try {
         const data = await dbLib.findApp(req.params.id)
         data["socketURL"] = `${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}`
@@ -272,7 +290,7 @@ app.get("/api/apps/:id/download/:folderid/:name", function (req, res, next) {
 })
 
 //Drones
-app.get("/api/drones/list", async function (req, res) {
+app.get("/api/drones/list", async function (req, res, next) {
     try {
         const data = await dbLib.listAllDrones();
         res.json(data);
@@ -281,7 +299,7 @@ app.get("/api/drones/list", async function (req, res) {
     }
 });
 
-app.post("/api/drones/new", async function (req, res) {
+app.post("/api/drones/new", async function (req, res, next) {
     if (req.body) {
         try {
             await dbLib.insertDrone(req.body.name, false)
@@ -295,7 +313,7 @@ app.post("/api/drones/new", async function (req, res) {
     }
 });
 
-app.put("/api/drones/edit/:id", async function (req, res) {
+app.put("/api/drones/edit/:id", async function (req, res, next) {
     if (req.body) {
         try {
             await dbLib.updateDrone(req.params.id, req.body.name)
@@ -308,7 +326,7 @@ app.put("/api/drones/edit/:id", async function (req, res) {
     }
 });
 
-app.delete("/api/apps/delete/:id", async function (req, res) {
+app.delete("/api/apps/delete/:id", async function (req, res, next) {
     try {
         await dbLib.deleteApp(req.params.id)
         deleteFolderRecursive(__dirname + '/database/apps/' + req.params.id)
@@ -318,7 +336,7 @@ app.delete("/api/apps/delete/:id", async function (req, res) {
         next(error)
     }
 })
-app.delete("/api/drones/delete/:id", async function (req, res) {
+app.delete("/api/drones/delete/:id", async function (req, res, next) {
     try {
         await dbLib.deleteDrone(req.params.id)
         res.send({ response: "Drone deleted" })

@@ -190,6 +190,7 @@ async function insertApp(name, author, scenario, category, appdata, drones) {
         );
         assert.equal(1, r.insertedCount);
         client.close();
+        return r.ops[0]._id
     } catch (err) {
         console.log(err.stack);
     }
