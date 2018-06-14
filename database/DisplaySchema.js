@@ -9,11 +9,11 @@ module.exports = {
         properties: {
             name: {
                 bsonType: "string",
-                description: "Drone name"
+                description: "Display name"
             },
             onair: {
                 bsonType: "bool",
-                description: "Is the drone on air?"
+                description: "Is the display on air?"
             }
         }
     }

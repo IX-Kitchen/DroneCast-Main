@@ -132,10 +132,10 @@ app.post("/api/apps/new", async function (req, res, next) {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir)
     ncp('./HTMLTest', dir, function (err) {
         if (err) {
-          return console.error(err);
+            return console.error(err);
         }
         console.log('done!');
-       });
+    });
     res.send({ response: "New App created" })
 });
 
@@ -384,7 +384,7 @@ server.listen(port, async function () {
 // Socket logic
 var avDisplays = new Map()
 
-const displaysIo = io.of('/displays'),
+const displaysIo = io.of('/drones'),
     appsIo = io.of('/clients');
 
 displaysIo.on('connection', (socket) => {
@@ -442,14 +442,17 @@ appsIo.on('connection', (socket) => {
 });
 
 var deleteFolderRecursive = function (path) {
-    console.log('Delete folder:',path)
     if (fs.existsSync(path)) {
         fs.readdirSync(path).forEach(function (file, index) {
             var curPath = path + "/" + file;
             if (fs.lstatSync(curPath).isDirectory()) { // recurse
                 deleteFolderRecursive(curPath);
             } else { // delete file
-                fs.unlinkSync(curPath);
+                try {
+                    fs.unlinkSync(curPath);
+                } catch (err) {
+                    console.log(err)
+                }
             }
         });
         fs.rmdirSync(path);

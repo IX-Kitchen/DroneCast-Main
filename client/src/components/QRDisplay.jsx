@@ -1,8 +1,7 @@
 import React from 'react'
-import { Segment, Button, Icon, Header } from 'semantic-ui-react'
+import { Segment, Header } from 'semantic-ui-react'
 import QRCode from 'qrcode.react'
 import request from 'superagent'
-import { Link } from 'react-router-dom'
 import { API_ROOT } from '../api-config';
 
 const style = {

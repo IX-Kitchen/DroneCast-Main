@@ -4,17 +4,17 @@ import { Link } from 'react-router-dom';
 import request from 'superagent'
 import { API_ROOT } from '../api-config';
 
-export default class DroneList extends React.Component {
+export default class DisplayList extends React.Component {
     constructor() {
         super();
-        this.state = { drones: [], ready: false };
-        this.deleteDrone = this.deleteDrone.bind(this)
+        this.state = { displays: [], ready: false };
+        this.deleteDisplay = this.deleteDisplay.bind(this)
     }
     updateData() {
         request
             .get(API_ROOT + 'displays/list')
             .then((response) => {
-                this.setState({ drones: response.body, ready: true });
+                this.setState({ displays: response.body, ready: true });
             })
             .catch((error) => {
                 console.log(error)
@@ -22,11 +22,10 @@ export default class DroneList extends React.Component {
             })
     }
 
-    deleteDrone(proxy, { id }) {
-        console.log(arguments)
+    deleteDisplay(proxy, { id }) {
         this.setState({ ready: false })
         request
-            .delete(API_ROOT + 'drones/delete/' + id)
+            .delete(API_ROOT + 'displays/delete/' + id)
             .then((response) => {
                 this.updateData()
             })
@@ -41,7 +40,7 @@ export default class DroneList extends React.Component {
     }
 
     render() {
-        const { drones, ready } = this.state
+        const { displays, ready } = this.state
 
         return (
             <Segment color='teal' loading={!ready}>
@@ -54,13 +53,13 @@ export default class DroneList extends React.Component {
                     </Table.Header>
 
                     <Table.Body>
-                        {drones.map(item => (
+                        {displays.map(item => (
                             <Table.Row key={item._id}>
                                 <Table.Cell>
                                     <Label color='brown' ribbon>{item.name}</Label>
                                 </Table.Cell>
                                 <Table.Cell>
-                                    <Link to={"/newdrone/" + item._id}>
+                                    <Link to={"/newdisplay/" + item._id}>
                                         <Button basic color='black' animated='fade'>
                                             <Button.Content visible>
                                                 <Icon name='edit' />
@@ -70,7 +69,7 @@ export default class DroneList extends React.Component {
                                             </Button.Content>
                                         </Button>
                                     </Link>
-                                    <Button basic id={item.name} color='red' animated='fade' onClick={this.deleteDrone}>
+                                    <Button basic id={item.name} color='red' animated='fade' onClick={this.deleteDisplay}>
                                         <Button.Content visible>
                                             <Icon name='delete' />
                                         </Button.Content>

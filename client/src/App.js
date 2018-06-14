@@ -1,7 +1,7 @@
 import React from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import { BrowserRouter, Switch, Route, Link } from 'react-router-dom'
-import { Button, Icon, Divider, Menu } from 'semantic-ui-react'
+import { Divider, Menu } from 'semantic-ui-react'
 import Main from './components/Main'
 import MyApp from './components/MyApp';
 import NewAppForm from './components/NewAppForm';
@@ -29,7 +29,7 @@ const App = () =>
         <Switch>
           <Route exact path="/" component={Main} />
           <Route exact path="/newapp" component={NewAppForm} />
-          <Route exact path="/newdrone/:id?" component={NewDisplayForm} />
+          <Route exact path="/newdisplay/:id?" component={NewDisplayForm} />
           <Route exact path="/myapp/:id/edit" component={MyApp} />
           <Route exact path="/myapp/:id/newfolder" component={FolderForm} />
           <Route exact path="/qr/:id?" component={QRCodeDisplay} />

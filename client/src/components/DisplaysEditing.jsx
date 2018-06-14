@@ -10,7 +10,7 @@ const style = {
     marginRight: 'auto'
 }
 
-export default class DisplaysEdition extends React.Component {
+export default class DisplaysEditing extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -36,11 +36,11 @@ export default class DisplaysEdition extends React.Component {
     }
 
     handleOpenModal() {
-        this.setState({ modalOpen: true });
+        this.setState({ modalOpen: true, selectedDisplays: [] });
     }
 
     handleClose() {
-        this.setState({ modalOpen: false })
+        this.setState({ modalOpen: false, selectedDisplays: [] })
     }
 
     handleSubmit = () => {
@@ -49,14 +49,12 @@ export default class DisplaysEdition extends React.Component {
     }
 
     handleChange = (event, data) => {
-        console.log('data', data)
         const { selectedDisplays } = this.state
         let newDisplays = selectedDisplays.slice()
-        console.log(data)
         if (data.checked) {
             newDisplays = [...newDisplays, data.label]
         } else {
-            newDisplays = selectedDisplays.filter(disp => disp !== data.label)
+            newDisplays = newDisplays.filter(disp => disp !== data.label)
         }
         this.setState({ selectedDisplays: newDisplays });
     }
@@ -64,7 +62,6 @@ export default class DisplaysEdition extends React.Component {
     render() {
         const { displays, handleRemoveDisplay } = this.props
         const { availableDisplays, ready, modalOpen } = this.state
-        console.log(this.state)
 
         return (
             <div>

@@ -1,6 +1,6 @@
 import React from 'react'
 import AppList from './AppList'
-import DroneList from './DroneList'
+import DisplayList from './DisplayList'
 import { Link } from 'react-router-dom'
 import { Button, Menu, Segment } from 'semantic-ui-react'
 
@@ -27,10 +27,10 @@ export default class Main extends React.Component {
                 list = <AppList />
                 break
             case 'displays':
-                addButton = <Link to="/newdrone">
+                addButton = <Link to="/newdisplay">
                     <Button color='green'> Create New Display </Button>
                 </Link>
-                list = <DroneList />
+                list = <DisplayList />
                 break
             default:
         }
