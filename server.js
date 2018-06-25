@@ -168,7 +168,7 @@ app.post("/api/apps/appupload", function (req, res) {
             req.files.forEach(file => {
                 path = file.destination
                 let filePath = file.path
-                if (file.originalname.indexOf('.zip') > -1) {    
+                if (file.originalname.indexOf('.zip') > -1) {
                     let zip = new admzip(filePath);
                     zip.extractAllTo(path, true);
                 }
@@ -406,15 +406,21 @@ appsIo.on('connection', (socket) => {
     });
     socket.on('data', (msg) => {
         console.log("Data sent from client to display:", msg)
-        const { displays } = msg // Displays bound to the app
-        for (let key of avDisplays.keys()) {
-            displays.forEach(display => {
-                if (display === key) {
-                    const sock = avDisplays.get(key)
-                    sock.emit('message', msg.content)
-                }
-            });
+        const { drones } = msg // Displays bound to the app
+        try {
+            if (drones === undefined) return
+            for (let key of avDisplays.keys()) {
+                drones.forEach(display => {
+                    if (display === key) {
+                        const sock = avDisplays.get(key)
+                        sock.emit('message', msg.content)
+                    }
+                });
+            }
+        } catch (error) {
+            console.log(error)
         }
+
     })
     socket.on('disconnect', (reason) => {
         console.log('Client disconnected. Reason:', reason)
