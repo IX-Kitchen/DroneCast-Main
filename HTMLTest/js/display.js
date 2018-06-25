@@ -2,7 +2,7 @@
 var textArea
 var data
 
-const prod = 'http://dronecast.westeurope.cloudapp.azure.com:8080/drones'
+const prod = 'http://ec2-18-233-146-243.compute-1.amazonaws.com:8080/drones'
 const dev = "http://localhost:8080/drones"
 const socket = io(prod);
 

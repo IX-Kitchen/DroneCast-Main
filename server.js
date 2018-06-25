@@ -163,38 +163,18 @@ app.post("/api/apps/appupload", function (req, res) {
             console.log(err)
             return res.status(500).send("Something went wrong Uploading the app!");
         }
-        let isIndex = false
         let path
-        req.files.forEach(file => {
-            path = file.destination
-            let filePath = file.path
-            if (file.originalname.indexOf('.rar') > -1 || file.originalname.indexOf('.zip') > -1) {
-                // Delete previous files. Requires root permission
-                // fs.readdir(path, (err, files) => {
-                //     if (err) throw err;                
-                //     for (const file of files) {
-                //       fs.unlink(path, err => {
-                //         if (err) throw err;
-                //       });
-                //     }
-                //   });
-
-                // Check for index.html
-
-                let zip = new admzip(filePath);
-                zip.extractAllTo(path, true);
-            }
-        })
-        fs.readdir(path, (err, files) => {
-            if (err) throw err;
-            for (const file of files) {
-                isIndex = file === 'index.html'
-            }
-        });
-        if (!isIndex) {
-            fs.writeFile(path + '/index.html', "There is not an index.html file", (err) => {
-                if (err) throw err;
+        try {
+            req.files.forEach(file => {
+                path = file.destination
+                let filePath = file.path
+                if (file.originalname.indexOf('.zip') > -1) {    
+                    let zip = new admzip(filePath);
+                    zip.extractAllTo(path, true);
+                }
             })
+        } catch (error) {
+            console.log(error)
         }
     });
 

@@ -5,7 +5,7 @@ var backPicker
 var scrollPicker
 var textArea
 
-const prod = 'http://dronecast.westeurope.cloudapp.azure.com:8080/clients'
+const prod = 'http://ec2-18-233-146-243.compute-1.amazonaws.com:8080/clients'
 const dev = "http://localhost:8080/clients"
 const socket = io(prod);
 
