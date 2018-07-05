@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from "react-router-dom";
 import Navigator from "./Navigator"
 import FolderForm from "./FolderForm"
 import Explorer from './Explorer'
@@ -258,12 +259,13 @@ export default class MyApp extends React.Component {
         const { name } = this.state.data
         const { ready, currentIndex, currentFolderName, currentFolderId, phase, tab } = this.state
         const { id } = this.props.match.params
-        // currentIndex can be 0
-        //const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
         return (
             <div>
                 <h2 style={{ textAlign: 'center' }}>{name}</h2>
                 <Menu pointing tabular>
+                    <Link to="/">
+                        <Menu.Item name='home' active={false} onClick={this.handleTabClick} />
+                    </Link>
                     <Menu.Item name='app' id='app' active={tab === 'app'} onClick={this.handleTabClick} />
                     <Menu.Item name='bound displays' id='displays' active={tab === 'displays'} onClick={this.handleTabClick} />
                     {phase === 'contentlist' &&

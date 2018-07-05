@@ -401,7 +401,7 @@ appsIo.on('connection', (socket) => {
         console.log("From client to server:", msg);
     });
     socket.on('toHTML', (msg) => {
-        //console.log("From HTML to HTML:", msg);
+        console.log("Client sending (toHTML):", msg);
         displaysIo.emit('toHTML', msg)
     });
     socket.on('data', (msg) => {
@@ -411,7 +411,9 @@ appsIo.on('connection', (socket) => {
             if (drones === undefined) return
             for (let key of avDisplays.keys()) {
                 drones.forEach(display => {
+                    console.log("AvDisplays-Drones received in data",key, display)
                     if (display === key) {
+                        console.log("Sending data from server to display",display)
                         const sock = avDisplays.get(key)
                         sock.emit('message', msg.content)
                     }
@@ -420,7 +422,6 @@ appsIo.on('connection', (socket) => {
         } catch (error) {
             console.log(error)
         }
-
     })
     socket.on('disconnect', (reason) => {
         console.log('Client disconnected. Reason:', reason)

@@ -81,7 +81,7 @@ export default class AppList extends React.Component {
                                 </Table.Cell>
                                 <Table.Cell>
                                     {apps[index].displays.map(item => (
-                                        <Label basic color='blue' key={item}>{item}</Label>
+                                        <Label basic key={item}>{item}</Label>
                                     ))}
                                 </Table.Cell>
                                 <Table.Cell>

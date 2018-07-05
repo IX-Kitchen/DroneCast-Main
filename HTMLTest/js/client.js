@@ -7,7 +7,7 @@ var textArea
 
 const prod = 'http://ec2-18-233-146-243.compute-1.amazonaws.com:8080/clients'
 const dev = "http://localhost:8080/clients"
-const socket = io(prod);
+const socket = io(dev);
 
 window.addEventListener("load", startup, false);
 window.addEventListener("beforeunload", closeSocket, false);

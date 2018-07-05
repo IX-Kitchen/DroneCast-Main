@@ -7,7 +7,7 @@ import { Button, Menu, Segment } from 'semantic-ui-react'
 export default class Main extends React.Component {
     constructor() {
         super();
-        this.state = { activeItem: 'apps' };
+        this.state = { activeItem: 'home' };
         this.handleItemClick = this.handleItemClick.bind(this);
     }
 
@@ -20,7 +20,7 @@ export default class Main extends React.Component {
         const { activeItem } = this.state
         let addButton, list
         switch (activeItem) {
-            case "apps":
+            case "home":
                 addButton = <Link to="/newapp">
                     <Button color='green'> Create New App </Button>
                 </Link>
@@ -37,7 +37,7 @@ export default class Main extends React.Component {
         return (
             <div>
                 <Menu pointing secondary>
-                    <Menu.Item name='apps' active={activeItem === 'apps'} onClick={this.handleItemClick} />
+                    <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} />
                     <Menu.Item name='displays' active={activeItem === 'displays'} onClick={this.handleItemClick} />
                 </Menu>
                 <Segment color='blue'>
