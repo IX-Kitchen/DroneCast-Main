@@ -65,7 +65,7 @@ export default class DisplaysEditing extends React.Component {
 
         return (
             <div>
-                <Button basic color='green' onClick={this.handleOpenModal}>
+                <Button color='green' onClick={this.handleOpenModal}>
                     Add display to app
                     </Button>
                 <Modal style={style} closeIcon onClose={this.handleClose}

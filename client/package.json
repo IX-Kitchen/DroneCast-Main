@@ -4,13 +4,13 @@
   "private": true,
   "dependencies": {
     "qrcode.react": "^0.8.0",
-    "react": "^16.3.0",
-    "react-dom": "^16.2.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
     "react-dropzone-component": "^3.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
-    "semantic-ui-css": "^2.3.1",
-    "semantic-ui-react": "^0.81.1",
+    "semantic-ui-css": "^2.3.2",
+    "semantic-ui-react": "^0.82.0",
     "shortid": "^2.2.8",
     "superagent": "^3.8.3"
   },

@@ -4,7 +4,7 @@ import Navigator from "./Navigator"
 import FolderForm from "./FolderForm"
 import Explorer from './Explorer'
 import ContentList from './ContentList'
-import { Menu, Segment } from 'semantic-ui-react'
+import { Menu, Segment, Button } from 'semantic-ui-react'
 import request from 'superagent'
 import { API_ROOT, BACK_ROOT } from '../api-config'
 import CodeFolders from './CodeFolders'
@@ -15,289 +15,292 @@ import shortid from 'shortid'
 
 // Phase: ContentList/Explorer/NewFolder/codefolders
 export default class MyApp extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            data: { name: "", folders: [] },
-            displays: [],
-            currentIndex: undefined,
-            currentFolderName: '',
-            currentFolderId: '',
-            ready: false,
-            phase: 'explorer',
-            tab: 'app'
-        }
-        this.handleBackClick = this.handleBackClick.bind(this);
-        this.getData = this.getData.bind(this);
-        this.handleAddFolder = this.handleAddFolder.bind(this)
-        this.handleSubmitFolder = this.handleSubmitFolder.bind(this)
-        this.handleRemoveFolder = this.handleRemoveFolder.bind(this)
-        this.handleFolderClick = this.handleFolderClick.bind(this)
-        this.handleNavClick = this.handleNavClick.bind(this)
-        this.handleChangeFolderName = this.handleChangeFolderName.bind(this)
-        this.handleDeleteContent = this.handleDeleteContent.bind(this)
-        this.downloadClick = this.downloadClick.bind(this)
-        this.Display = this.Display.bind(this)
-        this.handleTabClick = this.handleTabClick.bind(this)
-        this.handleUpdateDisplays = this.handleUpdateDisplays.bind(this)
-        this.handleRemoveDisplay = this.handleRemoveDisplay.bind(this)
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: { name: "", folders: [] },
+      displays: [],
+      currentIndex: undefined,
+      currentFolderName: '',
+      currentFolderId: '',
+      ready: false,
+      phase: 'explorer',
+      tab: 'app'
     }
+    this.handleBackClick = this.handleBackClick.bind(this);
+    this.getData = this.getData.bind(this);
+    this.handleAddFolder = this.handleAddFolder.bind(this)
+    this.handleSubmitFolder = this.handleSubmitFolder.bind(this)
+    this.handleRemoveFolder = this.handleRemoveFolder.bind(this)
+    this.handleFolderClick = this.handleFolderClick.bind(this)
+    this.handleNavClick = this.handleNavClick.bind(this)
+    this.handleChangeFolderName = this.handleChangeFolderName.bind(this)
+    this.handleDeleteContent = this.handleDeleteContent.bind(this)
+    this.downloadClick = this.downloadClick.bind(this)
+    this.Display = this.Display.bind(this)
+    this.handleTabClick = this.handleTabClick.bind(this)
+    this.handleUpdateDisplays = this.handleUpdateDisplays.bind(this)
+    this.handleRemoveDisplay = this.handleRemoveDisplay.bind(this)
+  }
 
-    componentDidMount() {
+  componentDidMount() {
+    this.getData()
+  }
+
+  getData() {
+    request
+      .get(API_ROOT + 'apps/find/' + this.props.match.params.id)
+      .then((response) => {
+        const data =
+        {
+          name: response.body.name,
+          folders: response.body.appdata.folders
+        }
+        this.setState({ data: data, ready: true, displays: response.body.displays });
+      })
+      .catch((error) => {
+        console.log(error)
+        return [error]
+      })
+  }
+
+  handleSubmitFolder(name, type) {
+    let newFolder
+    switch (type) {
+      case 'code':
+        newFolder = {
+          "name": name,
+          'type': type,
+          'id': shortid.generate(),
+          "content": {
+            "Phone": [],
+            "Display": []
+          }
+        };
+        break
+      default:
+        newFolder = {
+          "name": name,
+          'type': type,
+          'id': shortid.generate(),
+          "content": []
+        };
+        break
+    }
+    const folders = [...this.state.data.folders, newFolder]
+    const newJson = {
+      ...this.state.data,
+      folders: folders
+    }
+    this.setState({ data: newJson, phase: 'explorer' }, this.updateData)
+  }
+
+  handleChangeFolderName(oldName, newName) {
+    const { folders } = this.state.data
+    folders.forEach((folder) => {
+      folder.name = folder.name === oldName ? newName : folder.name
+    })
+    const newJson = {
+      ...this.state.data,
+      folders: folders
+    }
+    this.setState({ data: newJson, phase: 'explorer' }, this.updateData)
+  }
+
+  handleAddFolder() {
+    this.setState({ phase: 'newfolder' })
+  }
+
+  handleRemoveFolder(name) {
+    const { folders } = this.state.data
+    const newFolders = folders.filter(folder => folder.name !== name)
+    const newJson = {
+      ...this.state.data,
+      folders: newFolders
+    }
+    this.setState({ data: newJson }, this.updateData)
+  }
+
+  handleFolderClick(event, { value }) {
+    // Click on code folder (it is represented by a string, not an index)
+    const { currentFolderId } = this.state
+    if (typeof value === 'string') {
+      const url = `${BACK_ROOT}/${this.props.match.params.id}/${currentFolderId}/${value}`;
+      window.open(url, '_blank');
+      return
+    }
+    //Click on a folder represented by an index
+    const folder = this.state.data.folders[value]
+    let phase = folder.type === 'code' ? 'codefolders' : 'contentlist'
+    this.setState({
+      phase: phase,
+      currentIndex: value,
+      currentFolderName: folder.name,
+      currentFolderId: folder.id
+    })
+  }
+
+  handleNavClick(event, { value }) {
+    //this.updateData()
+    if (value === 'app') {
+      this.setState({
+        phase: 'explorer',
+        currentIndex: undefined,
+        currentFolderName: ''
+      })
+    } else {
+      this.setState({
+        phase: 'codefolders'
+      })
+    }
+  }
+
+  updateData() {
+    const { folders } = this.state.data
+    request
+      .put(API_ROOT + 'apps/updatedata/' + this.props.match.params.id)
+      .send({ folders: folders })
+      .then((response) => {
+      })
+      .catch((error) => {
+        console.log(error)
+        return [error]
+      })
+  }
+
+  handleUpdateDisplays(displays) {
+    request
+      .put(API_ROOT + 'apps/updatedisplays/' + this.props.match.params.id)
+      .send(displays)
+      .then((response) => {
+        this.setState({ displays: displays })
+      })
+      .catch((error) => {
+        console.log(error)
+        return [error]
+      })
+  }
+
+  handleRemoveDisplay(event, { id }) {
+    const { displays } = this.state
+    const newDisplays = displays.filter(disp => disp !== id)
+    this.handleUpdateDisplays(newDisplays)
+  }
+
+  handleBackClick() {
+    this.updateData()
+  }
+
+  handleDeleteContent(event, { value }) {
+    this.setState({ ready: false })
+    const { currentIndex } = this.state
+
+    request
+      .put(`${API_ROOT}apps/${this.props.match.params.id}/remove/${value}`)
+      .send({ index: currentIndex })
+      .then((response) => {
         this.getData()
-    }
+      })
+      .catch((error) => {
+        console.log(error)
+        return [error]
+      })
+  }
+  downloadClick(event, { value }) {
+    const { currentFolderId } = this.state
+    window.open(`${API_ROOT}apps/${this.props.match.params.id}/download/${currentFolderId}/${value}`, '_blank');
+  }
+  handleTabClick(event, { id }) {
+    this.setState({ tab: id })
+  }
 
-    getData() {
-        request
-            .get(API_ROOT + 'apps/find/' + this.props.match.params.id)
-            .then((response) => {
-                const data =
-                {
-                    name: response.body.name,
-                    folders: response.body.appdata.folders
+  // Switch display
+  Display(props) {
+    const { folders } = this.state.data
+    const { currentIndex, phase, currentFolderId, tab, displays } = this.state
+    // CurrentIndex can also be 0
+    const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
+    const { id } = this.props.match.params
+    if (tab === 'app') {
+      switch (phase) {
+        case 'contentlist':
+          return <ContentList content={currentFolder.content}
+            onClick={this.handleDeleteContent}
+            folder={currentFolderId}
+            appid={id} />
+        case 'newfolder':
+          return <FolderForm addCallback={this.handleSubmitFolder} />
+        // Explorer
+        case 'codefolders':
+          return <CodeFolders
+            handleClick={this.handleFolderClick}
+            downloadClick={this.downloadClick}
+            appid={id}
+            folderId={currentFolderId}
+            currentIndex={currentIndex} />
+        default:
+          return <Explorer
+            addCallback={this.handleAddFolder}
+            removeCallback={this.handleRemoveFolder}
+            folders={folders}
+            appid={id}
+            changeCallback={this.handleChangeFolderName}
+            handleClick={this.handleFolderClick} />
+      }
+    } else {
+      return <DisplaysEditing displays={displays}
+        handleRemoveDisplay={this.handleRemoveDisplay}
+        handleUpdateDisplays={this.handleUpdateDisplays} />
+    }
+  }
+
+  render() {
+    console.log(this.state)
+    const { name } = this.state.data
+    const { ready, currentIndex, currentFolderName, currentFolderId, phase, tab } = this.state
+    const { id } = this.props.match.params
+    return (
+      <React.Fragment>
+        <Menu secondary pointing >
+          <Link to="/">
+            <Menu.Item name='home' active={false} />
+          </Link>
+          <Menu.Item name='app' id='app' active={tab === 'app'} onClick={this.handleTabClick} />
+          <Menu.Item name='bound displays' id='displays' active={tab === 'displays'} onClick={this.handleTabClick} />
+        </Menu>
+        <Segment color='blue' loading={!ready}>
+          {(tab === 'app') &&
+            <React.Fragment>
+              {phase === 'explorer' &&
+                <Button.Group>
+                  <Button positive children="New Folder" onClick={this.handleAddFolder} />
+                </Button.Group>
+              }
+              <Menu borderless secondary>
+                {phase !== 'newfolder' &&
+                  <Menu.Item position='left' >
+                    <Navigator
+                      id={name}
+                      folder={currentFolderName}
+                      handleClick={this.handleNavClick} />
+                  </Menu.Item>
                 }
-                this.setState({ data: data, ready: true, displays: response.body.displays });
-            })
-            .catch((error) => {
-                console.log(error)
-                return [error]
-            })
-    }
-
-    handleSubmitFolder(name, type) {
-        let newFolder
-        switch (type) {
-            case 'code':
-                newFolder = {
-                    "name": name,
-                    'type': type,
-                    'id': shortid.generate(),
-                    "content": {
-                        "Phone": [],
-                        "Display": []
-                    }
-                };
-                break
-            default:
-                newFolder = {
-                    "name": name,
-                    'type': type,
-                    'id': shortid.generate(),
-                    "content": []
-                };
-                break
-        }
-        const folders = [...this.state.data.folders, newFolder]
-        const newJson = {
-            ...this.state.data,
-            folders: folders
-        }
-        this.setState({ data: newJson, phase: 'explorer' }, this.updateData)
-    }
-
-    handleChangeFolderName(oldName, newName) {
-        const { folders } = this.state.data
-        folders.forEach((folder) => {
-            folder.name = folder.name === oldName ? newName : folder.name
-        })
-        const newJson = {
-            ...this.state.data,
-            folders: folders
-        }
-        this.setState({ data: newJson, phase: 'explorer' }, this.updateData)
-    }
-
-    handleAddFolder() {
-        this.setState({ phase: 'newfolder' })
-    }
-
-    handleRemoveFolder(name) {
-        const { folders } = this.state.data
-        const newFolders = folders.filter(folder => folder.name !== name)
-        const newJson = {
-            ...this.state.data,
-            folders: newFolders
-        }
-        this.setState({ data: newJson }, this.updateData)
-    }
-
-    handleFolderClick(event, { value }) {
-        // Click on code folder (it is represented by a string, not an index)
-        const { currentFolderId } = this.state
-        if (typeof value === 'string') {
-            const url = `${BACK_ROOT}/${this.props.match.params.id}/${currentFolderId}/${value}`;
-            window.open(url, '_blank');
-            return
-        }
-        //Click on a folder represented by an index
-        const folder = this.state.data.folders[value]
-        let phase = folder.type === 'code' ? 'codefolders' : 'contentlist'
-        this.setState({
-            phase: phase,
-            currentIndex: value,
-            currentFolderName: folder.name,
-            currentFolderId: folder.id
-        })
-    }
-
-    handleNavClick(event, { value }) {
-        //this.updateData()
-        if (value === 'app') {
-            this.setState({
-                phase: 'explorer',
-                currentIndex: undefined,
-                currentFolderName: ''
-            })
-        } else {
-            this.setState({
-                phase: 'codefolders'
-            })
-        }
-    }
-
-    updateData() {
-        const { folders } = this.state.data
-        request
-            .put(API_ROOT + 'apps/updatedata/' + this.props.match.params.id)
-            .send({ folders: folders })
-            .then((response) => {
-            })
-            .catch((error) => {
-                console.log(error)
-                return [error]
-            })
-    }
-
-    handleUpdateDisplays(displays) {
-        request
-            .put(API_ROOT + 'apps/updatedisplays/' + this.props.match.params.id)
-            .send(displays)
-            .then((response) => {
-                this.setState({ displays: displays })
-            })
-            .catch((error) => {
-                console.log(error)
-                return [error]
-            })
-    }
-
-    handleRemoveDisplay(event, { id }) {
-        const { displays } = this.state
-        const newDisplays = displays.filter(disp => disp !== id)
-        this.handleUpdateDisplays(newDisplays)
-    }
-
-    handleBackClick() {
-        this.updateData()
-    }
-
-    handleDeleteContent(event, { value }) {
-        this.setState({ ready: false })
-        const { currentIndex } = this.state
-
-        request
-            .put(`${API_ROOT}apps/${this.props.match.params.id}/remove/${value}`)
-            .send({ index: currentIndex })
-            .then((response) => {
-                this.getData()
-            })
-            .catch((error) => {
-                console.log(error)
-                return [error]
-            })
-    }
-    downloadClick(event, { value }) {
-        const { currentFolderId } = this.state
-        window.open(`${API_ROOT}apps/${this.props.match.params.id}/download/${currentFolderId}/${value}`, '_blank');
-    }
-    handleTabClick(event, { id }) {
-        this.setState({ tab: id })
-    }
-
-    // Switch display
-    Display(props) {
-        const { folders } = this.state.data
-        const { currentIndex, phase, currentFolderId, tab, displays } = this.state
-        // CurrentIndex can also be 0
-        const currentFolder = currentIndex !== undefined ? folders[currentIndex] : undefined
-        const { id } = this.props.match.params
-        if (tab === 'app') {
-            switch (phase) {
-                case 'contentlist':
-                    return <ContentList content={currentFolder.content}
-                        onClick={this.handleDeleteContent}
-                        folder={currentFolderId}
-                        appid={id} />
-                case 'newfolder':
-                    return <FolderForm addCallback={this.handleSubmitFolder} />
-                // Explorer
-                case 'codefolders':
-                    return <CodeFolders
-                        handleClick={this.handleFolderClick}
-                        downloadClick={this.downloadClick}
-                        appid={id}
-                        folderId={currentFolderId}
-                        currentIndex={currentIndex} />
-                default:
-                    return <Explorer
-                        addCallback={this.handleAddFolder}
-                        removeCallback={this.handleRemoveFolder}
-                        folders={folders}
-                        appid={id}
-                        changeCallback={this.handleChangeFolderName}
-                        handleClick={this.handleFolderClick} />
-            }
-        } else {
-            return <DisplaysEditing displays={displays}
-                handleRemoveDisplay={this.handleRemoveDisplay}
-                handleUpdateDisplays={this.handleUpdateDisplays} />
-        }
-    }
-
-    render() {
-        //console.log(this.state)
-        const { name } = this.state.data
-        const { ready, currentIndex, currentFolderName, currentFolderId, phase, tab } = this.state
-        const { id } = this.props.match.params
-        return (
-            <div>
-                <h2 style={{ textAlign: 'center' }}>{name}</h2>
-                <Menu pointing tabular>
-                    <Link to="/">
-                        <Menu.Item name='home' active={false} onClick={this.handleTabClick} />
-                    </Link>
-                    <Menu.Item name='app' id='app' active={tab === 'app'} onClick={this.handleTabClick} />
-                    <Menu.Item name='bound displays' id='displays' active={tab === 'displays'} onClick={this.handleTabClick} />
-                    {phase === 'contentlist' &&
-                        <Menu.Item position="right">
-
-                        </Menu.Item>}
-                </Menu>
-                {(tab === 'app') &&
-                    <Menu borderless secondary>
-
-                        <Menu.Item position='left' >
-                            <Navigator
-                                id={name}
-                                folder={currentFolderName}
-                                handleClick={this.handleNavClick} />
-                        </Menu.Item>
-                        {phase === 'contentlist' &&
-                            <Menu.Item position='right'>
-                                <ModalDrop render={(header = "Upload content") => (<ContentDrop
-                                    index={currentIndex}
-                                    appid={id}
-                                    folderId={currentFolderId}
-                                    getData={this.getData} />
-                                )} />
-                            </Menu.Item>
-                        }
-                    </Menu>
+                {phase === 'contentlist' &&
+                  <Menu.Item position='right'>
+                    <ModalDrop render={(header = "Upload content") => (<ContentDrop
+                      index={currentIndex}
+                      appid={id}
+                      folderId={currentFolderId}
+                      getData={this.getData} />
+                    )} />
+                  </Menu.Item>
                 }
-                <Segment color='blue' loading={!ready}>
-                    <this.Display />
-                </Segment>
-            </div >
-        );
-    }
+              </Menu>
+            </React.Fragment>
+          }
+          <this.Display />
+        </Segment>
+      </React.Fragment>
+    );
+  }
 }

@@ -48,17 +48,14 @@ export default class Explorer extends React.PureComponent {
         this.setState({ confirm: false })
     }
     render() {
-        const { folders, addCallback, handleClick } = this.props
+        const { folders, handleClick } = this.props
         const { confirm } = this.state
         return (
-            <div>
+            <React.Fragment>
                 <Confirm open={confirm} style={style}
                     onCancel={this.handleCancel} onConfirm={this.handleConfirm}
                     confirmButton="Delete"
                 />
-                <Button.Group>
-                    <Button positive icon='plus' onClick={addCallback} />
-                </Button.Group>
                 <Transition.Group
                     as={Grid}
                     duration={200}
@@ -107,7 +104,7 @@ export default class Explorer extends React.PureComponent {
                         ))}
                     </Grid>
                 </Transition.Group>
-            </div>
+            </React.Fragment>
         )
     }
 }
