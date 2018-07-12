@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button, Form, Segment, Label } from 'semantic-ui-react'
 import request from "superagent"
-import { Redirect } from 'react-router-dom';
 import { API_ROOT } from '../api-config';
 import shortid from 'shortid'
 
@@ -10,12 +9,8 @@ export default class NewAppForm extends React.Component {
     super(props);
     this.state = {
       name: '',
-      availableDisplays: [],
-      displays: [],
-      redirect: false,
-      ready: false
+      displays: []
     };
-
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -35,7 +30,7 @@ export default class NewAppForm extends React.Component {
     }
   }
 
-  handleSubmit(event, data) {
+  handleSubmit(event) {
     const newAppData = {
       folders: [
         {
@@ -55,37 +50,24 @@ export default class NewAppForm extends React.Component {
       .post(API_ROOT + 'apps/new')
       .send(postData)
       .then((response) => {
-        this.setState({ redirect: true })
+        this.props.updateApps()
       })
       .catch((error) => {
         console.log(error)
-      })
-    event.preventDefault();
-  }
-
-  componentDidMount() {
-    request
-      .get(API_ROOT + 'displays/list')
-      .then((response) => {
-        this.setState({ availableDisplays: response.body, ready: true });
-      })
-      .catch((error) => {
-        console.log(error)
-        return [error]
       })
   }
 
   render() {
-    const { redirect, availableDisplays, ready } = this.state
+    const { availableDisplays } = this.props
     return (
-      <div>
+      <React.Fragment>
         <Form onSubmit={this.handleSubmit} size='big'>
           <Form.Field>
             <label>App Name</label>
             <input required placeholder='App Name' name='name' onChange={this.handleChange} />
           </Form.Field>
           <Form.Group grouped>
-            <Segment basic loading={!ready}>
+            <Segment basic>
               {availableDisplays.length > 0 &&
                 <Label pointing='below'>Select the displays for this app</Label>
               }
@@ -93,13 +75,11 @@ export default class NewAppForm extends React.Component {
                 <Form.Checkbox key={item._id} label={item.name} onClick={this.handleChange} />
               ))}
             </Segment>
-
           </Form.Group>
           <Button type='submit' positive>Submit</Button>
-
+          <Button negative onClick={this.props.closePortal} children="Cancel" />
         </Form>
-        {redirect && (<Redirect to={''} />)}
-      </div>
+      </React.Fragment>
     )
   }
 }

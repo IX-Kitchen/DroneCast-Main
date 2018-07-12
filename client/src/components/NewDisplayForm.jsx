@@ -1,15 +1,13 @@
 import React from 'react'
 import { Button, Form } from 'semantic-ui-react'
 import request from "superagent"
-import { Redirect } from 'react-router-dom';
 import { API_ROOT } from '../api-config';
 
 export default class NewAppForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      redirect: false
+      name: ''
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -22,13 +20,14 @@ export default class NewAppForm extends React.Component {
 
   handleSubmit(event) {
     const { name } = this.state
-    const { id } = this.props.match.params
-    if (id) {
+    const {editDisplay} = this.props
+    
+    if (editDisplay !== undefined) {
       request
-        .put(API_ROOT + 'displays/edit/' + id)
+        .put(API_ROOT + 'displays/edit/' + editDisplay)
         .send({ name: name })
         .then((response) => {
-          this.setState({ redirect: true })
+          this.props.updateDisplays()
         })
         .catch((error) => {
           console.log(error)
@@ -38,7 +37,7 @@ export default class NewAppForm extends React.Component {
         .post(API_ROOT + 'displays/new')
         .send({ name: name })
         .then((response) => {
-          this.setState({ redirect: true })
+          this.props.updateDisplays()
         })
         .catch((error) => {
           console.log(error)
@@ -47,19 +46,17 @@ export default class NewAppForm extends React.Component {
     event.preventDefault();
   }
   render() {
-    const { redirect } = this.state
     return (
-      <div>
+      <React.Fragment>
         <Form onSubmit={this.handleSubmit}>
           <Form.Field>
             <label>Display Name</label>
             <input required placeholder='App Name' name='name' onChange={this.handleChange} />
           </Form.Field>
           <Button type='submit'>Submit</Button>
-
+          <Button negative onClick={this.props.closePortal} children="Cancel"/>
         </Form>
-        {redirect && (<Redirect to={''} />)}
-      </div>
+      </React.Fragment>
     )
   }
 }

@@ -43,7 +43,7 @@ export default class FolderForm extends React.Component {
                         <Form.Radio label='HTML' value='code' checked={type === 'code'} onChange={this.handleTypeChange} />
                     </Form.Group>
                     <Button type='submit'>Submit</Button>
-
+                    <Button negative children='Cancel' onClick={this.props.closePortal}/>
                 </Form>
             </div>
         )

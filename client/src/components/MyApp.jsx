@@ -4,7 +4,7 @@ import Navigator from "./Navigator"
 import FolderForm from "./FolderForm"
 import Explorer from './Explorer'
 import ContentList from './ContentList'
-import { Menu, Segment, Button } from 'semantic-ui-react'
+import { Menu, Segment, Button, Portal } from 'semantic-ui-react'
 import request from 'superagent'
 import { API_ROOT, BACK_ROOT } from '../api-config'
 import CodeFolders from './CodeFolders'
@@ -13,6 +13,8 @@ import ContentDrop from './ContentDrop'
 import DisplaysEditing from './DisplaysEditing'
 import shortid from 'shortid'
 
+const portalStyle = { left: '40%', position: 'fixed', top: '30%', zIndex: 1000 }
+
 // Phase: ContentList/Explorer/NewFolder/codefolders
 export default class MyApp extends React.Component {
   constructor(props) {
@@ -20,6 +22,7 @@ export default class MyApp extends React.Component {
     this.state = {
       data: { name: "", folders: [] },
       displays: [],
+      portalOpen: false,
       currentIndex: undefined,
       currentFolderName: '',
       currentFolderId: '',
@@ -41,6 +44,8 @@ export default class MyApp extends React.Component {
     this.handleTabClick = this.handleTabClick.bind(this)
     this.handleUpdateDisplays = this.handleUpdateDisplays.bind(this)
     this.handleRemoveDisplay = this.handleRemoveDisplay.bind(this)
+    this.openPortal = this.openPortal.bind(this)
+    this.closePortal = this.closePortal.bind(this)
   }
 
   componentDidMount() {
@@ -213,6 +218,12 @@ export default class MyApp extends React.Component {
   handleTabClick(event, { id }) {
     this.setState({ tab: id })
   }
+  closePortal(){
+    this.setState({portalOpen:false})
+  }
+  openPortal(){
+    this.setState({portalOpen: true})
+  }
 
   // Switch display
   Display(props) {
@@ -228,8 +239,6 @@ export default class MyApp extends React.Component {
             onClick={this.handleDeleteContent}
             folder={currentFolderId}
             appid={id} />
-        case 'newfolder':
-          return <FolderForm addCallback={this.handleSubmitFolder} />
         // Explorer
         case 'codefolders':
           return <CodeFolders
@@ -255,9 +264,9 @@ export default class MyApp extends React.Component {
   }
 
   render() {
-    console.log(this.state)
+    //console.log(this.state)
     const { name } = this.state.data
-    const { ready, currentIndex, currentFolderName, currentFolderId, phase, tab } = this.state
+    const { ready, currentIndex, currentFolderName, currentFolderId, phase, tab, portalOpen } = this.state
     const { id } = this.props.match.params
     return (
       <React.Fragment>
@@ -272,9 +281,16 @@ export default class MyApp extends React.Component {
           {(tab === 'app') &&
             <React.Fragment>
               {phase === 'explorer' &&
-                <Button.Group>
-                  <Button positive children="New Folder" onClick={this.handleAddFolder} />
-                </Button.Group>
+                <React.Fragment>
+                  <Button positive children="New Folder" onClick={this.openPortal} />
+                  <Portal open={portalOpen} children={
+                    <Segment style={portalStyle}
+                      children={
+                        <FolderForm addCallback={this.handleSubmitFolder}
+                          closePortal={this.closePortal} />
+                    } />}
+                  />
+                </React.Fragment>
               }
               <Menu borderless secondary>
                 {phase !== 'newfolder' &&

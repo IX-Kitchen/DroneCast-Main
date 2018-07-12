@@ -37,12 +37,12 @@ const multer = require('multer');
 const bodyParser = require('body-parser');
 const path = require('path')
 
+// CORS
+app.use(cors());
+
 // HTTP request in req.body as json
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-
-// CORS
-app.use(cors());
 
 // Serve static files
 // URL/id/display

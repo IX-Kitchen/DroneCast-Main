@@ -1,8 +1,9 @@
 import React from 'react'
-import { Label, Table, Button, Icon, Segment, Confirm } from 'semantic-ui-react'
+import { Label, Table, Button, Icon, Segment, Confirm, Modal } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import request from 'superagent'
 import { API_ROOT } from '../api-config';
+import QRCodeDisplay from './QRDisplay';
 
 const style = {
     marginTop: '10%',
@@ -13,7 +14,7 @@ const style = {
 export default class AppList extends React.Component {
     constructor() {
         super();
-        this.state = { apps: [], ready: false, confirm: false, selected:'' };
+        this.state = { confirm: false, selected: '' };
         this.deleteApp = this.deleteApp.bind(this)
         this.showConfirm = this.showConfirm.bind(this)
         this.handleCancel = this.handleCancel.bind(this)
@@ -31,7 +32,7 @@ export default class AppList extends React.Component {
             })
     }
     componentDidMount() {
-        this.updateData();
+        //this.updateData();
     }
     deleteApp(appid) {
         this.setState({ ready: false })
@@ -49,7 +50,7 @@ export default class AppList extends React.Component {
         this.setState({ confirm: true, selected: value })
     }
     handleConfirm() {
-        this.deleteApp(this.state.selected)
+        this.props.deleteApp(this.state.selected)
         this.setState({ confirm: false })
     }
     handleCancel() {
@@ -57,7 +58,8 @@ export default class AppList extends React.Component {
     }
 
     render() {
-        const { apps, ready, confirm } = this.state
+        const { confirm } = this.state
+        const { apps, ready } = this.props
         return (
             <Segment color='red' loading={!ready || apps === null}>
                 <Confirm open={confirm} style={style}
@@ -87,31 +89,20 @@ export default class AppList extends React.Component {
                                 <Table.Cell>
                                     <Link to={"/myapp/" + item._id + "/edit"}>
                                         <Button basic color='black' animated='fade'>
-                                            <Button.Content visible>
-                                                <Icon name='edit' />
-                                            </Button.Content>
-                                            <Button.Content hidden>
-                                                Edit
-                                            </Button.Content>
+                                            <Button.Content visible content={<Icon name='edit' />}/>
+                                            <Button.Content hidden content='Edit'/>
                                         </Button>
                                     </Link>
-                                    <Link to={"/qr/" + item._id}>
+                                    <Modal header={item.name} closeIcon trigger={
                                         <Button basic color='black' animated='fade'>
-                                            <Button.Content visible>
-                                                <Icon name='qrcode' />
-                                            </Button.Content>
-                                            <Button.Content hidden>
-                                                QR Code
-                                            </Button.Content>
+                                            <Button.Content visible content={<Icon name='qrcode' />} />
+                                            <Button.Content hidden content="QR Code" />
                                         </Button>
-                                    </Link>
+                                    }
+                                        content={<QRCodeDisplay app={item} />} />
                                     <Button basic color='red' value={item._id} animated='fade' onClick={this.showConfirm}>
-                                        <Button.Content visible>
-                                            <Icon name='delete' />
-                                        </Button.Content>
-                                        <Button.Content hidden>
-                                            Delete
-                                        </Button.Content>
+                                        <Button.Content visible content={<Icon name='delete' />}/>
+                                        <Button.Content hidden content='Delete'/>
                                     </Button>
                                 </Table.Cell>
                             </Table.Row>
